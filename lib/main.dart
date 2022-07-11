@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/tasks_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             return ChangeNotifierProvider(
               create: (context) => TaskModel(),
-              child: const MyHomePage(title: "Test"),
+              child: const StartRoutineScreen(),
             );
           }
           return const Scaffold(
