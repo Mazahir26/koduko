@@ -8,7 +8,7 @@ part of 'routine.dart';
 
 class RoutineAdapter extends TypeAdapter<Routine> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   Routine read(BinaryReader reader) {
