@@ -30,7 +30,27 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             return ChangeNotifierProvider(
               create: (context) => TaskModel(),
-              child: const RoutineScreen(),
+              child: RoutineScreen(
+                routine: Routine(
+                    name: "ok",
+                    tasks: [
+                      Task.fromDuration(
+                        duration: const Duration(seconds: 5),
+                        name: "Test 1",
+                        color: Colors.blueAccent,
+                      ),
+                      Task.fromDuration(
+                        duration: const Duration(seconds: 15),
+                        name: "Test 2",
+                        color: Colors.greenAccent,
+                      ),
+                      Task.fromDuration(
+                        duration: const Duration(seconds: 10),
+                        name: "Test 3",
+                        color: Colors.redAccent,
+                      )
+                    ].reversed.toList()),
+              ),
             );
           }
           return const Scaffold(

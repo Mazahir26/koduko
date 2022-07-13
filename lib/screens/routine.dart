@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/card.dart';
+import 'package:koduko/models/routine.dart';
+import 'package:koduko/models/task.dart';
 
 class RoutineScreen extends StatefulWidget {
-  const RoutineScreen({Key? key}) : super(key: key);
+  final Routine routine;
+  const RoutineScreen({Key? key, required this.routine}) : super(key: key);
 
   @override
   State<RoutineScreen> createState() => RoutineScreenState();
@@ -12,10 +15,22 @@ class RoutineScreenState extends State<RoutineScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
+  List<Widget> tasks = [];
+
   @override
   void initState() {
     _controller =
         AnimationController(vsync: this, duration: const Duration(seconds: 10));
+    for (var i = 0; i < widget.routine.tasks.length; i++) {
+      var ta = widget.routine.tasks[i];
+      tasks.insert(
+          i,
+          TaskCard(
+              name: ta.name,
+              controller:
+                  i == widget.routine.tasks.length - 1 ? _controller : null,
+              color: Color(ta.color)));
+    }
     super.initState();
   }
 
@@ -38,17 +53,7 @@ class RoutineScreenState extends State<RoutineScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                const TaskCard(
-                    name: "Hello", controller: null, color: Colors.amberAccent),
-                TaskCard(
-                    name: "Hello",
-                    controller: _controller,
-                    color: Colors.blueAccent),
-              ],
-            )
+            Stack(alignment: AlignmentDirectional.center, children: tasks)
           ],
         ),
       ),
