@@ -52,19 +52,30 @@ class RoutineScreenState extends State<RoutineScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(
-                alignment: AlignmentDirectional.center,
-                children: tasks
-                    .asMap()
-                    .entries
-                    .map((e) => TaskCard(
-                        name: e.value.name,
-                        controller:
-                            e.key == tasks.length - 1 ? _controller : null,
-                        color: Color(e.value.color),
-                        index: (tasks.length - 1 - e.key) * 1.0,
-                        onDismissed: onDismiss))
-                    .toList())
+            Stack(alignment: AlignmentDirectional.center, children: [
+              const SizedBox(
+                height: 300,
+                child: Center(
+                    child: Text(
+                  "Good Work",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold),
+                )),
+              ),
+              ...tasks
+                  .asMap()
+                  .entries
+                  .map((e) => TaskCard(
+                      name: e.value.name,
+                      controller:
+                          e.key == tasks.length - 1 ? _controller : null,
+                      color: Color(e.value.color),
+                      index: (tasks.length - 1 - e.key) * 1.0,
+                      onDismissed: onDismiss))
+                  .toList(),
+            ])
           ],
         ),
       ),

@@ -74,12 +74,13 @@ class _TaskCardState extends State<TaskCard>
         constraints: const BoxConstraints(
           minHeight: 300,
         ),
-        child: Transform.rotate(
-          angle: widget.controller != null
-              ? radians(0)
-              : -(radians((widget.index * 2.0))),
-          child: Transform.translate(
-            offset: Offset(-5.0 * widget.index.toDouble(), 0.0),
+        child: AnimatedRotation(
+          duration: const Duration(milliseconds: 100),
+          turns: widget.index / 100,
+          child: AnimatedPadding(
+            duration: const Duration(milliseconds: 100),
+            padding: EdgeInsets.only(
+                left: widget.index * 10, bottom: widget.index * 10),
             child: Dismissible(
               key: Key(widget.name),
               onDismissed: widget.onDismissed,
