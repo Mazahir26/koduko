@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/card.dart';
 
-class StartRoutineScreen extends StatefulWidget {
-  const StartRoutineScreen({Key? key}) : super(key: key);
+class RoutineScreen extends StatefulWidget {
+  const RoutineScreen({Key? key}) : super(key: key);
 
   @override
-  State<StartRoutineScreen> createState() => StartRoutineScreenState();
+  State<RoutineScreen> createState() => RoutineScreenState();
 }
 
-class StartRoutineScreenState extends State<StartRoutineScreen> {
+class RoutineScreenState extends State<RoutineScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 10));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +37,12 @@ class StartRoutineScreenState extends State<StartRoutineScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [TaskCard()],
+          children: [
+            TaskCard(
+                name: "Hello",
+                controller: _controller,
+                color: Colors.blueAccent)
+          ],
         ),
       ),
     );

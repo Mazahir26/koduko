@@ -1,37 +1,63 @@
 import 'package:flutter/material.dart';
 
 class TaskCard extends StatefulWidget {
-  const TaskCard({Key? key}) : super(key: key);
+  final String name;
+  final AnimationController? controller;
+  final Color color;
+
+  const TaskCard(
+      {Key? key,
+      required this.name,
+      required this.controller,
+      required this.color})
+      : super(key: key);
 
   @override
   State<TaskCard> createState() => _TaskCardState();
 }
 
 class _TaskCardState extends State<TaskCard>
-    with TickerProviderStateMixin<TaskCard> {
-  late AnimationController _controller;
+    with SingleTickerProviderStateMixin<TaskCard> {
   late AnimationController _buttonController;
 
   bool _isPlaying = false;
   @override
   void initState() {
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 15));
     _buttonController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 250));
-
     super.initState();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     _buttonController.dispose();
     super.dispose();
   }
 
+  void onTap(TapUpDetails _) {
+    if (widget.controller == null) {
+      return;
+    }
+    if (_isPlaying) {
+      setState(() {
+        _isPlaying = false;
+      });
+      widget.controller!.stop();
+      _buttonController.reverse();
+    } else {
+      setState(() {
+        _isPlaying = true;
+      });
+      widget.controller!.forward();
+      _buttonController.forward();
+    }
+  }
+
   String get timerString {
-    Duration duration = _controller.duration! * _controller.value;
+    if (widget.controller == null) {
+      return "0:00";
+    }
+    Duration duration = widget.controller!.duration! * widget.controller!.value;
     return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 
@@ -49,55 +75,56 @@ class _TaskCardState extends State<TaskCard>
               Container(
                   height: 300,
                   decoration: BoxDecoration(
-                    color: Colors.redAccent.withOpacity(0.4),
+                    color: widget.color.withOpacity(0.4),
                     borderRadius: BorderRadius.circular(20),
                   )),
-              AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return Container(
-                      height: _controller.value * 260 + 40,
+              widget.controller == null
+                  ? Container(
+                      height: 40,
                       decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: const Radius.circular(20),
-                            bottomRight: const Radius.circular(20),
-                            topLeft:
-                                Radius.circular(_controller.value * 15 + 5),
-                            topRight:
-                                Radius.circular(_controller.value * 15 + 5),
-                          )),
-                    );
-                  }),
+                          color: widget.color,
+                          borderRadius: BorderRadius.circular(20)))
+                  : AnimatedBuilder(
+                      animation: widget.controller!,
+                      builder: (context, child) {
+                        return Container(
+                          height: widget.controller!.value * 260 + 40,
+                          decoration: BoxDecoration(
+                              color: widget.color,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: const Radius.circular(20),
+                                bottomRight: const Radius.circular(20),
+                                topLeft: Radius.circular(
+                                    widget.controller!.value * 15 + 5),
+                                topRight: Radius.circular(
+                                    widget.controller!.value * 15 + 5),
+                              )),
+                        );
+                      }),
               Positioned(
                 bottom: 15,
                 left: 10,
-                child: AnimatedBuilder(
-                    animation: _controller,
-                    builder: ((context, child) => Text(
-                          timerString,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 26,
-                              fontWeight: FontWeight.w500),
-                        ))),
+                child: widget.controller == null
+                    ? const Text(
+                        "0:00",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w500),
+                      )
+                    : AnimatedBuilder(
+                        animation: widget.controller!,
+                        builder: ((context, child) => Text(
+                              timerString,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ))),
               ),
               GestureDetector(
-                onTapUp: (_) {
-                  if (_isPlaying) {
-                    setState(() {
-                      _isPlaying = false;
-                    });
-                    _controller.stop();
-                    _buttonController.reverse();
-                  } else {
-                    setState(() {
-                      _isPlaying = true;
-                    });
-                    _controller.forward();
-                    _buttonController.forward();
-                  }
-                },
+                onTapUp: onTap,
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: AnimatedIcon(
@@ -108,6 +135,17 @@ class _TaskCardState extends State<TaskCard>
                   ),
                 ),
               ),
+              Positioned(
+                  top: 125,
+                  left: 125,
+                  child: Text(
+                    widget.name,
+                    style: const TextStyle(
+                      fontSize: 40,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ))
             ],
           ),
         ));
