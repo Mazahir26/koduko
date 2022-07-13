@@ -13,20 +13,34 @@ class StartRoutineScreenState extends State<StartRoutineScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          color: Colors.grey,
-          iconSize: 35,
+        leadingWidth: 80,
+        leading: Center(
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1.5),
+                borderRadius: BorderRadius.circular(90)),
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              color: Colors.grey,
+              iconSize: 35,
+            ),
+          ),
         ),
         centerTitle: true,
         elevation: 0,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.clear_rounded),
-            color: Colors.grey,
-            iconSize: 35,
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1.5),
+                borderRadius: BorderRadius.circular(90)),
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.clear_rounded),
+              color: Colors.grey,
+              iconSize: 35,
+            ),
           )
         ],
       ),
