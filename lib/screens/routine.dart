@@ -38,10 +38,17 @@ class RoutineScreenState extends State<RoutineScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TaskCard(
-                name: "Hello",
-                controller: _controller,
-                color: Colors.blueAccent)
+            Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                const TaskCard(
+                    name: "Hello", controller: null, color: Colors.amberAccent),
+                TaskCard(
+                    name: "Hello",
+                    controller: _controller,
+                    color: Colors.blueAccent),
+              ],
+            )
           ],
         ),
       ),
