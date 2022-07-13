@@ -21,8 +21,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          primarySwatch: Colors.indigo,
+          primaryIconTheme:
+              const IconThemeData(color: Color.fromRGBO(36, 41, 49, 1))),
       home: FutureBuilder(
         future: Hive.openBox<Task>("Tasks"),
         builder: (context, snapshot) {
