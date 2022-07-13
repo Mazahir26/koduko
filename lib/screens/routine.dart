@@ -15,23 +15,22 @@ class RoutineScreenState extends State<RoutineScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
-  List<Widget> tasks = [];
+  List<Task> tasks = [];
 
   @override
   void initState() {
     _controller =
         AnimationController(vsync: this, duration: const Duration(seconds: 10));
-    for (var i = 0; i < widget.routine.tasks.length; i++) {
-      var ta = widget.routine.tasks[i];
-      tasks.insert(
-          i,
-          TaskCard(
-              name: ta.name,
-              controller:
-                  i == widget.routine.tasks.length - 1 ? _controller : null,
-              color: Color(ta.color)));
-    }
+
+    tasks = widget.routine.tasks;
+
     super.initState();
+  }
+
+  void onDismiss(_) {
+    setState(() {
+      tasks.removeLast();
+    });
   }
 
   @override
@@ -53,7 +52,19 @@ class RoutineScreenState extends State<RoutineScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(alignment: AlignmentDirectional.center, children: tasks)
+            Stack(
+                alignment: AlignmentDirectional.center,
+                children: tasks
+                    .asMap()
+                    .entries
+                    .map((e) => TaskCard(
+                        name: e.value.name,
+                        controller:
+                            e.key == tasks.length - 1 ? _controller : null,
+                        color: Color(e.value.color),
+                        index: (tasks.length - 1 - e.key) * 1.0,
+                        onDismissed: onDismiss))
+                    .toList())
           ],
         ),
       ),
