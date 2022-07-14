@@ -1,68 +1,59 @@
 import 'package:vector_math/vector_math.dart' show radians;
 import 'package:flutter/material.dart';
 
-class TaskCard extends StatefulWidget {
+// class TaskCard extends StatelessWidget {
+//   final String name;
+//   final AnimationController? controller;
+//   final Color color;
+//   final double index;
+//   final void Function(DismissDirection direction) onDismissed;
+//   final bool isPlaying;
+//   final AnimationController buttonController;
+//   const TaskCard({
+//     Key? key,
+//     required this.name,
+//     required this.controller,
+//     required this.color,
+//     required this.index,
+//     required this.onDismissed,
+//     required this.isPlaying, required this.buttonController,
+//   }) : super(key: key);
+
+// }
+
+class TaskCard extends StatelessWidget {
   final String name;
   final AnimationController? controller;
   final Color color;
   final double index;
   final void Function(DismissDirection direction) onDismissed;
+  final bool isPlaying;
+  final AnimationController buttonController;
+  final void Function(TapUpDetails details) onTap;
 
-  const TaskCard({
+  late final Color textColor;
+
+  TaskCard({
     Key? key,
     required this.name,
     required this.controller,
     required this.color,
     required this.index,
     required this.onDismissed,
-  }) : super(key: key);
-
-  @override
-  State<TaskCard> createState() => _TaskCardState();
-}
-
-class _TaskCardState extends State<TaskCard>
-    with SingleTickerProviderStateMixin<TaskCard> {
-  late AnimationController _buttonController;
-
-  bool _isPlaying = false;
-  @override
-  void initState() {
-    _buttonController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 250));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _buttonController.dispose();
-    super.dispose();
-  }
-
-  void onTap(TapUpDetails _) {
-    if (widget.controller == null) {
-      return;
-    }
-    if (_isPlaying) {
-      setState(() {
-        _isPlaying = false;
-      });
-      widget.controller!.stop();
-      _buttonController.reverse();
-    } else {
-      setState(() {
-        _isPlaying = true;
-      });
-      widget.controller!.forward();
-      _buttonController.forward();
-    }
+    required this.isPlaying,
+    required this.buttonController,
+    required this.onTap,
+  }) : super(key: key) {
+    textColor =
+        color.computeLuminance() > 0.5 ? Colors.grey[800]! : Colors.white;
   }
 
   String get timerString {
-    if (widget.controller == null) {
+    if (controller == null) {
       return "0:00";
     }
-    Duration duration = widget.controller!.duration! * widget.controller!.value;
+
+    Duration duration = controller!.duration! * controller!.value;
     return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 
@@ -76,14 +67,15 @@ class _TaskCardState extends State<TaskCard>
         ),
         child: AnimatedRotation(
           duration: const Duration(milliseconds: 100),
-          turns: widget.index / 100,
+          curve: Curves.bounceIn,
+          turns: index / 200,
           child: AnimatedPadding(
             duration: const Duration(milliseconds: 100),
-            padding: EdgeInsets.only(
-                left: widget.index * 10, bottom: widget.index * 10),
+            curve: Curves.easeInOutQuad,
+            padding: EdgeInsets.only(left: index * 10, bottom: index * 10),
             child: Dismissible(
-              key: Key(widget.name),
-              onDismissed: widget.onDismissed,
+              key: Key(name),
+              onDismissed: onDismissed,
               child: Stack(
                 alignment: AlignmentDirectional.bottomEnd,
                 children: [
@@ -102,49 +94,49 @@ class _TaskCardState extends State<TaskCard>
                   Container(
                       height: 300,
                       decoration: BoxDecoration(
-                        color: widget.color.withOpacity(0.4),
+                        color: color.withOpacity(0.4),
                         borderRadius: BorderRadius.circular(20),
                       )),
-                  widget.controller == null
+                  controller == null
                       ? Container(
                           height: 40,
                           decoration: BoxDecoration(
-                              color: widget.color,
+                              color: color,
                               borderRadius: BorderRadius.circular(20)))
                       : AnimatedBuilder(
-                          animation: widget.controller!,
+                          animation: controller!,
                           builder: (context, child) {
                             return Container(
-                              height: widget.controller!.value * 260 + 40,
+                              height: controller!.value * 260 + 40,
                               decoration: BoxDecoration(
-                                  color: widget.color,
+                                  color: color,
                                   borderRadius: BorderRadius.only(
                                     bottomLeft: const Radius.circular(20),
                                     bottomRight: const Radius.circular(20),
                                     topLeft: Radius.circular(
-                                        widget.controller!.value * 15 + 5),
+                                        controller!.value * 15 + 5),
                                     topRight: Radius.circular(
-                                        widget.controller!.value * 15 + 5),
+                                        controller!.value * 15 + 5),
                                   )),
                             );
                           }),
                   Positioned(
                     bottom: 15,
                     left: 10,
-                    child: widget.controller == null
-                        ? const Text(
+                    child: controller == null
+                        ? Text(
                             "0:00",
                             style: TextStyle(
-                                color: Colors.white,
+                                color: textColor,
                                 fontSize: 26,
                                 fontWeight: FontWeight.w500),
                           )
                         : AnimatedBuilder(
-                            animation: widget.controller!,
+                            animation: controller!,
                             builder: ((context, child) => Text(
                                   timerString,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: textColor,
                                     fontSize: 26,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -156,8 +148,8 @@ class _TaskCardState extends State<TaskCard>
                       padding: const EdgeInsets.all(5.0),
                       child: AnimatedIcon(
                         icon: AnimatedIcons.play_pause,
-                        progress: _buttonController,
-                        color: Colors.white,
+                        progress: buttonController,
+                        color: textColor,
                         size: 45,
                       ),
                     ),
@@ -166,10 +158,10 @@ class _TaskCardState extends State<TaskCard>
                       top: 125,
                       left: 125,
                       child: Text(
-                        widget.name,
-                        style: const TextStyle(
+                        name,
+                        style: TextStyle(
                           fontSize: 40,
-                          color: Colors.white,
+                          color: textColor,
                           fontWeight: FontWeight.w500,
                         ),
                       ))

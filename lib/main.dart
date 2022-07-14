@@ -48,6 +48,16 @@ class MyApp extends StatelessWidget {
                         duration: const Duration(seconds: 10),
                         name: "Test 3",
                         color: Colors.redAccent,
+                      ),
+                      Task.fromDuration(
+                        duration: const Duration(seconds: 12),
+                        name: "Test 3",
+                        color: Color.fromARGB(255, 191, 254, 193),
+                      ),
+                      Task.fromDuration(
+                        duration: const Duration(seconds: 18),
+                        name: "Test 3",
+                        color: Colors.redAccent,
                       )
                     ].reversed.toList()),
               ),

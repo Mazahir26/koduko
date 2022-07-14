@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:koduko/components/card.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/utils/parse_duration.dart';
 
 class RoutineScreen extends StatefulWidget {
   final Routine routine;
@@ -12,30 +13,63 @@ class RoutineScreen extends StatefulWidget {
 }
 
 class RoutineScreenState extends State<RoutineScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
+  late final AnimationController _buttonController;
 
+  bool _isPlaying = false;
   List<Task> tasks = [];
 
   @override
   void initState() {
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 10));
-
     tasks = widget.routine.tasks;
+    _controller = AnimationController(
+        vsync: this, duration: parseDuration(tasks.last.duration));
 
+    _buttonController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 250));
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        onDismiss("dismiss");
+      }
+    });
     super.initState();
+  }
+
+  void onTap(TapUpDetails _) {
+    if (_isPlaying) {
+      setState(() {
+        _isPlaying = false;
+      });
+      _controller.stop();
+      _buttonController.reverse();
+    } else {
+      setState(() {
+        _isPlaying = true;
+      });
+      _controller.forward();
+      _buttonController.forward();
+    }
   }
 
   void onDismiss(_) {
     setState(() {
       tasks.removeLast();
     });
+    _controller.reset();
+    if (tasks.isNotEmpty) {
+      _controller.duration = parseDuration(tasks.last.duration);
+    }
+    if (_isPlaying) {
+      _controller.forward();
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _buttonController.dispose();
+
     super.dispose();
   }
 
@@ -52,30 +86,37 @@ class RoutineScreenState extends State<RoutineScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(alignment: AlignmentDirectional.center, children: [
-              const SizedBox(
-                height: 300,
-                child: Center(
-                    child: Text(
-                  "Good Work",
-                  style: TextStyle(
+            Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                const SizedBox(
+                  height: 300,
+                  child: Center(
+                      child: Text(
+                    "Good Work",
+                    style: TextStyle(
                       color: Colors.black,
                       fontSize: 48,
-                      fontWeight: FontWeight.bold),
-                )),
-              ),
-              ...tasks
-                  .asMap()
-                  .entries
-                  .map((e) => TaskCard(
-                      name: e.value.name,
-                      controller:
-                          e.key == tasks.length - 1 ? _controller : null,
-                      color: Color(e.value.color),
-                      index: (tasks.length - 1 - e.key) * 1.0,
-                      onDismissed: onDismiss))
-                  .toList(),
-            ])
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
+                ),
+                ...tasks
+                    .asMap()
+                    .entries
+                    .map((e) => TaskCard(
+                        buttonController: _buttonController,
+                        isPlaying: _isPlaying,
+                        onTap: onTap,
+                        name: e.value.name,
+                        controller:
+                            e.key == tasks.length - 1 ? _controller : null,
+                        color: Color(e.value.color),
+                        index: (tasks.length - 1 - e.key) * 1.0,
+                        onDismissed: onDismiss))
+                    .toList(),
+              ],
+            )
           ],
         ),
       ),
