@@ -19,6 +19,7 @@ class RoutineScreenState extends State<RoutineScreen>
 
   bool _isPlaying = false;
   List<Task> tasks = [];
+  bool _isComplete = false;
 
   @override
   void initState() {
@@ -30,7 +31,9 @@ class RoutineScreenState extends State<RoutineScreen>
         vsync: this, duration: const Duration(milliseconds: 250));
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        onDismiss("dismiss");
+        setState(() {
+          _isComplete = true;
+        });
       }
     });
     super.initState();
@@ -54,6 +57,9 @@ class RoutineScreenState extends State<RoutineScreen>
 
   void onDismiss(_) {
     setState(() {
+      if (_isComplete) {
+        _isComplete = false;
+      }
       tasks.removeLast();
     });
     _controller.reset();
@@ -105,6 +111,7 @@ class RoutineScreenState extends State<RoutineScreen>
                     .asMap()
                     .entries
                     .map((e) => TaskCard(
+                        isCompleted: _isComplete,
                         buttonController: _buttonController,
                         isPlaying: _isPlaying,
                         onTap: onTap,
