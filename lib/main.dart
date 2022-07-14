@@ -3,7 +3,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/screens/app.dart';
-import 'package:koduko/screens/home.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
       return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorSchemeSeed: Colors.indigo,
+          colorSchemeSeed: Colors.blueGrey,
           useMaterial3: true,
           brightness: Brightness.light,
         ),

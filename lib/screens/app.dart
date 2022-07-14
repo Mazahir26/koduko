@@ -26,13 +26,13 @@ class _AppState extends State<App> {
       const HomeScreen(),
       Center(
         child: Text(
-          'Index 1: Business',
+          'Routines',
           style: textTheme.displaySmall,
         ),
       ),
       Center(
         child: Text(
-          'Index 2: School',
+          'Settings',
           style: textTheme.displaySmall,
         ),
       ),
@@ -40,6 +40,7 @@ class _AppState extends State<App> {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: _onItemTapped,
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         selectedIndex: _selectedIndex,
         destinations: const <Widget>[
           NavigationDestination(
