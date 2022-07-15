@@ -98,46 +98,55 @@ class TaskCard extends StatelessWidget {
                   alignment: AlignmentDirectional.bottomEnd,
                   children: [
                     Container(
-                        height: 300,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey[300]!,
-                                blurRadius: 4.0,
-                                spreadRadius: 0.2,
-                              )
-                            ])),
+                      height: 300,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey[300]!,
+                            blurRadius: 4.0,
+                            spreadRadius: 0.2,
+                          )
+                        ],
+                      ),
+                    ),
                     Container(
-                        height: 300,
-                        decoration: BoxDecoration(
-                          color: color.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(20),
-                        )),
+                      height: 300,
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                     controller == null
                         ? Container(
                             height: 40,
                             decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(20)))
+                              color: color,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          )
                         : AnimatedBuilder(
                             animation: controller!,
                             builder: (context, child) {
                               return Container(
                                 height: controller!.value * 260 + 40,
                                 decoration: BoxDecoration(
-                                    color: color,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: const Radius.circular(20),
-                                      bottomRight: const Radius.circular(20),
-                                      topLeft: Radius.circular(
-                                          controller!.value * 15 + 5),
-                                      topRight: Radius.circular(
-                                          controller!.value * 15 + 5),
-                                    )),
+                                  color: color,
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: const Radius.circular(20),
+                                    bottomRight: const Radius.circular(20),
+                                    topLeft: Radius.circular(
+                                      controller!.value * 15 + 5,
+                                    ),
+                                    topRight: Radius.circular(
+                                      controller!.value * 15 + 5,
+                                    ),
+                                  ),
+                                ),
                               );
-                            }),
+                            },
+                          ),
                     Positioned(
                       bottom: 15,
                       left: 10,

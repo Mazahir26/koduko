@@ -35,8 +35,9 @@ class HomeScreen extends StatelessWidget {
                           Text(
                             "Good Morning",
                             style: GoogleFonts.lato(
-                                fontWeight: FontWeight.bold,
-                                textStyle: textTheme.headlineLarge),
+                              fontWeight: FontWeight.bold,
+                              textStyle: textTheme.headlineLarge,
+                            ),
                           ),
                           Text(
                             DateFormat.MMMMEEEEd().format(DateTime.now()),
@@ -45,7 +46,11 @@ class HomeScreen extends StatelessWidget {
                               textStyle: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
-                                  .apply(color: Colors.grey[700]),
+                                  .apply(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withOpacity(0.5)),
                             ),
                           ),
                         ],
