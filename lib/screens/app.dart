@@ -60,7 +60,9 @@ class _AppState extends State<App> {
           ),
         ],
       ),
-      body: widgetOptions.elementAt(_selectedIndex),
+      body: SafeArea(
+        child: widgetOptions.elementAt(_selectedIndex),
+      ),
     );
   }
 }

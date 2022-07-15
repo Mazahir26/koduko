@@ -39,6 +39,8 @@ dependencies:
   uuid: ^3.0.6
   google_fonts: ^3.0.1
   intl: ^0.17.0
+  fl_chart: ^0.55.0
+  syncfusion_flutter_gauges: ^20.2.38
 
 dev_dependencies:
   flutter_test:
