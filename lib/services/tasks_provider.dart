@@ -9,24 +9,10 @@ class TaskModel extends ChangeNotifier {
   final box = Hive.box<Task>('Tasks');
 
   UnmodifiableListView<Task> get tasks => UnmodifiableListView(_tasks);
+
   TaskModel() {
     _tasks = box.values.toList();
   }
-
-  // Checks if the name of the task is unique
-  // Don't want to implement
-
-  // bool _isNameUnique(String name) {
-  //   bool unique = true;
-  //   _tasks.asMap().forEach((key, value) {
-  //     if (value.name.compareTo(name) == 0) {
-  //       unique = false;
-  //       return;
-  //     }
-  //   });
-
-  //   return unique;
-  // }
 
   void add(Task task) {
     _tasks.add(task);

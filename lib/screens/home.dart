@@ -1,10 +1,10 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:koduko/components/weekly_chart.dart';
-import 'package:koduko/models/task.dart';
+// import 'package:koduko/components/weekly_chart.dart';
+import 'package:koduko/models/routine.dart';
+// import 'package:koduko/models/task.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
         .textTheme
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     return FutureBuilder(
-        future: Hive.openBox<Task>("Tasks"),
+        future: Hive.openBox<Routine>("Routines"),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
