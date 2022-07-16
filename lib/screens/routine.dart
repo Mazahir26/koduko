@@ -25,7 +25,7 @@ class RoutineScreenState extends State<RoutineScreen>
   void initState() {
     tasks = widget.routine.tasks;
     _controller = AnimationController(
-        vsync: this, duration: parseDuration(tasks.last.duration));
+        vsync: this, duration: parseDuration(tasks.first.duration));
 
     _buttonController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 250));
@@ -60,11 +60,11 @@ class RoutineScreenState extends State<RoutineScreen>
       if (_isComplete) {
         _isComplete = false;
       }
-      tasks.removeLast();
+      tasks.removeAt(0);
     });
     _controller.reset();
     if (tasks.isNotEmpty) {
-      _controller.duration = parseDuration(tasks.last.duration);
+      _controller.duration = parseDuration(tasks.first.duration);
     }
     if (_isPlaying) {
       _controller.forward();
@@ -111,17 +111,18 @@ class RoutineScreenState extends State<RoutineScreen>
                     .asMap()
                     .entries
                     .map((e) => TaskCard(
-                        isCompleted: _isComplete,
-                        buttonController: _buttonController,
-                        isPlaying: _isPlaying,
-                        onTap: onTap,
-                        name: e.value.name,
-                        controller:
-                            e.key == tasks.length - 1 ? _controller : null,
-                        color: Color(e.value.color),
-                        index: (tasks.length - 1 - e.key) * 1.0,
-                        onDismissed: onDismiss))
-                    .toList(),
+                          isCompleted: _isComplete,
+                          buttonController: _buttonController,
+                          isPlaying: _isPlaying,
+                          onTap: onTap,
+                          name: e.value.name,
+                          controller: e.key == 0 ? _controller : null,
+                          color: Color(e.value.color),
+                          index: (e.key) * 1.0,
+                          onDismissed: onDismiss,
+                        ))
+                    .toList()
+                    .reversed,
               ],
             )
           ],

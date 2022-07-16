@@ -11,6 +11,13 @@ class TaskModel extends ChangeNotifier {
   UnmodifiableListView<Task> get tasks => UnmodifiableListView(_tasks);
 
   TaskModel() {
+    init();
+  }
+
+  void init() async {
+    if (!(box.isOpen)) {
+      await Hive.openBox('Tasks');
+    }
     _tasks = box.values.toList();
   }
 

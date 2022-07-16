@@ -14,29 +14,15 @@ class HomeScreen extends StatelessWidget {
     final textTheme = Theme.of(context)
         .textTheme
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
-    return FutureBuilder(
-        future: Hive.openBox<Routine>("Routines"),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Oops! Try again later",
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-            );
-          } else if (snapshot.hasData) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: [
-                  Header(textTheme: textTheme),
-                  const SizedBox(height: 30),
-                ],
-              ),
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        });
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          Header(textTheme: textTheme),
+          const SizedBox(height: 30),
+        ],
+      ),
+    );
   }
 }
 

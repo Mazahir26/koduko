@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
 
-class RoutineProvider extends ChangeNotifier {
+class RoutineModel extends ChangeNotifier {
   late final List<Routine> _routines;
   final box = Hive.box<Routine>('Routines');
 
-  RoutineProvider() {
+  RoutineModel() {
+    init();
+  }
+  void init() async {
     if (!(box.isOpen)) {
-      return;
+      await Hive.openBox("Routines");
     }
     _routines = box.values.toList();
   }
