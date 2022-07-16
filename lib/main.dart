@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(
-            colorSchemeSeed: const Color(0xff2a9d8f),
+            colorSchemeSeed: Colors.blue[200],
             // colorScheme: ColorScheme.fromSwatch(
             //   primarySwatch: Colors.deepPurple,
             // ),
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           home: FutureBuilder(
               future: Future.wait([
                 Hive.openBox<Routine>("Routines"),
-                Hive.openBox<Routine>("Tasks"),
+                Hive.openBox<Task>("Tasks"),
               ]),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -64,7 +64,16 @@ class MyApp extends StatelessWidget {
                     child: const App(),
                   );
                 }
-                return const Center(child: CircularProgressIndicator());
+                return const Scaffold(
+                    body: Center(
+                  child: SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 6,
+                    ),
+                  ),
+                ));
               }));
     });
   }

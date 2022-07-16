@@ -3,7 +3,7 @@ import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/screens/home.dart';
 import 'package:koduko/screens/routine.dart';
-import 'package:koduko/screens/routines.dart';
+import 'package:koduko/screens/tasks.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -28,7 +28,7 @@ class _AppState extends State<App> {
     //     .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     final List<Widget> widgetOptions = <Widget>[
       const HomeScreen(),
-      const RoutinesScreen(),
+      const TasksScreen(),
       RoutineScreen(
           routine: Routine.create(
               name: "Test",

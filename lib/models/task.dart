@@ -28,4 +28,9 @@ class Task {
     this.color = color.value;
     id = const Uuid().v4();
   }
+  @override
+  String toString() {
+    super.toString();
+    return '{id: $id ,name: $name, color: $color, duration: $duration}';
+  }
 }

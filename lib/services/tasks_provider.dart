@@ -15,10 +15,11 @@ class TaskModel extends ChangeNotifier {
   }
 
   void init() async {
-    if (!(box.isOpen)) {
+    if (box.isOpen) {
+      _tasks = box.values.toList();
+    } else {
       await Hive.openBox('Tasks');
     }
-    _tasks = box.values.toList();
   }
 
   void add(Task task) {

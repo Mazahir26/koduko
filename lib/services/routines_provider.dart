@@ -12,10 +12,11 @@ class RoutineModel extends ChangeNotifier {
     init();
   }
   void init() async {
-    if (!(box.isOpen)) {
+    if (box.isOpen) {
+      _routines = box.values.toList();
+    } else {
       await Hive.openBox("Routines");
     }
-    _routines = box.values.toList();
   }
 
   UnmodifiableListView<Routine> get routines => UnmodifiableListView(_routines);
