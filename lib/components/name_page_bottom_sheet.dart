@@ -14,6 +14,7 @@ class NamePage extends StatelessWidget {
   final bool pageComplected;
   final String hintText;
   final String title;
+
   @override
   Widget build(BuildContext context) {
     return Column(

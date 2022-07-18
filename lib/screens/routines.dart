@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/create_routine_bottom_sheet.dart';
 import 'package:koduko/models/routine.dart';
+import 'package:koduko/models/task.dart';
 import 'package:koduko/services/routines_provider.dart';
+import 'package:koduko/services/tasks_provider.dart';
 import 'package:provider/provider.dart';
 
 class RoutinesScreen extends StatelessWidget {
@@ -13,6 +15,8 @@ class RoutinesScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
+          List<Task> tasks =
+              Provider.of<TaskModel>(context, listen: false).tasks;
           await showModalBottomSheet<Routine>(
               isScrollControlled: true,
               isDismissible: true,
@@ -23,7 +27,7 @@ class RoutinesScreen extends StatelessWidget {
                 ),
               ),
               context: context,
-              builder: ((context) => const CreateRoutineBottomSheet()));
+              builder: ((context) => CreateRoutineBottomSheet(tasks: tasks)));
         },
       ),
       body: Consumer<RoutineModel>(

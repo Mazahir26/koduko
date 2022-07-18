@@ -6,14 +6,14 @@ import 'package:koduko/models/routine.dart';
 
 class RoutineModel extends ChangeNotifier {
   late final List<Routine> _routines;
-  final box = Hive.box<Routine>('Routines');
+  final _box = Hive.box<Routine>('Routines');
 
   RoutineModel() {
-    init();
+    _init();
   }
-  void init() async {
-    if (box.isOpen) {
-      _routines = box.values.toList();
+  void _init() async {
+    if (_box.isOpen) {
+      _routines = _box.values.toList();
     } else {
       await Hive.openBox("Routines");
     }
@@ -23,13 +23,13 @@ class RoutineModel extends ChangeNotifier {
 
   void add(Routine task) {
     _routines.add(task);
-    box.add(task);
+    _box.add(task);
     notifyListeners();
   }
 
   void delete(String id) {
     if (_routines.indexWhere((element) => element.id.compareTo(id) == 0) > -1) {
-      box.deleteAt(
+      _box.deleteAt(
           _routines.indexWhere((element) => element.id.compareTo(id) == 0));
       _routines.removeWhere((element) => element.id.compareTo(id) == 0);
       notifyListeners();

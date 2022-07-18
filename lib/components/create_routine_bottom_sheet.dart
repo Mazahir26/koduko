@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/name_page_bottom_sheet.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/utils/duration_to_string.dart';
+import 'package:koduko/utils/parse_duration.dart';
 
 class CreateRoutineBottomSheet extends StatefulWidget {
-  const CreateRoutineBottomSheet({Key? key}) : super(key: key);
-
+  const CreateRoutineBottomSheet({Key? key, required this.tasks})
+      : super(key: key);
+  final List<Task> tasks;
   @override
   State<CreateRoutineBottomSheet> createState() =>
       _CreateRoutineBottomSheetState();
@@ -14,29 +17,8 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
   late final PageController _pageController;
   late final TextEditingController _nameController;
 
-  static const chipList = <String, Duration>{
-    "30 sec": Duration(seconds: 30),
-    "1 min": Duration(minutes: 1),
-    "2 min": Duration(minutes: 2),
-    "5 min": Duration(minutes: 5),
-    "10 min": Duration(minutes: 10),
-    "15 mins": Duration(minutes: 15),
-    "20 mins": Duration(minutes: 20),
-    "25 mins": Duration(minutes: 25),
-    "30 mins": Duration(minutes: 30),
-  };
-  static const colorList = [
-    Colors.blue,
-    Colors.amber,
-    Colors.brown,
-    Colors.yellow,
-    Colors.teal,
-    Colors.purple,
-    Colors.red,
-  ];
+  final List<Task> selectedTask = [];
 
-  String? _value;
-  int? _selectedColor;
   int pageIndex = 0;
   bool pageComplected = false;
   @override
@@ -56,6 +38,18 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
     } else if (pageComplected) {
       setState(() {
         pageComplected = false;
+      });
+    }
+  }
+
+  void onTap(bool selected, int index) {
+    if (selected) {
+      setState(() {
+        selectedTask.removeAt(index);
+      });
+    } else {
+      setState(() {
+        selectedTask.add(widget.tasks[index]);
       });
     }
   }
@@ -105,7 +99,36 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                     pageComplected: pageComplected,
                     hintText: "ex. Gym",
                     title: "Routine Name",
-                  )
+                  ),
+                  ListView.builder(
+                    itemCount: widget.tasks.length,
+                    itemBuilder: (context, index) => ListTile(
+                      selected: selectedTask.indexWhere((element) =>
+                              element.id.compareTo(widget.tasks[index].id) ==
+                              0) >
+                          -1,
+                      onTap: () => onTap(
+                          selectedTask.indexWhere((element) =>
+                                  element.id
+                                      .compareTo(widget.tasks[index].id) ==
+                                  0) >
+                              -1,
+                          index),
+                      subtitle: Text(
+                        durationToString(
+                            parseDuration(widget.tasks[index].duration)),
+                        style: Theme.of(context).textTheme.labelLarge!.apply(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onBackground
+                                .withOpacity(0.8)),
+                      ),
+                      title: Text(
+                        widget.tasks[index].name,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -128,6 +151,11 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
               },
               onNext: pageComplected
                   ? () async {
+                      FocusScopeNode currentFocus = FocusScope.of(context);
+
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
                       // if (pageIndex == 3) {
                       //   Navigator.pop(
                       //       context,

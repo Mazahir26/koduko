@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:koduko/utils/duration_to_string.dart';
 
 // class TaskCard extends StatelessWidget {
 //   final String name;
@@ -62,7 +63,7 @@ class TaskCard extends StatelessWidget {
     }
 
     Duration duration = controller!.duration! * controller!.value;
-    return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    return durationToString(duration);
   }
 
   @override

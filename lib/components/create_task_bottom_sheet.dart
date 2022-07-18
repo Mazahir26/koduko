@@ -177,6 +177,11 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
               },
               onNext: pageComplected
                   ? () {
+                      FocusScopeNode currentFocus = FocusScope.of(context);
+
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
                       setState(() {
                         pageIndex++;
                       });
