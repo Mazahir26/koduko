@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:koduko/components/name_page_bottom_sheet.dart';
 import 'package:koduko/models/task.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {
@@ -82,6 +83,20 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     }
   }
 
+  void onChangeChip(bool selected, int index) {
+    setState(() {
+      _value = selected ? chipList.keys.toList()[index] : null;
+    });
+    validateDuration();
+  }
+
+  void onChangeColor(int index) {
+    setState(() {
+      _selectedColor = index;
+    });
+    validateColor();
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -121,142 +136,23 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Task Name",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      TextField(
-                        controller: _nameController,
-                        autofocus: true,
-                        maxLength: 20,
-                        onChanged: validateName,
-                        decoration: InputDecoration(
-                          suffixIcon:
-                              pageComplected ? const Icon(Icons.check) : null,
-                          filled: true,
-                          hintText: "ex. push up",
-                          errorText: _nameController.text.length > 4 ||
-                                  _nameController.text.isEmpty
-                              ? null
-                              : "Invalid Name",
-                        ),
-                      )
-                    ],
+                  NamePage(
+                    nameController: _nameController,
+                    validateName: validateName,
+                    pageComplected: pageComplected,
+                    hintText: "ex. push up",
+                    title: "Task Name",
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Select a Duration",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Wrap(
-                        spacing: 8,
-                        children: List<Widget>.generate(
-                          chipList.length,
-                          (index) => ChoiceChip(
-                            label: Text(chipList.keys.toList()[index]),
-                            selected: _value == chipList.keys.toList()[index],
-                            selectedColor: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.7),
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.15),
-                            labelStyle: Theme.of(context)
-                                .textTheme
-                                .labelLarge!
-                                .apply(
-                                    color:
-                                        _value == chipList.keys.toList()[index]
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .onSecondary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onBackground),
-                            onSelected: (bool selected) {
-                              setState(() {
-                                _value = selected
-                                    ? chipList.keys.toList()[index]
-                                    : null;
-                              });
-                              validateDuration();
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
+                  DurationPage(
+                    onChange: onChangeChip,
+                    chipList: chipList,
+                    value: _value,
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Pick a Color",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Wrap(
-                        spacing: 5,
-                        children: List<Widget>.generate(
-                            colorList.length,
-                            (index) => GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedColor = index;
-                                    });
-                                    validateColor();
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: _selectedColor == index
-                                            ? Colors.blueAccent
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .background,
-                                        width: 3,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Container(
-                                      height: _selectedColor == index ? 25 : 20,
-                                      width: _selectedColor == index ? 25 : 20,
-                                      decoration: BoxDecoration(
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            offset: Offset(0.0, 1.0), //(x,y)
-                                            blurRadius: 6.0,
-                                          ),
-                                        ],
-                                        color: colorList[index],
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                      ),
-                    ],
-                  ),
+                  ColorPage(
+                    onChange: onChangeColor,
+                    colorList: colorList,
+                    selectedColor: _selectedColor,
+                  )
                 ],
               ),
             ),
@@ -377,6 +273,119 @@ class Buttons extends StatelessWidget {
             ),
           ),
         )
+      ],
+    );
+  }
+}
+
+class DurationPage extends StatelessWidget {
+  const DurationPage(
+      {Key? key,
+      required this.onChange,
+      required this.chipList,
+      required this.value})
+      : super(key: key);
+
+  final void Function(bool, int) onChange;
+  final Map<String, Duration> chipList;
+  final String? value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Select a Duration",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Wrap(
+          spacing: 8,
+          children: List<Widget>.generate(
+            chipList.length,
+            (index) => ChoiceChip(
+              label: Text(chipList.keys.toList()[index]),
+              selected: value == chipList.keys.toList()[index],
+              selectedColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.7),
+              backgroundColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.15),
+              labelStyle: Theme.of(context).textTheme.labelLarge!.apply(
+                  color: value == chipList.keys.toList()[index]
+                      ? Theme.of(context).colorScheme.onSecondary
+                      : Theme.of(context).colorScheme.onBackground),
+              onSelected: (bool selected) => onChange(selected, index),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ColorPage extends StatelessWidget {
+  const ColorPage(
+      {Key? key,
+      required this.onChange,
+      required this.colorList,
+      required this.selectedColor})
+      : super(key: key);
+  final void Function(int) onChange;
+  final List<Color> colorList;
+  final int? selectedColor;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Pick a Color",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Wrap(
+          spacing: 5,
+          children: List<Widget>.generate(
+              colorList.length,
+              (index) => GestureDetector(
+                    onTap: () => onChange(index),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: selectedColor == index
+                              ? Colors.blueAccent
+                              : Theme.of(context).colorScheme.background,
+                          width: 3,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Container(
+                        height: selectedColor == index ? 25 : 20,
+                        width: selectedColor == index ? 25 : 20,
+                        decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 6.0,
+                            ),
+                          ],
+                          color: colorList[index],
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  )),
+        ),
       ],
     );
   }
