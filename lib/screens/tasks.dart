@@ -10,11 +10,15 @@ class TasksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _addTask(Task t) {
+      Provider.of<TaskModel>(context, listen: false).add(t);
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
-          await showModalBottomSheet<Task>(
+          Task? t = await showModalBottomSheet<Task>(
               isScrollControlled: true,
               isDismissible: true,
               shape: const RoundedRectangleBorder(
@@ -25,6 +29,9 @@ class TasksScreen extends StatelessWidget {
               ),
               context: context,
               builder: ((context) => const CreateTaskSheet()));
+          if (t != null) {
+            _addTask(t);
+          }
         },
       ),
       body: Consumer<TaskModel>(
