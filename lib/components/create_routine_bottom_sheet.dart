@@ -88,7 +88,8 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
           Padding(
             padding: const EdgeInsets.all(15),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height / 4,
+              height: MediaQuery.of(context).size.height *
+                  (pageIndex == 1 ? 0.6 : 0.25),
               child: PageView(
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
@@ -101,34 +102,35 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                     title: "Routine Name",
                   ),
                   ListView.builder(
-                    itemCount: widget.tasks.length,
-                    itemBuilder: (context, index) => ListTile(
-                      selected: selectedTask.indexWhere((element) =>
-                              element.id.compareTo(widget.tasks[index].id) ==
-                              0) >
-                          -1,
-                      onTap: () => onTap(
-                          selectedTask.indexWhere((element) =>
-                                  element.id
-                                      .compareTo(widget.tasks[index].id) ==
-                                  0) >
-                              -1,
-                          index),
-                      subtitle: Text(
-                        durationToString(
-                            parseDuration(widget.tasks[index].duration)),
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onBackground
-                                .withOpacity(0.8)),
-                      ),
-                      title: Text(
-                        widget.tasks[index].name,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ),
-                  ),
+                      itemCount: widget.tasks.length,
+                      itemBuilder: (context, index) {
+                        bool isSelected = selectedTask.indexWhere((element) =>
+                                element.id.compareTo(widget.tasks[index].id) ==
+                                0) >
+                            -1;
+
+                        if (index == 0) {}
+                        return ListTile(
+                          selected: isSelected,
+                          onTap: () => onTap(isSelected, index),
+                          subtitle: Text(
+                            durationToString(
+                                parseDuration(widget.tasks[index].duration)),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .apply(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground
+                                        .withOpacity(0.8)),
+                          ),
+                          title: Text(
+                            widget.tasks[index].name,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        );
+                      }),
                 ],
               ),
             ),
