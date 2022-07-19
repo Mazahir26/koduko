@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(
-            colorSchemeSeed: Colors.deepOrange,
+            colorSchemeSeed: Colors.blue[700],
             // colorScheme: ColorScheme.fromSwatch(
             //   primarySwatch: Colors.deepPurple,
             // ),
@@ -35,7 +35,6 @@ class MyApp extends StatelessWidget {
           // routes: {
           //   '/': (context) => const App(),
           // },
-          // initialRoute: '/',
           home: FutureBuilder(
               future: Future.wait([
                 Hive.openBox<Routine>("Routines"),

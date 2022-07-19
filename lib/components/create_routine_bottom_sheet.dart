@@ -44,12 +44,22 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
 
   void onTap(bool selected, int index) {
     if (selected) {
-      setState(() {
-        selectedTask.removeAt(index);
-      });
+      if (selectedTask.length == 1) {
+        setState(() {
+          selectedTask
+              .removeWhere((element) => element.id == widget.tasks[index].id);
+          pageComplected = false;
+        });
+      } else {
+        setState(() {
+          selectedTask
+              .removeWhere((element) => element.id == widget.tasks[index].id);
+        });
+      }
     } else {
       setState(() {
         selectedTask.add(widget.tasks[index]);
+        pageComplected = true;
       });
     }
   }
@@ -108,28 +118,83 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                                 element.id.compareTo(widget.tasks[index].id) ==
                                 0) >
                             -1;
-
-                        if (index == 0) {}
-                        return ListTile(
-                          selected: isSelected,
-                          onTap: () => onTap(isSelected, index),
-                          subtitle: Text(
-                            durationToString(
-                                parseDuration(widget.tasks[index].duration)),
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelLarge!
-                                .apply(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground
-                                        .withOpacity(0.8)),
-                          ),
-                          title: Text(
-                            widget.tasks[index].name,
-                            style: Theme.of(context).textTheme.bodyLarge,
+                        Widget card = Card(
+                          child: ListTile(
+                            selected: isSelected,
+                            onTap: () => onTap(isSelected, index),
+                            trailing: isSelected
+                                ? const Icon(Icons.check_box_rounded)
+                                : const Icon(
+                                    Icons.check_box_outline_blank_rounded),
+                            subtitle: Text(
+                              'Duration : ${durationToString(parseDuration(widget.tasks[index].duration))} Min',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .apply(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground
+                                          .withOpacity(0.8)),
+                            ),
+                            title: Text(
+                              widget.tasks[index].name,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                           ),
                         );
+                        if (index == 0) {
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Select Tasks',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!),
+                                  AnimatedCrossFade(
+                                    firstChild: TextButton.icon(
+                                      onPressed: () {},
+                                      icon: const Icon(Icons.add),
+                                      label: Text(
+                                        'Add Task',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .apply(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary),
+                                      ),
+                                    ),
+                                    secondChild: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Selected (${selectedTask.length})',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .apply(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary),
+                                      ),
+                                    ),
+                                    crossFadeState: selectedTask.isEmpty
+                                        ? CrossFadeState.showFirst
+                                        : CrossFadeState.showSecond,
+                                    duration: const Duration(milliseconds: 250),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              card
+                            ],
+                          );
+                        }
+                        return card;
                       }),
                 ],
               ),
@@ -158,21 +223,24 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                       if (!currentFocus.hasPrimaryFocus) {
                         currentFocus.unfocus();
                       }
-                      // if (pageIndex == 3) {
-                      //   Navigator.pop(
-                      //       context,
-                      //       Task.fromDuration(
-                      //           duration: chipList[_value]!,
-                      //           name: _nameController.text,
-                      //           color: colorList[_selectedColor!]));
-                      // }
+
                       await _pageController.nextPage(
                         duration: const Duration(milliseconds: 350),
                         curve: Curves.easeIn,
                       );
-                      setState(() {
-                        pageIndex++;
-                      });
+
+                      if (pageIndex == 0) {
+                        if (selectedTask.isEmpty) {
+                          setState(() {
+                            pageIndex++;
+                            pageComplected = false;
+                          });
+                        }
+                      } else {
+                        setState(() {
+                          pageIndex++;
+                        });
+                      }
                     }
                   : null)
         ],
