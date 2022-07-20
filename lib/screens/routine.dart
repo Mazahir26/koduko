@@ -82,9 +82,19 @@ class RoutineScreenState extends State<RoutineScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: MyAppBar(),
+      appBar: AppBar(
+        title: Text(
+          widget.routine.name,
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
+        leading: IconButton(
+            icon: const Icon(
+              Icons.clear_rounded,
+              size: 40,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),

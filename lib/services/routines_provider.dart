@@ -21,16 +21,27 @@ class RoutineModel extends ChangeNotifier {
 
   UnmodifiableListView<Routine> get routines => UnmodifiableListView(_routines);
 
-  void add(Routine task) {
-    _routines.add(task);
-    _box.add(task);
+  void add(Routine routine) {
+    _routines.add(routine);
+    _box.add(routine);
     notifyListeners();
   }
 
+  void edit(Routine routine) {
+    int index = _routines
+        .indexWhere((element) => element.id.compareTo(routine.id) == 0);
+    if (index > -1) {
+      _box.putAt(index, routine);
+      _routines[index] = routine;
+      notifyListeners();
+    }
+  }
+
   void delete(String id) {
-    if (_routines.indexWhere((element) => element.id.compareTo(id) == 0) > -1) {
-      _box.deleteAt(
-          _routines.indexWhere((element) => element.id.compareTo(id) == 0));
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      _box.deleteAt(index);
       _routines.removeWhere((element) => element.id.compareTo(id) == 0);
       notifyListeners();
     }

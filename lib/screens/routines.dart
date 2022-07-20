@@ -16,6 +16,10 @@ class RoutinesScreen extends StatelessWidget {
       Provider.of<RoutineModel>(context, listen: false).add(r);
     }
 
+    void _editRoutine(Routine r) {
+      Provider.of<RoutineModel>(context, listen: false).edit(r);
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -51,6 +55,7 @@ class RoutinesScreen extends StatelessWidget {
                     .map((e) => RoutineTile(
                           routine: e,
                           isToday: true,
+                          onEdit: _editRoutine,
                         ))
                     .toList();
                 return Padding(
@@ -81,7 +86,10 @@ class RoutinesScreen extends StatelessWidget {
                         DateFormat('EEEE').format(DateTime.now()),
                       ),
                     )
-                    .map((e) => RoutineTile(routine: e))
+                    .map((e) => RoutineTile(
+                          routine: e,
+                          onEdit: _editRoutine,
+                        ))
                     .toList();
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -116,16 +124,18 @@ class RoutineTile extends StatelessWidget {
     Key? key,
     required this.routine,
     this.isToday = false,
+    required this.onEdit,
   }) : super(key: key);
   final Routine routine;
   final bool isToday;
+  final void Function(Routine) onEdit;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: ElevatedButton(
         onLongPress: (() async {
-          await showModalBottomSheet<Routine>(
+          Routine? r = await showModalBottomSheet<Routine>(
               isScrollControlled: true,
               isDismissible: true,
               shape: const RoundedRectangleBorder(
@@ -138,6 +148,13 @@ class RoutineTile extends StatelessWidget {
               builder: ((context) => CreateRoutineBottomSheet(
                     editRoutine: routine,
                   )));
+          if (r != null) {
+            onEdit(routine.copyWith(
+              name: r.name,
+              tasks: r.tasks,
+              days: r.days,
+            ));
+          }
         }),
         onPressed: (() {
           Navigator.push(

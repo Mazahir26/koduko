@@ -48,6 +48,25 @@ class Routine {
     history = [];
     completedTasks = [];
   }
+  Routine copyWith({
+    List<Task>? tasks,
+    List<TaskEvent>? completedTasks,
+    List<DateTime>? history,
+    String? id,
+    String? name,
+    List<String>? days,
+    bool? isDaily,
+  }) {
+    return Routine(
+        name: name ?? this.name,
+        tasks: tasks ?? this.tasks,
+        completedTasks: completedTasks ?? this.completedTasks,
+        history: history ?? this.history,
+        id: id ?? this.id,
+        days: days ?? this.days,
+        isDaily: isDaily ?? this.isDaily);
+  }
+
   String getDays() {
     return isDaily ? "Daily" : days.map((e) => e.substring(0, 3)).join(", ");
   }

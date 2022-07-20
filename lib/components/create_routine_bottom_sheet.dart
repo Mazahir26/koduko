@@ -48,9 +48,10 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
 
     if (widget.editRoutine != null) {
       _nameController.text = widget.editRoutine!.name;
-      selectedDays.entries.map((e) {
-        selectedDays[e.key] = widget.editRoutine!.days.contains(e.key);
-      });
+
+      selectedDays = selectedDays.map((key, value) =>
+          MapEntry(key, widget.editRoutine!.days.contains(key)));
+
       for (var element in widget.editRoutine!.tasks) {
         selectedTask.add(element);
       }
