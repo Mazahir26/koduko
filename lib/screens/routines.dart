@@ -11,13 +11,17 @@ class RoutinesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _addRoutine(Routine r) {
+      Provider.of<RoutineModel>(context, listen: false).add(r);
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
           List<Task> tasks =
               Provider.of<TaskModel>(context, listen: false).tasks;
-          await showModalBottomSheet<Routine>(
+          Routine? r = await showModalBottomSheet<Routine>(
               isScrollControlled: true,
               isDismissible: true,
               shape: const RoundedRectangleBorder(
@@ -28,6 +32,10 @@ class RoutinesScreen extends StatelessWidget {
               ),
               context: context,
               builder: ((context) => CreateRoutineBottomSheet(tasks: tasks)));
+
+          if (r != null) {
+            _addRoutine(r);
+          }
         },
       ),
       body: Consumer<RoutineModel>(

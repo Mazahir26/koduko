@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
             //   primarySwatch: Colors.deepPurple,
             // ),
             useMaterial3: true,
-            brightness: Brightness.light,
+            brightness: Brightness.dark,
           ),
           // routes: {
           //   '/': (context) => const App(),
