@@ -19,8 +19,6 @@ class RoutinesScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
-          List<Task> tasks =
-              Provider.of<TaskModel>(context, listen: false).tasks;
           Routine? r = await showModalBottomSheet<Routine>(
               isScrollControlled: true,
               isDismissible: true,
@@ -31,7 +29,7 @@ class RoutinesScreen extends StatelessWidget {
                 ),
               ),
               context: context,
-              builder: ((context) => CreateRoutineBottomSheet()));
+              builder: ((context) => const CreateRoutineBottomSheet()));
 
           if (r != null) {
             _addRoutine(r);
@@ -41,10 +39,12 @@ class RoutinesScreen extends StatelessWidget {
       body: Consumer<RoutineModel>(
         builder: ((context, value, child) => ListView.builder(
               itemCount: value.routines.length,
-              itemBuilder: (context, index) => ListTile(
-                title: Text(
-                  value.routines[index].name,
-                  style: Theme.of(context).textTheme.titleSmall,
+              itemBuilder: (context, index) => Card(
+                child: ListTile(
+                  title: Text(
+                    value.routines[index].name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
               ),
             )),
