@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 class TasksScreen extends StatelessWidget {
   const TasksScreen({Key? key}) : super(key: key);
-
+  static const routeName = "/tasks";
   @override
   Widget build(BuildContext context) {
     void _addTask(Task t) {

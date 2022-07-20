@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/screens/app.dart';
+import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/tasks_provider.dart';
 import 'package:provider/provider.dart';
@@ -20,60 +21,64 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(builder: (context, snapshot) {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            colorSchemeSeed: Colors.blue[700],
-            // colorScheme: ColorScheme.fromSwatch(
-            //   primarySwatch: Colors.deepPurple,
-            // ),
-            useMaterial3: true,
-            brightness: Brightness.dark,
-          ),
-          // routes: {
-          //   '/': (context) => const App(),
-          // },
-          home: FutureBuilder(
-              future: Future.wait([
-                Hive.openBox<Routine>("Routines"),
-                Hive.openBox<Task>("Tasks"),
-              ]),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Scaffold(
-                    body: Center(
-                      child: Text(
-                        "Oops! Try again later",
-                        style: Theme.of(context).textTheme.displayMedium,
-                      ),
-                    ),
-                  );
-                } else if (snapshot.hasData) {
-                  return MultiProvider(
-                    providers: [
-                      ChangeNotifierProvider(
-                        create: (context) => RoutineModel(),
-                      ),
-                      ChangeNotifierProvider(
-                        create: (context) => TaskModel(),
-                      )
-                    ],
-                    child: const App(),
-                  );
-                }
-                return const Scaffold(
-                    body: Center(
-                  child: SizedBox(
-                    height: 60,
-                    width: 60,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 6,
-                    ),
-                  ),
-                ));
-              }));
-    });
+    return FutureBuilder(
+      future: Future.wait([
+        Hive.openBox<Routine>("Routines"),
+        Hive.openBox<Task>("Tasks"),
+      ]),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: Text(
+                  "Oops! Try again later",
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
+            ),
+          );
+        } else if (snapshot.hasData) {
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                create: (context) => RoutineModel(),
+              ),
+              ChangeNotifierProvider(
+                create: (context) => TaskModel(),
+              )
+            ],
+            child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Flutter Demo',
+                theme: ThemeData(
+                  colorSchemeSeed: Colors.blue[700],
+                  // colorScheme: ColorScheme.fromSwatch(
+                  //   primarySwatch: Colors.deepPurple,
+                  // ),
+                  useMaterial3: true,
+                  brightness: Brightness.dark,
+                ),
+                initialRoute: '/',
+                routes: {
+                  TasksScreen.routeName: (context) => const TasksScreen(),
+                  '/': (context) => const App()
+                }),
+          );
+        }
+        return const MaterialApp(
+          home: Scaffold(
+              body: Center(
+            child: SizedBox(
+              height: 60,
+              width: 60,
+              child: CircularProgressIndicator(
+                strokeWidth: 6,
+              ),
+            ),
+          )),
+        );
+      },
+    );
   }
 }

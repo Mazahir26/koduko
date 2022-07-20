@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:koduko/components/name_page_bottom_sheet.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/screens/tasks.dart';
+import 'package:koduko/services/tasks_provider.dart';
 import 'package:koduko/utils/duration_to_string.dart';
 import 'package:koduko/utils/parse_duration.dart';
+import 'package:provider/provider.dart';
 
 enum RepeatType {
   daily,
@@ -11,9 +14,8 @@ enum RepeatType {
 }
 
 class CreateRoutineBottomSheet extends StatefulWidget {
-  const CreateRoutineBottomSheet({Key? key, required this.tasks})
-      : super(key: key);
-  final List<Task> tasks;
+  const CreateRoutineBottomSheet({Key? key}) : super(key: key);
+
   @override
   State<CreateRoutineBottomSheet> createState() =>
       _CreateRoutineBottomSheetState();
@@ -80,23 +82,26 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
     });
   }
 
-  void onTap(bool selected, int index) {
+  void onTap(bool selected, int index, BuildContext context) {
     if (selected) {
       if (selectedTask.length == 1) {
         setState(() {
-          selectedTask
-              .removeWhere((element) => element.id == widget.tasks[index].id);
+          selectedTask.removeWhere((element) =>
+              element.id ==
+              Provider.of<TaskModel>(context, listen: false).tasks[index].id);
           pageComplected = false;
         });
       } else {
         setState(() {
-          selectedTask
-              .removeWhere((element) => element.id == widget.tasks[index].id);
+          selectedTask.removeWhere((element) =>
+              element.id ==
+              Provider.of<TaskModel>(context, listen: false).tasks[index].id);
         });
       }
     } else {
       setState(() {
-        selectedTask.add(widget.tasks[index]);
+        selectedTask
+            .add(Provider.of<TaskModel>(context, listen: false).tasks[index]);
         pageComplected = true;
       });
     }
@@ -151,7 +156,6 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                   ),
                   TaskSelectPage(
                     selectedTask: selectedTask,
-                    tasks: widget.tasks,
                     onTap: onTap,
                   ),
                   RepeatPage(
@@ -313,85 +317,99 @@ class Buttons extends StatelessWidget {
 }
 
 class TaskSelectPage extends StatelessWidget {
-  const TaskSelectPage(
-      {Key? key,
-      required this.selectedTask,
-      required this.tasks,
-      required this.onTap})
-      : super(key: key);
+  const TaskSelectPage({
+    Key? key,
+    required this.selectedTask,
+    required this.onTap,
+  }) : super(key: key);
   final List<Task> selectedTask;
-  final List<Task> tasks;
-  final void Function(bool, int) onTap;
+  final void Function(bool, int, BuildContext) onTap;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          bool isSelected = selectedTask.indexWhere(
-                  (element) => element.id.compareTo(tasks[index].id) == 0) >
-              -1;
-          Widget card = Card(
-            child: ListTile(
-              selected: isSelected,
-              onTap: () => onTap(isSelected, index),
-              trailing: isSelected
-                  ? const Icon(Icons.check_box_rounded)
-                  : const Icon(Icons.check_box_outline_blank_rounded),
-              subtitle: Text(
-                'Duration : ${durationToString(parseDuration(tasks[index].duration))} Min',
-                style: Theme.of(context).textTheme.bodyMedium!.apply(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onBackground
-                        .withOpacity(0.8)),
-              ),
-              title: Text(
-                tasks[index].name,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-          );
-          if (index == 0) {
-            return Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Select Tasks',
-                        style: Theme.of(context).textTheme.titleLarge!),
-                    AnimatedCrossFade(
-                      firstChild: TextButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.add),
-                        label: Text(
-                          'Add Task',
-                          style: Theme.of(context).textTheme.titleMedium!.apply(
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
-                      ),
-                      secondChild: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          'Selected (${selectedTask.length})',
-                          style: Theme.of(context).textTheme.titleMedium!.apply(
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
-                      ),
-                      crossFadeState: selectedTask.isEmpty
-                          ? CrossFadeState.showFirst
-                          : CrossFadeState.showSecond,
-                      duration: const Duration(milliseconds: 250),
-                    )
-                  ],
+    return Consumer<TaskModel>(
+        builder: ((context, value, child) => ListView.builder(
+            itemCount: value.tasks.length,
+            itemBuilder: (context, index) {
+              bool isSelected = selectedTask.indexWhere((element) =>
+                      element.id.compareTo(value.tasks[index].id) == 0) >
+                  -1;
+              Widget card = Card(
+                child: ListTile(
+                  selected: isSelected,
+                  onTap: () => onTap(isSelected, index, context),
+                  trailing: isSelected
+                      ? const Icon(Icons.check_box_rounded)
+                      : const Icon(Icons.check_box_outline_blank_rounded),
+                  subtitle: Text(
+                    'Duration : ${durationToString(parseDuration(value.tasks[index].duration))} Min',
+                    style: Theme.of(context).textTheme.bodyMedium!.apply(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onBackground
+                            .withOpacity(0.8)),
+                  ),
+                  title: Text(
+                    value.tasks[index].name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
-                const SizedBox(height: 10),
-                card
-              ],
-            );
-          }
-          return card;
-        });
+              );
+              if (index == 0) {
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Select Tasks',
+                            style: Theme.of(context).textTheme.titleLarge!),
+                        AnimatedCrossFade(
+                          firstChild: TextButton.icon(
+                            onPressed: (() {
+                              Navigator.pushNamed(
+                                context,
+                                TasksScreen.routeName,
+                              );
+                            }),
+                            icon: const Icon(Icons.edit_rounded),
+                            label: Text(
+                              'Edit Tasks',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .apply(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                            ),
+                          ),
+                          secondChild: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              'Selected (${selectedTask.length})',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .apply(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                            ),
+                          ),
+                          crossFadeState: selectedTask.isEmpty
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          duration: const Duration(milliseconds: 250),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    card
+                  ],
+                );
+              }
+              return card;
+            })));
   }
 }
 

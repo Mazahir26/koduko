@@ -31,7 +31,7 @@ class RoutinesScreen extends StatelessWidget {
                 ),
               ),
               context: context,
-              builder: ((context) => CreateRoutineBottomSheet(tasks: tasks)));
+              builder: ((context) => CreateRoutineBottomSheet()));
 
           if (r != null) {
             _addRoutine(r);
