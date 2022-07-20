@@ -48,4 +48,15 @@ class Routine {
     history = [];
     completedTasks = [];
   }
+  String getDays() {
+    return isDaily ? "Daily" : days.map((e) => e.substring(0, 3)).join(", ");
+  }
+
+  double getPercentage() {
+    return completedTasks.isEmpty ? 0 : (tasks.length / completedTasks.length);
+  }
+
+  String getPercentageString() {
+    return '${(getPercentage() * 100).toInt()}%';
+  }
 }

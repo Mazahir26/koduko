@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:koduko/models/task.dart';
-import 'package:koduko/utils/parse_duration.dart';
 
 class TaskModel extends ChangeNotifier {
   late final List<Task> _tasks;

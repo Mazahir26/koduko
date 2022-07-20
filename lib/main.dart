@@ -57,12 +57,12 @@ class MyApp extends StatelessWidget {
                   //   primarySwatch: Colors.deepPurple,
                   // ),
                   useMaterial3: true,
-                  brightness: Brightness.dark,
+                  brightness: Brightness.light,
                 ),
                 initialRoute: '/',
                 routes: {
                   TasksScreen.routeName: (context) => const TasksScreen(),
-                  '/': (context) => const App()
+                  App.routeName: (context) => const App()
                 }),
           );
         }

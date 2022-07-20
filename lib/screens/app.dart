@@ -7,6 +7,7 @@ import 'package:koduko/screens/routines.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
+  static const routeName = "/";
 
   @override
   State<App> createState() => _AppState();
