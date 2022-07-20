@@ -23,7 +23,7 @@ class RoutineScreenState extends State<RoutineScreen>
 
   @override
   void initState() {
-    tasks = widget.routine.tasks;
+    tasks = List.from(widget.routine.tasks);
     _controller = AnimationController(
         vsync: this, duration: parseDuration(tasks.first.duration));
 

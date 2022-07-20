@@ -14,7 +14,11 @@ enum RepeatType {
 }
 
 class CreateRoutineBottomSheet extends StatefulWidget {
-  const CreateRoutineBottomSheet({Key? key}) : super(key: key);
+  const CreateRoutineBottomSheet({
+    Key? key,
+    this.editRoutine,
+  }) : super(key: key);
+  final Routine? editRoutine;
 
   @override
   State<CreateRoutineBottomSheet> createState() =>
@@ -41,6 +45,17 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
   void initState() {
     _pageController = PageController();
     _nameController = TextEditingController();
+
+    if (widget.editRoutine != null) {
+      _nameController.text = widget.editRoutine!.name;
+      selectedDays.entries.map((e) {
+        selectedDays[e.key] = widget.editRoutine!.days.contains(e.key);
+      });
+      for (var element in widget.editRoutine!.tasks) {
+        selectedTask.add(element);
+      }
+      pageComplected = true;
+    }
     super.initState();
   }
 
@@ -433,52 +448,62 @@ class RepeatPage extends StatelessWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(
-          height: 25,
+          height: 15,
         ),
         Wrap(
           spacing: 8,
           children: [
-            ChoiceChip(
-              elevation: 5,
-              label: const Text("Daily"),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: ChoiceChip(
+                elevation: 5,
+                label: const Text("Daily"),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                selected: !selectedDays.values.contains(false),
+                backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
+                onSelected: (value) => onChangeRepeatType(RepeatType.daily),
+                selectedColor: Theme.of(context).colorScheme.inversePrimary,
+                labelStyle: Theme.of(context).textTheme.titleMedium,
               ),
-              selected: !selectedDays.values.contains(false),
-              backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
-              onSelected: (value) => onChangeRepeatType(RepeatType.daily),
-              selectedColor: Theme.of(context).colorScheme.inversePrimary,
-              labelStyle: Theme.of(context).textTheme.labelLarge,
             ),
-            ChoiceChip(
-              elevation: 5,
-              label: const Text("Only on"),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: ChoiceChip(
+                elevation: 5,
+                label: const Text("Only on"),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                selected: selectedDays.values.contains(false),
+                backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
+                onSelected: (value) => onChangeRepeatType(RepeatType.onlyOn),
+                selectedColor: Theme.of(context).colorScheme.inversePrimary,
+                labelStyle: Theme.of(context).textTheme.titleMedium,
               ),
-              selected: selectedDays.values.contains(false),
-              backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
-              onSelected: (value) => onChangeRepeatType(RepeatType.onlyOn),
-              selectedColor: Theme.of(context).colorScheme.inversePrimary,
-              labelStyle: Theme.of(context).textTheme.labelLarge,
             ),
           ],
         ),
         selectedDays.values.contains(false)
             ? Wrap(
-                spacing: 4,
+                spacing: 2,
+                runSpacing: -8,
                 children: selectedDays.keys
                     .map(
-                      (e) => ChoiceChip(
-                        elevation: 5,
-                        label: Text(e),
-                        selected: selectedDays[e] ?? false,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.onInverseSurface,
-                        onSelected: (value) => onDayChange(e, value),
-                        selectedColor:
-                            Theme.of(context).colorScheme.inversePrimary,
-                        labelStyle: Theme.of(context).textTheme.labelMedium,
+                      (e) => Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: ChoiceChip(
+                          elevation: 5,
+                          label: Text(e),
+                          selected: selectedDays[e] ?? false,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.onInverseSurface,
+                          onSelected: (value) => onDayChange(e, value),
+                          selectedColor:
+                              Theme.of(context).colorScheme.inversePrimary,
+                          labelStyle: Theme.of(context).textTheme.labelMedium,
+                        ),
                       ),
                     )
                     .toList())
