@@ -202,10 +202,7 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                           Routine.create(
                             name: _nameController.text,
                             tasks: selectedTask,
-                            completedTasks: [],
-                            history: [],
                             days: temp,
-                            isDaily: temp.length == 7,
                           ),
                         );
                       }

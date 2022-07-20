@@ -31,25 +31,23 @@ class _AppState extends State<App> {
       const RoutinesScreen(),
       RoutineScreen(
           routine: Routine.create(
-              name: "Test",
-              tasks: [
-                Task.fromDuration(
-                    duration: const Duration(seconds: 10),
-                    name: "Task1",
-                    color: Colors.blue),
-                Task.fromDuration(
-                    duration: const Duration(seconds: 15),
-                    name: "Task2",
-                    color: Colors.grey),
-                Task.fromDuration(
-                    duration: const Duration(seconds: 40),
-                    name: "Task3",
-                    color: Colors.greenAccent),
-              ],
-              completedTasks: [],
-              history: [],
-              days: ["Monday", "Tuesday"],
-              isDaily: false))
+        name: "Test",
+        tasks: [
+          Task.fromDuration(
+              duration: const Duration(seconds: 10),
+              name: "Task1",
+              color: Colors.blue),
+          Task.fromDuration(
+              duration: const Duration(seconds: 15),
+              name: "Task2",
+              color: Colors.grey),
+          Task.fromDuration(
+              duration: const Duration(seconds: 40),
+              name: "Task3",
+              color: Colors.greenAccent),
+        ],
+        days: ["Monday", "Tuesday"],
+      ))
     ];
     return Scaffold(
       bottomNavigationBar: NavigationBar(

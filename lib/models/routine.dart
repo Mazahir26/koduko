@@ -17,13 +17,13 @@ class Routine {
   List<Task> tasks;
 
   @HiveField(3)
-  List<TaskEvent> completedTasks;
+  late List<TaskEvent> completedTasks;
 
   @HiveField(4)
-  List<DateTime> history;
+  late List<DateTime> history;
 
   @HiveField(5, defaultValue: true)
-  bool isDaily;
+  late bool isDaily;
 
   @HiveField(6)
   List<String> days;
@@ -41,11 +41,11 @@ class Routine {
   Routine.create({
     required this.name,
     required this.tasks,
-    required this.completedTasks,
-    required this.history,
     required this.days,
-    required this.isDaily,
   }) {
     id = const Uuid().v4();
+    isDaily = days.length == 7;
+    history = [];
+    completedTasks = [];
   }
 }
