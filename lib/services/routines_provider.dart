@@ -39,11 +39,22 @@ class RoutineModel extends ChangeNotifier {
   }
 
   void removeTask(Task t) {
-    _routines.asMap().map((key, value) {
+    List<Routine> temp = List.from(_routines);
+    temp.asMap().map((key, value) {
       Routine? r = value.taskExists(t);
       if (r != null) {
-        _box.putAt(key, r);
-        _routines[key] = r;
+        if (r.tasks.isEmpty) {
+          int index = _routines
+              .indexWhere((element) => element.id.compareTo(r.id) == 0);
+          if (index > -1) {
+            _box.deleteAt(index);
+            _routines.removeWhere((element) => element.id.compareTo(r.id) == 0);
+          }
+          delete(r.id);
+        } else {
+          _box.putAt(key, r);
+          _routines[key] = r;
+        }
       }
       return MapEntry(key, value);
     });
