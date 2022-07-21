@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/create_task_bottom_sheet.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/tasks_provider.dart';
 import 'package:koduko/utils/duration_to_string.dart';
 import 'package:koduko/utils/parse_duration.dart';
@@ -46,6 +47,8 @@ class TaskTile extends StatelessWidget {
                   onPressed: () {
                     Provider.of<TaskModel>(context, listen: false)
                         .delete(task.id);
+                    Provider.of<RoutineModel>(context, listen: false)
+                        .removeTask(task);
                   },
                   icon: Icon(
                     Icons.delete,

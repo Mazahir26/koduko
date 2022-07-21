@@ -67,6 +67,16 @@ class Routine {
         isDaily: isDaily ?? this.isDaily);
   }
 
+  Routine? taskExists(Task t) {
+    int index = tasks.indexWhere((element) => element.id.compareTo(t.id) == 0);
+    if (index > -1) {
+      List<Task> ts = List.from(tasks);
+      ts.removeAt(index);
+      return copyWith(tasks: ts);
+    }
+    return null;
+  }
+
   String getDays() {
     return isDaily ? "Daily" : days.map((e) => e.substring(0, 3)).join(", ");
   }

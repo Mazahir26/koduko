@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
+import 'package:koduko/models/task.dart';
 
 class RoutineModel extends ChangeNotifier {
   late final List<Routine> _routines;
@@ -35,6 +36,18 @@ class RoutineModel extends ChangeNotifier {
       _routines[index] = routine;
       notifyListeners();
     }
+  }
+
+  void removeTask(Task t) {
+    _routines.asMap().map((key, value) {
+      Routine? r = value.taskExists(t);
+      if (r != null) {
+        _box.putAt(key, r);
+        _routines[key] = r;
+      }
+      return MapEntry(key, value);
+    });
+    notifyListeners();
   }
 
   void delete(String id) {
