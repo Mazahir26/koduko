@@ -14,6 +14,10 @@ class TasksScreen extends StatelessWidget {
       Provider.of<TaskModel>(context, listen: false).add(t);
     }
 
+    void _onEdit(Task t) {
+      Provider.of<TaskModel>(context, listen: false).edit(t);
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -49,7 +53,10 @@ class TasksScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: 25),
-                      TaskTile(task: value.tasks[index])
+                      TaskTile(
+                        task: value.tasks[index],
+                        onEdit: _onEdit,
+                      )
                     ],
                   ),
                 );
@@ -58,6 +65,7 @@ class TasksScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TaskTile(
                     task: value.tasks[index],
+                    onEdit: _onEdit,
                   ));
             })),
       ),

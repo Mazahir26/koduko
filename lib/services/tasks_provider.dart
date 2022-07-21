@@ -28,6 +28,16 @@ class TaskModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void edit(Task task) {
+    int index =
+        _tasks.indexWhere((element) => element.id.compareTo(task.id) == 0);
+    if (index > -1) {
+      _box.putAt(index, task);
+      _tasks[index] = task;
+      notifyListeners();
+    }
+  }
+
   void delete(String id) {
     if (_tasks.indexWhere((element) => element.id.compareTo(id) == 0) > -1) {
       _box.deleteAt(

@@ -22,6 +22,20 @@ class Task {
       required this.name,
       required this.color,
       required this.id});
+
+  Task copyWith({
+    String? duration,
+    String? name,
+    int? color,
+    String? id,
+  }) {
+    return Task(
+        duration: duration ?? this.duration,
+        name: name ?? this.name,
+        color: color ?? this.color,
+        id: id ?? this.id);
+  }
+
   Task.fromDuration(
       {required Duration duration, required this.name, required Color color}) {
     this.duration = duration.toString();

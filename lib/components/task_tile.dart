@@ -7,8 +7,10 @@ import 'package:koduko/utils/parse_duration.dart';
 import 'package:provider/provider.dart';
 
 class TaskTile extends StatelessWidget {
-  const TaskTile({Key? key, required this.task}) : super(key: key);
+  const TaskTile({Key? key, required this.task, required this.onEdit})
+      : super(key: key);
   final Task task;
+  final void Function(Task) onEdit;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -20,7 +22,7 @@ class TaskTile extends StatelessWidget {
             children: [
               IconButton(
                   onPressed: () async {
-                    await showModalBottomSheet<Task>(
+                    Task? t = await showModalBottomSheet<Task>(
                         isScrollControlled: true,
                         isDismissible: true,
                         shape: const RoundedRectangleBorder(
@@ -33,6 +35,11 @@ class TaskTile extends StatelessWidget {
                         builder: ((context) => CreateTaskBottomSheet(
                               task: task,
                             )));
+
+                    if (t != null) {
+                      onEdit(task.copyWith(
+                          color: t.color, duration: t.duration, name: t.name));
+                    }
                   },
                   icon: const Icon(Icons.edit)),
               IconButton(
