@@ -38,7 +38,7 @@ class NamePage extends StatelessWidget {
             filled: true,
             hintText: hintText,
             errorText:
-                nameController.text.length > 4 || nameController.text.isEmpty
+                nameController.text.length > 2 || nameController.text.isEmpty
                     ? null
                     : "Invalid Name",
           ),

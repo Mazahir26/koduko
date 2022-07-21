@@ -46,7 +46,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
   }
 
   void validateName(String _) {
-    if (_nameController.text.length > 4) {
+    if (_nameController.text.length > 2) {
       if (!pageComplected) {
         setState(() {
           pageComplected = true;

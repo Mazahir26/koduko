@@ -45,6 +45,15 @@ class RoutinesScreen extends StatelessWidget {
         builder: ((context, value, child) => ListView.builder(
             itemCount: 2,
             itemBuilder: (context, index) {
+              if (value.routines.isEmpty) {
+                return Center(
+                  child: Text(
+                    "Looks Empty try to add a routine",
+                    style: Theme.of(context).textTheme.displayMedium,
+                  ),
+                );
+              }
+
               if (index == 0) {
                 List<Widget> t = value.routines
                     .where(
@@ -58,6 +67,10 @@ class RoutinesScreen extends StatelessWidget {
                           onEdit: _editRoutine,
                         ))
                     .toList();
+
+                if (t.isEmpty) {
+                  return Container();
+                }
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -91,6 +104,9 @@ class RoutinesScreen extends StatelessWidget {
                           onEdit: _editRoutine,
                         ))
                     .toList();
+                if (t.isEmpty) {
+                  return Container();
+                }
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
