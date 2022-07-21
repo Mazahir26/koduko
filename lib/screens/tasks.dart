@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/create_task_bottom_sheet.dart';
+import 'package:koduko/components/task_tile.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/services/tasks_provider.dart';
-import 'package:koduko/utils/duration_to_string.dart';
-import 'package:koduko/utils/parse_duration.dart';
 import 'package:provider/provider.dart';
 
 class TasksScreen extends StatelessWidget {
@@ -29,7 +28,7 @@ class TasksScreen extends StatelessWidget {
                 ),
               ),
               context: context,
-              builder: ((context) => const CreateTaskSheet()));
+              builder: ((context) => const CreateTaskBottomSheet()));
           if (t != null) {
             _addTask(t);
           }
@@ -50,79 +49,18 @@ class TasksScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: 25),
-                      Card(
-                        child: ListTile(
-                          trailing: SizedBox(
-                            width: 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.edit)),
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.delete,
-                                      color: Colors.red[300],
-                                    ))
-                              ],
-                            ),
-                          ),
-                          subtitle: Text(
-                              'Duration : ${durationToString(parseDuration(value.tasks[index].duration))} Min'),
-                          title: Text(
-                            value.tasks[index].name,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
-                      )
+                      TaskTile(task: value.tasks[index])
                     ],
                   ),
                 );
               }
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Card(
-                  child: ListTile(
-                    trailing: SizedBox(
-                      width: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.edit)),
-                          IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red[300],
-                              ))
-                        ],
-                      ),
-                    ),
-                    subtitle: Text(
-                        'Duration : ${durationToString(parseDuration(value.tasks[index].duration))} Min'),
-                    title: Text(
-                      value.tasks[index].name,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ),
-              );
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TaskTile(
+                    task: value.tasks[index],
+                  ));
             })),
       ),
     );
-  }
-}
-
-class CreateTaskSheet extends StatelessWidget {
-  const CreateTaskSheet({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const CreateTaskBottomSheet();
   }
 }

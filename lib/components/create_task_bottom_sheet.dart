@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/name_page_bottom_sheet.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/utils/parse_duration.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {
-  const CreateTaskBottomSheet({Key? key}) : super(key: key);
-
+  const CreateTaskBottomSheet({Key? key, this.task}) : super(key: key);
+  final Task? task;
   @override
   State<CreateTaskBottomSheet> createState() => _CreateTaskBottomSheetState();
 }
@@ -42,6 +43,14 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
   void initState() {
     _pageController = PageController();
     _nameController = TextEditingController();
+    if (widget.task != null) {
+      _nameController.text = widget.task!.name;
+      _value = chipList.keys.firstWhere((element) =>
+          chipList[element] == parseDuration(widget.task!.duration));
+      _selectedColor = colorList
+          .indexWhere((element) => element.value == widget.task!.color);
+      pageComplected = true;
+    }
     super.initState();
   }
 

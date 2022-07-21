@@ -44,7 +44,8 @@ class RoutinesScreen extends StatelessWidget {
       body: Consumer<RoutineModel>(
         builder: ((context, value, child) => value.routines.isEmpty
             ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
         .textTheme
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       child: Column(
         children: [
           Header(textTheme: textTheme),

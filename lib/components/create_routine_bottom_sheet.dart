@@ -344,88 +344,98 @@ class TaskSelectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<TaskModel>(
-        builder: ((context, value, child) => ListView.builder(
-            itemCount: value.tasks.length,
-            itemBuilder: (context, index) {
-              bool isSelected = selectedTask.indexWhere((element) =>
-                      element.id.compareTo(value.tasks[index].id) == 0) >
-                  -1;
-              Widget card = Card(
-                child: ListTile(
-                  selected: isSelected,
-                  onTap: () => onTap(isSelected, index, context),
-                  trailing: isSelected
-                      ? const Icon(Icons.check_box_rounded)
-                      : const Icon(Icons.check_box_outline_blank_rounded),
-                  subtitle: Text(
-                    'Duration : ${durationToString(parseDuration(value.tasks[index].duration))} Min',
-                    style: Theme.of(context).textTheme.bodyMedium!.apply(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onBackground
-                            .withOpacity(0.8)),
-                  ),
-                  title: Text(
-                    value.tasks[index].name,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-              );
-              if (index == 0) {
-                return Column(
+        builder: ((context, value, child) => value.tasks.isEmpty
+            ? Center(
+                child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Select Tasks',
-                            style: Theme.of(context).textTheme.titleLarge!),
-                        AnimatedCrossFade(
-                          firstChild: TextButton.icon(
-                            onPressed: (() {
-                              Navigator.pushNamed(
-                                context,
-                                TasksScreen.routeName,
-                              );
-                            }),
-                            icon: const Icon(Icons.edit_rounded),
-                            label: Text(
-                              'Edit Tasks',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .apply(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                            ),
-                          ),
-                          secondChild: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text(
-                              'Selected (${selectedTask.length})',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .apply(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                            ),
-                          ),
-                          crossFadeState: selectedTask.isEmpty
-                              ? CrossFadeState.showFirst
-                              : CrossFadeState.showSecond,
-                          duration: const Duration(milliseconds: 250),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    card
+                    const Text("Looks like you haven't created any tasks"),
+                    TextButton(
+                        onPressed: () {}, child: const Text("Create One"))
                   ],
-                );
-              }
-              return card;
-            })));
+                ),
+              )
+            : ListView.builder(
+                itemCount: value.tasks.length,
+                itemBuilder: (context, index) {
+                  bool isSelected = selectedTask.indexWhere((element) =>
+                          element.id.compareTo(value.tasks[index].id) == 0) >
+                      -1;
+                  Widget card = Card(
+                    child: ListTile(
+                      selected: isSelected,
+                      onTap: () => onTap(isSelected, index, context),
+                      trailing: isSelected
+                          ? const Icon(Icons.check_box_rounded)
+                          : const Icon(Icons.check_box_outline_blank_rounded),
+                      subtitle: Text(
+                        'Duration : ${durationToString(parseDuration(value.tasks[index].duration))} Min',
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onBackground
+                                .withOpacity(0.8)),
+                      ),
+                      title: Text(
+                        value.tasks[index].name,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  );
+                  if (index == 0) {
+                    return Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Select Tasks',
+                                style: Theme.of(context).textTheme.titleLarge!),
+                            AnimatedCrossFade(
+                              firstChild: TextButton.icon(
+                                onPressed: (() {
+                                  Navigator.pushNamed(
+                                    context,
+                                    TasksScreen.routeName,
+                                  );
+                                }),
+                                icon: const Icon(Icons.edit_rounded),
+                                label: Text(
+                                  'Edit Tasks',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
+                                ),
+                              ),
+                              secondChild: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  'Selected (${selectedTask.length})',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .apply(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
+                                ),
+                              ),
+                              crossFadeState: selectedTask.isEmpty
+                                  ? CrossFadeState.showFirst
+                                  : CrossFadeState.showSecond,
+                              duration: const Duration(milliseconds: 250),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        card
+                      ],
+                    );
+                  }
+                  return card;
+                })));
   }
 }
 
