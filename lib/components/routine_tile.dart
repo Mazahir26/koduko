@@ -3,6 +3,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:koduko/components/create_routine_bottom_sheet.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/routine.dart';
+import 'package:koduko/services/routines_provider.dart';
+import 'package:provider/provider.dart';
 
 class RoutineTile extends StatelessWidget {
   const RoutineTile({
@@ -51,17 +53,22 @@ class RoutineTile extends StatelessWidget {
       padding: const EdgeInsets.all(2),
       child: Slidable(
         key: Key(routine.id),
-
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
-          dismissible: DismissiblePane(onDismissed: () {}),
+          dismissible: DismissiblePane(onDismissed: () {
+            Provider.of<RoutineModel>(context, listen: false)
+                .delete(routine.id);
+          }),
           children: [
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Center(
                     child: TextButton.icon(
-                  onPressed: (() {}),
+                  onPressed: (() {
+                    Provider.of<RoutineModel>(context, listen: false)
+                        .delete(routine.id);
+                  }),
                   icon: Icon(
                     Icons.delete,
                     color: Colors.red[300],
@@ -86,7 +93,9 @@ class RoutineTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Center(
                     child: TextButton.icon(
-                  onPressed: (() {}),
+                  onPressed: (() {
+                    onLongPress(context);
+                  }),
                   icon: Icon(
                     Icons.edit,
                     color: Colors.blue[300],
@@ -103,32 +112,6 @@ class RoutineTile extends StatelessWidget {
             )
           ],
         ),
-        // background: Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 10),
-        //   child: Align(
-        //     alignment: Alignment.centerLeft,
-        //     child: Text(
-        //       "Edit",
-        //       style: Theme.of(context)
-        //           .textTheme
-        //           .titleLarge!
-        //           .apply(color: Colors.blue[300]),
-        //     ),
-        //   ),
-        // ),
-        // secondaryBackground: Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 10),
-        //   child: Align(
-        //     alignment: Alignment.centerRight,
-        //     child: Text(
-        //       "Delete",
-        //       style: Theme.of(context)
-        //           .textTheme
-        //           .titleLarge!
-        //           .apply(color: Colors.red[300]),
-        //     ),
-        //   ),
-        // ),
         child: Card(
           child: ListTile(
               title: Text(

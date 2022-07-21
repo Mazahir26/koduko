@@ -42,94 +42,125 @@ class RoutinesScreen extends StatelessWidget {
         },
       ),
       body: Consumer<RoutineModel>(
-        builder: ((context, value, child) => ListView.builder(
-            itemCount: 2,
-            itemBuilder: (context, index) {
-              if (value.routines.isEmpty) {
-                return Center(
-                  child: Text(
-                    "Looks Empty try to add a routine",
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                );
-              }
-
-              if (index == 0) {
-                List<Widget> t = value.routines
-                    .where(
-                      (element) => element.days.contains(
-                        DateFormat('EEEE').format(DateTime.now()),
+        builder: ((context, value, child) => value.routines.isEmpty
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        "Routines",
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.bold,
+                          textStyle: Theme.of(context)
+                              .textTheme
+                              .apply(
+                                  displayColor:
+                                      Theme.of(context).colorScheme.onSurface)
+                              .headlineLarge,
+                        ),
                       ),
-                    )
-                    .map((e) => RoutineTile(
-                          routine: e,
-                          isToday: true,
-                          onEdit: _editRoutine,
-                        ))
-                    .toList();
-
-                if (t.isEmpty) {
-                  return Container();
-                }
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Today's Routines",
-                          style: GoogleFonts.lato(
-                            fontWeight: FontWeight.bold,
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .apply(
-                                    displayColor:
-                                        Theme.of(context).colorScheme.onSurface)
-                                .headlineMedium,
+                    ),
+                    Expanded(
+                      flex: 10,
+                      child: Center(
+                        child: Text(
+                          "Looks Empty! \n Try to add a routine",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .apply(
+                                  displayColor:
+                                      Theme.of(context).colorScheme.onSurface)
+                              .headlineMedium,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                itemCount: 2,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    List<Widget> t = value.routines
+                        .where(
+                          (element) => element.days.contains(
+                            DateFormat('EEEE').format(DateTime.now()),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        ...t
-                      ]),
-                );
-              } else {
-                List<Widget> t = value.routines
-                    .where(
-                      (element) => !element.days.contains(
-                        DateFormat('EEEE').format(DateTime.now()),
-                      ),
-                    )
-                    .map((e) => RoutineTile(
-                          routine: e,
-                          onEdit: _editRoutine,
-                        ))
-                    .toList();
-                if (t.isEmpty) {
-                  return Container();
-                }
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "All Routines",
-                          style: GoogleFonts.lato(
-                              fontWeight: FontWeight.bold,
-                              textStyle: Theme.of(context)
-                                  .textTheme
-                                  .apply(
-                                      displayColor: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface)
-                                  .headlineMedium),
-                        ),
-                        const SizedBox(height: 20),
-                        ...t
-                      ]),
-                );
-              }
-            })),
+                        )
+                        .map((e) => RoutineTile(
+                              routine: e,
+                              isToday: true,
+                              onEdit: _editRoutine,
+                            ))
+                        .toList();
+
+                    if (t.isEmpty) {
+                      return Container();
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Today's Routines",
+                              style: GoogleFonts.lato(
+                                fontWeight: FontWeight.bold,
+                                textStyle: Theme.of(context)
+                                    .textTheme
+                                    .apply(
+                                        displayColor: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface)
+                                    .headlineMedium,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            ...t
+                          ]),
+                    );
+                  } else {
+                    List<Widget> t = value.routines
+                        .where(
+                          (element) => !element.days.contains(
+                            DateFormat('EEEE').format(DateTime.now()),
+                          ),
+                        )
+                        .map((e) => RoutineTile(
+                              routine: e,
+                              onEdit: _editRoutine,
+                            ))
+                        .toList();
+                    if (t.isEmpty) {
+                      return Container();
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "All Routines",
+                              style: GoogleFonts.lato(
+                                  fontWeight: FontWeight.bold,
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .apply(
+                                          displayColor: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface)
+                                      .headlineMedium),
+                            ),
+                            const SizedBox(height: 20),
+                            ...t
+                          ]),
+                    );
+                  }
+                })),
       ),
     );
   }
