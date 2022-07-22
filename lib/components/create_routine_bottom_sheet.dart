@@ -347,10 +347,25 @@ class TaskSelectPage extends StatelessWidget {
         builder: ((context, value, child) => value.tasks.isEmpty
             ? Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Looks like you haven't created any tasks"),
+                    Text(
+                      "Looks like you haven't created any tasks",
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
                     TextButton(
-                        onPressed: () {}, child: const Text("Create One"))
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            TasksScreen.routeName,
+                          );
+                        },
+                        child: const Text(
+                          "Create One",
+                          style: TextStyle(fontSize: 18),
+                        ))
                   ],
                 ),
               )
