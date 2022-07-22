@@ -19,8 +19,8 @@ class RoutineAdapter extends TypeAdapter<Routine> {
     return Routine(
       name: fields[1] as String,
       tasks: (fields[2] as List).cast<Task>(),
-      completedTasks: (fields[3] as List).cast<TaskEvent>(),
-      history: (fields[4] as List).cast<DateTime>(),
+      inCompletedTasks: (fields[3] as List).cast<Task>(),
+      history: (fields[4] as List).cast<TaskEvent>(),
       id: fields[0] as String,
       days: (fields[6] as List).cast<String>(),
       isDaily: fields[5] == null ? true : fields[5] as bool,
@@ -38,7 +38,7 @@ class RoutineAdapter extends TypeAdapter<Routine> {
       ..writeByte(2)
       ..write(obj.tasks)
       ..writeByte(3)
-      ..write(obj.completedTasks)
+      ..write(obj.inCompletedTasks)
       ..writeByte(4)
       ..write(obj.history)
       ..writeByte(5)

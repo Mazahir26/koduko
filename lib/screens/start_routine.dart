@@ -136,6 +136,7 @@ class RoutineScreenState extends State<RoutineScreen>
                       .asMap()
                       .entries
                       .map((e) => TaskCard(
+                            isSkipped: _isSkipped,
                             isCompleted: _isComplete,
                             buttonController: _buttonController,
                             isPlaying: _isPlaying,

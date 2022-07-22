@@ -31,6 +31,7 @@ class TaskCard extends StatelessWidget {
   final AnimationController buttonController;
   final void Function(TapUpDetails details) onTap;
   final bool isCompleted;
+  final bool isSkipped;
 
   late final Tween<double> tween;
   late final Color textColor;
@@ -46,9 +47,12 @@ class TaskCard extends StatelessWidget {
     required this.buttonController,
     required this.onTap,
     required this.isCompleted,
+    required this.isSkipped,
   }) : super(key: key) {
     if (controller != null) {
-      tween = Tween(begin: 0, end: isCompleted ? -400 : 0);
+      tween = Tween(
+          begin: 0,
+          end: (isCompleted || isSkipped) ? (isSkipped ? -400 : 400) : 0);
     } else {
       tween = Tween(begin: 0, end: 0);
     }
