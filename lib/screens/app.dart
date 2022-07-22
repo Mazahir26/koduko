@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/screens/home.dart';
-import 'package:koduko/screens/routine.dart';
+import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/screens/routines.dart';
 
 class App extends StatefulWidget {

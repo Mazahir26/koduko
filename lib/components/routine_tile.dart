@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:koduko/components/create_routine_bottom_sheet.dart';
 import 'package:koduko/models/routine.dart';
-import 'package:koduko/screens/routine.dart';
+import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 
