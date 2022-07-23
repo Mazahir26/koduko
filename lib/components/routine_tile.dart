@@ -4,6 +4,7 @@ import 'package:koduko/components/create_routine_bottom_sheet.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class RoutineTile extends StatelessWidget {
@@ -122,7 +123,8 @@ class RoutineTile extends StatelessWidget {
               ),
               subtitle: Text(routine.getDays()),
               trailing: SizedBox(
-                width: 100,
+                width: 150,
+                height: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -137,12 +139,11 @@ class RoutineTile extends StatelessWidget {
                                 backgroundColor:
                                     Theme.of(context).colorScheme.onPrimary,
                                 strokeWidth: 6.2,
-                                semanticsLabel: "Hello",
                                 value: routine.getPercentage(),
                               ),
                               Text(
                                 routine.getPercentageString(),
-                                style: Theme.of(context).textTheme.labelSmall,
+                                style: Theme.of(context).textTheme.labelMedium,
                               )
                             ],
                           )

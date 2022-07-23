@@ -3,7 +3,6 @@ import 'package:koduko/components/create_task_bottom_sheet.dart';
 import 'package:koduko/components/header.dart';
 import 'package:koduko/components/task_tile.dart';
 import 'package:koduko/models/task.dart';
-import 'package:koduko/screens/home.dart';
 import 'package:koduko/services/tasks_provider.dart';
 import 'package:provider/provider.dart';
 

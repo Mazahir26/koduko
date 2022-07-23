@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/components/card.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
@@ -144,10 +145,13 @@ class RoutineScreenState extends State<RoutineScreen>
           selector: (p0, p1) => p1.getRoutine(widget.routine.id)!.name,
           builder: (context, value, child) => Text(
             value,
-            style: Theme.of(context)
-                .textTheme
-                .headlineLarge!
-                .apply(color: Theme.of(context).colorScheme.onBackground),
+            style: GoogleFonts.lato(
+              fontWeight: FontWeight.bold,
+              textStyle: Theme.of(context)
+                  .textTheme
+                  .apply(displayColor: Theme.of(context).colorScheme.onSurface)
+                  .headlineLarge,
+            ),
             textAlign: TextAlign.center,
           ),
         ),

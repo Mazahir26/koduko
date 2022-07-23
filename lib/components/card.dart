@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/utils/duration_to_string.dart';
 
 // class TaskCard extends StatelessWidget {
@@ -205,10 +206,12 @@ class TaskCard extends StatelessWidget {
                         child: Align(
                       child: Text(
                         name,
-                        style: TextStyle(
-                          fontSize: 40,
-                          color: textColor,
-                          fontWeight: FontWeight.w500,
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.bold,
+                          textStyle: Theme.of(context)
+                              .textTheme
+                              .apply(displayColor: textColor)
+                              .displaySmall,
                         ),
                       ),
                     ))

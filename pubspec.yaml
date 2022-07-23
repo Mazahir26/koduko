@@ -42,6 +42,7 @@ dependencies:
   fl_chart: ^0.55.0
   syncfusion_flutter_gauges: ^20.2.38
   flutter_slidable: ^2.0.0
+  percent_indicator: ^4.2.2
 
 dev_dependencies:
   flutter_test:
