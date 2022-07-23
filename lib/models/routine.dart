@@ -36,7 +36,11 @@ class Routine {
     required this.id,
     required this.days,
     required this.isDaily,
-  });
+  }) {
+    if (inCompletedTasks.isEmpty) {
+      inCompletedTasks = tasks;
+    }
+  }
 
   Routine.create({
     required this.name,
@@ -46,7 +50,7 @@ class Routine {
     id = const Uuid().v4();
     isDaily = days.length == 7;
     history = [];
-    inCompletedTasks = [];
+    inCompletedTasks = tasks;
   }
   Routine copyWith({
     List<Task>? tasks,
@@ -68,9 +72,15 @@ class Routine {
   }
 
   Routine skipTask() {
-    List<Task> r = List.from(tasks);
+    List<Task> r = List.from(inCompletedTasks);
     Task t = r.removeAt(0);
     r.add(t);
+    return copyWith(inCompletedTasks: r);
+  }
+
+  Routine completeTask() {
+    List<Task> r = List.from(inCompletedTasks);
+    r.removeAt(0);
     return copyWith(inCompletedTasks: r);
   }
 

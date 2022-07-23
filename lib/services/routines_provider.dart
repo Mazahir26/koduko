@@ -38,6 +38,35 @@ class RoutineModel extends ChangeNotifier {
     }
   }
 
+  void skipTask(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      _box.putAt(index, _routines[index].skipTask());
+      _routines[index] = _routines[index].skipTask();
+      notifyListeners();
+    }
+  }
+
+  Routine? getRoutine(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      return _routines[index];
+    }
+    return null;
+  }
+
+  void completeTask(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      _box.putAt(index, _routines[index].completeTask());
+      _routines[index] = _routines[index].completeTask();
+      notifyListeners();
+    }
+  }
+
   void removeTask(Task t) {
     List<Routine> temp = List.from(_routines);
     temp.asMap().map((key, value) {

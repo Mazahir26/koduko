@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/card.dart';
-import 'package:koduko/components/header.dart';
-import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/utils/parse_duration.dart';
+import 'package:provider/provider.dart';
 
 class RoutineScreen extends StatefulWidget {
-  final Routine routine;
-  const RoutineScreen({Key? key, required this.routine}) : super(key: key);
+  final String id;
+  const RoutineScreen({Key? key, required this.id}) : super(key: key);
 
   @override
   State<RoutineScreen> createState() => RoutineScreenState();
@@ -19,15 +19,20 @@ class RoutineScreenState extends State<RoutineScreen>
   late final AnimationController _buttonController;
 
   bool _isPlaying = false;
-  List<Task> tasks = [];
   bool _isComplete = false;
   bool _isSkipped = false;
   @override
   void initState() {
-    tasks = List.from(widget.routine.tasks);
-    _controller = AnimationController(
-        vsync: this, duration: parseDuration(tasks.first.duration));
-
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _controller.duration = parseDuration(
+          Provider.of<RoutineModel>(context, listen: false)
+              .getRoutine(widget.id)!
+              .tasks
+              .first
+              .duration);
+    });
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(minutes: 1));
     _buttonController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 250));
     _controller.addStatusListener((status) {
@@ -56,22 +61,41 @@ class RoutineScreenState extends State<RoutineScreen>
     }
   }
 
-  void onDismiss(DismissDirection t) {
-    setState(() {
-      if (_isComplete) {
-        _isComplete = false;
+  void onDismiss(DismissDirection t, BuildContext context) {
+    if (t == DismissDirection.endToStart) {
+      Provider.of<RoutineModel>(context, listen: false).skipTask(widget.id);
+      setState(() {
+        if (_isSkipped) {
+          _isSkipped = false;
+        }
+        _controller.reset();
+        var ts = Provider.of<RoutineModel>(context, listen: false)
+            .getRoutine(widget.id)!
+            .tasks;
+        if (ts.isNotEmpty) {
+          _controller.duration = parseDuration(ts.first.duration);
+        }
+        if (_isPlaying) {
+          _controller.forward();
+        }
+      });
+    } else if (t == DismissDirection.startToEnd) {
+      Provider.of<RoutineModel>(context, listen: false).completeTask(widget.id);
+      _controller.reset();
+      var ts = Provider.of<RoutineModel>(context, listen: false)
+          .getRoutine(widget.id)!
+          .tasks;
+      if (ts.isNotEmpty) {
+        _controller.duration = parseDuration(ts.first.duration);
       }
-      tasks.removeAt(0);
-    });
-    if (_isSkipped) {
-      _isSkipped = false;
-    }
-    _controller.reset();
-    if (tasks.isNotEmpty) {
-      _controller.duration = parseDuration(tasks.first.duration);
-    }
-    if (_isPlaying) {
-      _controller.forward();
+      if (_isPlaying) {
+        _controller.forward();
+      }
+      setState(() {
+        if (_isComplete) {
+          _isComplete = false;
+        }
+      });
     }
   }
 
@@ -100,13 +124,16 @@ class RoutineScreenState extends State<RoutineScreen>
             ),
           ),
         ),
-        title: Text(
-          widget.routine.name,
-          style: Theme.of(context)
-              .textTheme
-              .headlineLarge!
-              .apply(color: Theme.of(context).colorScheme.onBackground),
-          textAlign: TextAlign.center,
+        title: Selector<RoutineModel, String>(
+          selector: (p0, p1) => p1.getRoutine(widget.id)!.name,
+          builder: (context, value, child) => Text(
+            value,
+            style: Theme.of(context)
+                .textTheme
+                .headlineLarge!
+                .apply(color: Theme.of(context).colorScheme.onBackground),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
       body: Padding(
@@ -117,46 +144,56 @@ class RoutineScreenState extends State<RoutineScreen>
           children: [
             Expanded(
               flex: 7,
-              child: Stack(
-                alignment: AlignmentDirectional.center,
-                children: [
-                  const SizedBox(
-                    height: 300,
-                    child: Center(
-                        child: Text(
-                      "Good Work",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )),
-                  ),
-                  ...tasks
-                      .asMap()
-                      .entries
-                      .map((e) => TaskCard(
-                            isSkipped: _isSkipped,
-                            isCompleted: _isComplete,
-                            buttonController: _buttonController,
-                            isPlaying: _isPlaying,
-                            onTap: onTap,
-                            name: e.value.name,
-                            controller: e.key == 0 ? _controller : null,
-                            color: Color(e.value.color),
-                            index: (e.key) * 1.0,
-                            onDismissed: onDismiss,
-                          ))
-                      .toList()
-                      .reversed,
-                ],
-              ),
+              child: Selector<RoutineModel, List<Task>>(
+                  selector: (p0, p1) =>
+                      p1.getRoutine(widget.id)!.inCompletedTasks,
+                  builder: ((context, value, child) => Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: [
+                          const SizedBox(
+                            height: 300,
+                            child: Center(
+                                child: Text(
+                              "Good Work",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                          ),
+                          ...value
+                              .asMap()
+                              .entries
+                              .map((e) => TaskCard(
+                                    isSkipped: _isSkipped,
+                                    isCompleted: _isComplete,
+                                    buttonController: _buttonController,
+                                    isPlaying: _isPlaying,
+                                    onTap: onTap,
+                                    name: e.value.name,
+                                    controller: e.key == 0 ? _controller : null,
+                                    color: Color(e.value.color),
+                                    index: (e.key) * 1.0,
+                                    onDismissed: onDismiss,
+                                  ))
+                              .toList()
+                              .reversed,
+                        ],
+                      ))),
             ),
             Expanded(
               flex: 1,
               child: TweenAnimationBuilder<double>(
                   duration: const Duration(milliseconds: 350),
-                  tween: Tween(begin: 0, end: tasks.isEmpty ? 300 : 0),
+                  tween: Tween(
+                      begin: 0,
+                      end: Provider.of<RoutineModel>(context, listen: false)
+                              .getRoutine(widget.id)!
+                              .tasks
+                              .isEmpty
+                          ? 300
+                          : 0),
                   curve: Curves.easeInCirc,
                   builder: ((context, double value, child) =>
                       Transform.translate(

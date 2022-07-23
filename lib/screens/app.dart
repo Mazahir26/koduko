@@ -30,25 +30,7 @@ class _AppState extends State<App> {
     final List<Widget> widgetOptions = <Widget>[
       const HomeScreen(),
       const RoutinesScreen(),
-      RoutineScreen(
-          routine: Routine.create(
-        name: "Test",
-        tasks: [
-          Task.fromDuration(
-              duration: const Duration(seconds: 10),
-              name: "Task1",
-              color: Colors.blue),
-          Task.fromDuration(
-              duration: const Duration(seconds: 15),
-              name: "Task2",
-              color: Colors.grey),
-          Task.fromDuration(
-              duration: const Duration(seconds: 40),
-              name: "Task3",
-              color: Colors.greenAccent),
-        ],
-        days: ["Monday", "Tuesday"],
-      ))
+      const HomeScreen(),
     ];
     return Scaffold(
       bottomNavigationBar: NavigationBar(

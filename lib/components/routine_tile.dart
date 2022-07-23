@@ -44,7 +44,7 @@ class RoutineTile extends StatelessWidget {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: ((context) => RoutineScreen(routine: routine))));
+            builder: ((context) => RoutineScreen(id: routine.id))));
   }
 
   @override

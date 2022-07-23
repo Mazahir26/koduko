@@ -26,7 +26,7 @@ class TaskCard extends StatelessWidget {
   final AnimationController? controller;
   final Color color;
   final double index;
-  final void Function(DismissDirection direction) onDismissed;
+  final void Function(DismissDirection, BuildContext) onDismissed;
   final bool isPlaying;
   final AnimationController buttonController;
   final void Function(TapUpDetails details) onTap;
@@ -82,7 +82,7 @@ class TaskCard extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           tween: tween,
           onEnd: () {
-            onDismissed(DismissDirection.vertical);
+            onDismissed(DismissDirection.endToStart, context);
           },
           builder: (context, double value, child) => Transform.translate(
             offset: Offset(value, 0),
@@ -98,7 +98,7 @@ class TaskCard extends StatelessWidget {
               padding: EdgeInsets.only(left: index * 10, bottom: index * 10),
               child: Dismissible(
                 key: Key(name),
-                onDismissed: onDismissed,
+                onDismissed: ((direction) => onDismissed(direction, context)),
                 child: Stack(
                   alignment: AlignmentDirectional.bottomEnd,
                   children: [
