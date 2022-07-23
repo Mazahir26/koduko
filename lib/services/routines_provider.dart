@@ -42,8 +42,9 @@ class RoutineModel extends ChangeNotifier {
     int index =
         _routines.indexWhere((element) => element.id.compareTo(id) == 0);
     if (index > -1) {
-      _box.putAt(index, _routines[index].skipTask());
-      _routines[index] = _routines[index].skipTask();
+      var r = _routines[index].skipTask();
+      _box.putAt(index, r);
+      _routines[index] = r;
       notifyListeners();
     }
   }
@@ -61,8 +62,20 @@ class RoutineModel extends ChangeNotifier {
     int index =
         _routines.indexWhere((element) => element.id.compareTo(id) == 0);
     if (index > -1) {
-      _box.putAt(index, _routines[index].completeTask());
-      _routines[index] = _routines[index].completeTask();
+      var r = _routines[index].completeTask();
+      _box.putAt(index, r);
+      _routines[index] = r;
+      notifyListeners();
+    }
+  }
+
+  void replay(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      var r = _routines[index].replay();
+      _box.putAt(index, r);
+      _routines[index] = r;
       notifyListeners();
     }
   }

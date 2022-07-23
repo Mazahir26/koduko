@@ -23,7 +23,7 @@ class RoutineAdapter extends TypeAdapter<Routine> {
       history: (fields[4] as List).cast<TaskEvent>(),
       id: fields[0] as String,
       days: (fields[6] as List).cast<String>(),
-      isDaily: fields[5] == null ? true : fields[5] as bool,
+      isCompleted: fields[5] == null ? true : fields[5] as bool,
     );
   }
 
@@ -42,7 +42,7 @@ class RoutineAdapter extends TypeAdapter<Routine> {
       ..writeByte(4)
       ..write(obj.history)
       ..writeByte(5)
-      ..write(obj.isDaily)
+      ..write(obj.isCompleted)
       ..writeByte(6)
       ..write(obj.days);
   }

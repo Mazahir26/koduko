@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/card.dart';
+import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/utils/parse_duration.dart';
 import 'package:provider/provider.dart';
 
 class RoutineScreen extends StatefulWidget {
-  final String id;
-  const RoutineScreen({Key? key, required this.id}) : super(key: key);
+  final Routine routine;
+  const RoutineScreen({Key? key, required this.routine}) : super(key: key);
 
   @override
   State<RoutineScreen> createState() => RoutineScreenState();
@@ -24,12 +25,25 @@ class RoutineScreenState extends State<RoutineScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.duration = parseDuration(
+      if (widget.routine.isCompleted) {
+        Provider.of<RoutineModel>(context, listen: false)
+            .replay(widget.routine.id);
+        _controller.duration = parseDuration(
           Provider.of<RoutineModel>(context, listen: false)
-              .getRoutine(widget.id)!
+              .getRoutine(widget.routine.id)!
               .tasks
               .first
-              .duration);
+              .duration,
+        );
+      } else {
+        _controller.duration = parseDuration(
+          Provider.of<RoutineModel>(context, listen: false)
+              .getRoutine(widget.routine.id)!
+              .inCompletedTasks
+              .first
+              .duration,
+        );
+      }
     });
     _controller =
         AnimationController(vsync: this, duration: const Duration(minutes: 1));
@@ -63,27 +77,16 @@ class RoutineScreenState extends State<RoutineScreen>
 
   void onDismiss(DismissDirection t, BuildContext context) {
     if (t == DismissDirection.endToStart) {
-      Provider.of<RoutineModel>(context, listen: false).skipTask(widget.id);
+      Provider.of<RoutineModel>(context, listen: false)
+          .skipTask(widget.routine.id);
       setState(() {
+        _controller.reset();
         if (_isSkipped) {
           _isSkipped = false;
         }
-        _controller.reset();
-        var ts = Provider.of<RoutineModel>(context, listen: false)
-            .getRoutine(widget.id)!
-            .tasks;
-        if (ts.isNotEmpty) {
-          _controller.duration = parseDuration(ts.first.duration);
-        }
-        if (_isPlaying) {
-          _controller.forward();
-        }
       });
-    } else if (t == DismissDirection.startToEnd) {
-      Provider.of<RoutineModel>(context, listen: false).completeTask(widget.id);
-      _controller.reset();
       var ts = Provider.of<RoutineModel>(context, listen: false)
-          .getRoutine(widget.id)!
+          .getRoutine(widget.routine.id)!
           .tasks;
       if (ts.isNotEmpty) {
         _controller.duration = parseDuration(ts.first.duration);
@@ -91,11 +94,24 @@ class RoutineScreenState extends State<RoutineScreen>
       if (_isPlaying) {
         _controller.forward();
       }
+    } else if (t == DismissDirection.startToEnd) {
+      Provider.of<RoutineModel>(context, listen: false)
+          .completeTask(widget.routine.id);
+      _controller.reset();
       setState(() {
         if (_isComplete) {
           _isComplete = false;
         }
       });
+      var ts = Provider.of<RoutineModel>(context, listen: false)
+          .getRoutine(widget.routine.id)!
+          .tasks;
+      if (ts.isNotEmpty) {
+        _controller.duration = parseDuration(ts.first.duration);
+      }
+      if (_isPlaying) {
+        _controller.forward();
+      }
     }
   }
 
@@ -125,7 +141,7 @@ class RoutineScreenState extends State<RoutineScreen>
           ),
         ),
         title: Selector<RoutineModel, String>(
-          selector: (p0, p1) => p1.getRoutine(widget.id)!.name,
+          selector: (p0, p1) => p1.getRoutine(widget.routine.id)!.name,
           builder: (context, value, child) => Text(
             value,
             style: Theme.of(context)
@@ -138,132 +154,130 @@ class RoutineScreenState extends State<RoutineScreen>
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 7,
-              child: Selector<RoutineModel, List<Task>>(
-                  selector: (p0, p1) =>
-                      p1.getRoutine(widget.id)!.inCompletedTasks,
-                  builder: ((context, value, child) => Stack(
-                        alignment: AlignmentDirectional.center,
-                        children: [
-                          const SizedBox(
-                            height: 300,
-                            child: Center(
-                                child: Text(
-                              "Good Work",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 48,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )),
-                          ),
-                          ...value
-                              .asMap()
-                              .entries
-                              .map((e) => TaskCard(
-                                    isSkipped: _isSkipped,
-                                    isCompleted: _isComplete,
-                                    buttonController: _buttonController,
-                                    isPlaying: _isPlaying,
-                                    onTap: onTap,
-                                    name: e.value.name,
-                                    controller: e.key == 0 ? _controller : null,
-                                    color: Color(e.value.color),
-                                    index: (e.key) * 1.0,
-                                    onDismissed: onDismiss,
-                                  ))
-                              .toList()
-                              .reversed,
-                        ],
-                      ))),
-            ),
-            Expanded(
-              flex: 1,
-              child: TweenAnimationBuilder<double>(
-                  duration: const Duration(milliseconds: 350),
-                  tween: Tween(
-                      begin: 0,
-                      end: Provider.of<RoutineModel>(context, listen: false)
-                              .getRoutine(widget.id)!
-                              .tasks
-                              .isEmpty
-                          ? 300
-                          : 0),
-                  curve: Curves.easeInCirc,
-                  builder: ((context, double value, child) =>
-                      Transform.translate(
-                        offset: Offset(0, value),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isSkipped = true;
-                                  });
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: const [
-                                    Icon(Icons.swipe_left_rounded),
-                                    SizedBox(height: 10),
-                                    Text("Skip"),
-                                  ],
-                                ),
-                              ),
+        child: Selector<RoutineModel, List<Task>>(
+          selector: (p0, p1) =>
+              p1.getRoutine(widget.routine.id)!.inCompletedTasks,
+          builder: ((context, value, child) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 7,
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        const SizedBox(
+                          height: 300,
+                          child: Center(
+                              child: Text(
+                            "Good Work",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Expanded(
-                                flex: 1,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    onTap(null);
-                                  },
-                                  style: ButtonStyle(
-                                    elevation:
-                                        MaterialStateProperty.all<double>(6),
-                                    shape: MaterialStateProperty.all(
-                                        const CircleBorder()),
-                                    padding: MaterialStateProperty.all(
-                                        const EdgeInsets.all(15)),
-                                  ),
-                                  child: AnimatedIcon(
-                                    icon: AnimatedIcons.play_pause,
-                                    progress: _buttonController,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    size: 50,
-                                  ),
-                                )),
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isComplete = true;
-                                  });
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: const [
-                                    Icon(Icons.swipe_right_rounded),
-                                    SizedBox(height: 10),
-                                    Text("Completed"),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                          )),
                         ),
-                      ))),
-            )
-          ],
+                        ...value
+                            .asMap()
+                            .entries
+                            .map((e) => TaskCard(
+                                  isSkipped: _isSkipped,
+                                  isCompleted: _isComplete,
+                                  buttonController: _buttonController,
+                                  isPlaying: _isPlaying,
+                                  onTap: onTap,
+                                  name: e.value.name,
+                                  controller: e.key == 0 ? _controller : null,
+                                  color: Color(e.value.color),
+                                  index: (e.key) * 1.0,
+                                  onDismissed: onDismiss,
+                                ))
+                            .toList()
+                            .reversed,
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: TweenAnimationBuilder<double>(
+                        duration: const Duration(milliseconds: 350),
+                        tween: Tween(begin: 0, end: value.isEmpty ? 300 : 0),
+                        curve: Curves.easeInCirc,
+                        builder: ((context, double value, child) =>
+                            Transform.translate(
+                              offset: Offset(0, value),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _isSkipped = true;
+                                        });
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: const [
+                                          Icon(Icons.swipe_left_rounded),
+                                          SizedBox(height: 10),
+                                          Text("Skip"),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      flex: 1,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          onTap(null);
+                                        },
+                                        style: ButtonStyle(
+                                          elevation:
+                                              MaterialStateProperty.all<double>(
+                                                  6),
+                                          shape: MaterialStateProperty.all(
+                                              const CircleBorder()),
+                                          padding: MaterialStateProperty.all(
+                                              const EdgeInsets.all(15)),
+                                        ),
+                                        child: AnimatedIcon(
+                                          icon: AnimatedIcons.play_pause,
+                                          progress: _buttonController,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          size: 50,
+                                        ),
+                                      )),
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _isComplete = true;
+                                        });
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: const [
+                                          Icon(Icons.swipe_right_rounded),
+                                          SizedBox(height: 10),
+                                          Text("Completed"),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ))),
+                  )
+                ],
+              )),
         ),
       ),
     );

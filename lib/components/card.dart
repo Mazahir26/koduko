@@ -66,7 +66,8 @@ class TaskCard extends StatelessWidget {
       return "0:00";
     }
 
-    Duration duration = controller!.duration! * controller!.value;
+    Duration duration =
+        controller!.duration! - (controller!.duration! * controller!.value);
     return durationToString(duration);
   }
 
@@ -186,17 +187,17 @@ class TaskCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Positioned(
-                        top: 125,
-                        left: 125,
-                        child: Text(
-                          name,
-                          style: TextStyle(
-                            fontSize: 40,
-                            color: textColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ))
+                    Positioned.fill(
+                        child: Align(
+                      child: Text(
+                        name,
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: textColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ))
                   ],
                 ),
               ),

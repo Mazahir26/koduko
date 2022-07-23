@@ -44,7 +44,9 @@ class RoutineTile extends StatelessWidget {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: ((context) => RoutineScreen(id: routine.id))));
+            builder: ((context) => RoutineScreen(
+                  routine: routine,
+                ))));
   }
 
   @override
@@ -150,8 +152,10 @@ class RoutineTile extends StatelessWidget {
                         onPressed: () {
                           onPress(context);
                         },
-                        icon: const Icon(
-                          Icons.play_arrow_rounded,
+                        icon: Icon(
+                          routine.isCompleted
+                              ? Icons.replay_rounded
+                              : Icons.play_arrow_rounded,
                           size: 30,
                         ))
                   ],

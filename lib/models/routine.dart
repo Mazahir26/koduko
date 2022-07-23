@@ -23,7 +23,7 @@ class Routine {
   late List<TaskEvent> history;
 
   @HiveField(5, defaultValue: true)
-  late bool isDaily;
+  late bool isCompleted;
 
   @HiveField(6)
   List<String> days;
@@ -35,9 +35,9 @@ class Routine {
     required this.history,
     required this.id,
     required this.days,
-    required this.isDaily,
+    required this.isCompleted,
   }) {
-    if (inCompletedTasks.isEmpty) {
+    if (inCompletedTasks.isEmpty && !isCompleted) {
       inCompletedTasks = tasks;
     }
   }
@@ -48,7 +48,7 @@ class Routine {
     required this.days,
   }) {
     id = const Uuid().v4();
-    isDaily = days.length == 7;
+    isCompleted = false;
     history = [];
     inCompletedTasks = tasks;
   }
@@ -59,7 +59,7 @@ class Routine {
     String? id,
     String? name,
     List<String>? days,
-    bool? isDaily,
+    bool? isCompleted,
   }) {
     return Routine(
         name: name ?? this.name,
@@ -68,7 +68,7 @@ class Routine {
         history: history ?? this.history,
         id: id ?? this.id,
         days: days ?? this.days,
-        isDaily: isDaily ?? this.isDaily);
+        isCompleted: isCompleted ?? this.isCompleted);
   }
 
   Routine skipTask() {
@@ -81,7 +81,11 @@ class Routine {
   Routine completeTask() {
     List<Task> r = List.from(inCompletedTasks);
     r.removeAt(0);
-    return copyWith(inCompletedTasks: r);
+    return copyWith(inCompletedTasks: r, isCompleted: r.isEmpty ? true : false);
+  }
+
+  Routine replay() {
+    return copyWith(isCompleted: false);
   }
 
   Routine? taskExists(Task t) {
@@ -95,7 +99,9 @@ class Routine {
   }
 
   String getDays() {
-    return isDaily ? "Daily" : days.map((e) => e.substring(0, 3)).join(", ");
+    return days.length == 7
+        ? "Daily"
+        : days.map((e) => e.substring(0, 3)).join(", ");
   }
 
   double getPercentage() {
