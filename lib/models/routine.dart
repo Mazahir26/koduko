@@ -105,9 +105,9 @@ class Routine {
   }
 
   double getPercentage() {
-    return inCompletedTasks.isEmpty
+    return (tasks.length - inCompletedTasks.length) == 0
         ? 0
-        : (tasks.length / inCompletedTasks.length);
+        : ((tasks.length - inCompletedTasks.length) / tasks.length);
   }
 
   String getPercentageString() {

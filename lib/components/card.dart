@@ -50,9 +50,19 @@ class TaskCard extends StatelessWidget {
     required this.isSkipped,
   }) : super(key: key) {
     if (controller != null) {
-      tween = Tween(
+      if (isCompleted) {
+        tween = Tween(
           begin: 0,
-          end: (isCompleted || isSkipped) ? (isSkipped ? -400 : 400) : 0);
+          end: 400,
+        );
+      } else if (isSkipped) {
+        tween = Tween(
+          begin: 0,
+          end: -400,
+        );
+      } else {
+        tween = Tween(begin: 0, end: 0);
+      }
     } else {
       tween = Tween(begin: 0, end: 0);
     }
@@ -83,7 +93,11 @@ class TaskCard extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           tween: tween,
           onEnd: () {
-            onDismissed(DismissDirection.endToStart, context);
+            if (isSkipped) {
+              onDismissed(DismissDirection.endToStart, context);
+            } else if (isCompleted) {
+              onDismissed(DismissDirection.startToEnd, context);
+            }
           },
           builder: (context, double value, child) => Transform.translate(
             offset: Offset(value, 0),
@@ -91,11 +105,11 @@ class TaskCard extends StatelessWidget {
           ),
           child: AnimatedRotation(
             duration: const Duration(milliseconds: 100),
-            curve: Curves.bounceIn,
+            curve: Curves.easeInCirc,
             turns: index / 200,
             child: AnimatedPadding(
               duration: const Duration(milliseconds: 100),
-              curve: Curves.easeInOutQuad,
+              curve: Curves.easeInCirc,
               padding: EdgeInsets.only(left: index * 10, bottom: index * 10),
               child: Dismissible(
                 key: Key(name),

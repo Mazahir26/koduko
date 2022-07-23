@@ -87,12 +87,12 @@ class RoutineScreenState extends State<RoutineScreen>
       });
       var ts = Provider.of<RoutineModel>(context, listen: false)
           .getRoutine(widget.routine.id)!
-          .tasks;
+          .inCompletedTasks;
       if (ts.isNotEmpty) {
         _controller.duration = parseDuration(ts.first.duration);
-      }
-      if (_isPlaying) {
-        _controller.forward();
+        if (_isPlaying) {
+          _controller.forward();
+        }
       }
     } else if (t == DismissDirection.startToEnd) {
       Provider.of<RoutineModel>(context, listen: false)
@@ -105,12 +105,12 @@ class RoutineScreenState extends State<RoutineScreen>
       });
       var ts = Provider.of<RoutineModel>(context, listen: false)
           .getRoutine(widget.routine.id)!
-          .tasks;
+          .inCompletedTasks;
       if (ts.isNotEmpty) {
         _controller.duration = parseDuration(ts.first.duration);
-      }
-      if (_isPlaying) {
-        _controller.forward();
+        if (_isPlaying) {
+          _controller.forward();
+        }
       }
     }
   }
