@@ -4,7 +4,6 @@ import 'package:koduko/components/create_routine_bottom_sheet.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
