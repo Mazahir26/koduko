@@ -5,6 +5,7 @@ import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class RoutineTile extends StatelessWidget {
@@ -121,47 +122,29 @@ class RoutineTile extends StatelessWidget {
                 routine.name,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              subtitle: Text(routine.getDays()),
-              trailing: SizedBox(
-                width: 150,
-                height: 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    isToday
-                        ? Stack(
-                            alignment: AlignmentDirectional.center,
-                            children: [
-                              CircularProgressIndicator(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                                strokeWidth: 6.2,
-                                value: routine.getPercentage(),
-                              ),
-                              Text(
-                                routine.getPercentageString(),
-                                style: Theme.of(context).textTheme.labelMedium,
-                              )
-                            ],
-                          )
-                        : Container(),
-                    IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          onPress(context);
-                        },
-                        icon: Icon(
-                          routine.isCompleted
-                              ? Icons.replay_rounded
-                              : Icons.play_arrow_rounded,
-                          size: 30,
-                        ))
-                  ],
-                ),
-              )),
+              subtitle: isToday
+                  ? LinearPercentIndicator(
+                      animateFromLastPercent: true,
+                      animation: true,
+                      percent: routine.getPercentage(),
+                      barRadius: const Radius.circular(10),
+                      lineHeight: 8,
+                      progressColor:
+                          Theme.of(context).colorScheme.inversePrimary,
+                      padding: EdgeInsets.zero,
+                    )
+                  : Text(routine.getDays()),
+              trailing: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    onPress(context);
+                  },
+                  icon: Icon(
+                    routine.isCompleted
+                        ? Icons.replay_rounded
+                        : Icons.play_arrow_rounded,
+                    size: 30,
+                  ))),
         ),
       ),
     );
