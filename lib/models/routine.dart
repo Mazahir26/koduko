@@ -40,7 +40,14 @@ class Routine {
   }) {
     if (inCompletedTasks.isNotEmpty || isCompleted) {
       if (history.isNotEmpty) {
-        if (!(history.first.time.isSameDate(DateTime.now()))) {
+        bool isNewDay = true;
+        for (var element in history) {
+          if (element.time.isSameDate(DateTime.now())) {
+            isNewDay = false;
+            break;
+          }
+        }
+        if (isNewDay) {
           isCompleted = false;
           inCompletedTasks = [];
         }
@@ -93,6 +100,7 @@ class Routine {
     List<TaskEvent> h = List.from(history);
     h.add(
         TaskEvent.create(taskName: t.name, taskId: t.id, time: DateTime.now()));
+    h.sort((a, b) => b.time.compareTo(a.time));
     return copyWith(
         inCompletedTasks: r, isCompleted: r.isEmpty ? true : false, history: h);
   }
@@ -106,9 +114,11 @@ class Routine {
     if (history.isEmpty) {
       return count;
     } else {
-      history.map((e) => {
-            if (e.time.isSameDate(d)) {count++}
-          });
+      for (var element in history) {
+        if (element.time.isSameDate(d)) {
+          count++;
+        }
+      }
     }
     return count;
   }

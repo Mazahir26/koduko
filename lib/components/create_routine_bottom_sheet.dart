@@ -78,6 +78,7 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
     if (r == RepeatType.daily) {
       setState(() {
         selectedDays = selectedDays.map((key, value) => MapEntry(key, true));
+        pageComplected = true;
       });
     } else {
       setState(() {

@@ -64,13 +64,11 @@ class RoutineModel extends ChangeNotifier {
     List<int> data = [];
     for (var i = 0; i < 7; i++) {
       var noOfTasks = 0;
-      _routines.map((e) => {
-            noOfTasks += e.getCompletedTasks(
-              startOfWeek.add(
-                Duration(days: i),
-              ),
-            )
-          });
+      var day = startOfWeek.add(Duration(days: i));
+      for (var element in _routines) {
+        noOfTasks += element.getCompletedTasks(day);
+      }
+
       data.add(noOfTasks);
     }
     return data;
