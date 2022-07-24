@@ -101,6 +101,18 @@ class Routine {
     return copyWith(isCompleted: false);
   }
 
+  int getCompletedTasks(DateTime d) {
+    var count = 0;
+    if (history.isEmpty) {
+      return count;
+    } else {
+      history.map((e) => {
+            if (e.time.isSameDate(d)) {count++}
+          });
+    }
+    return count;
+  }
+
   Routine? taskExists(Task t) {
     int index = tasks.indexWhere((element) => element.id.compareTo(t.id) == 0);
     if (index > -1) {

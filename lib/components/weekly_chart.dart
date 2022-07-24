@@ -1,5 +1,10 @@
+// import 'dart:math';
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:koduko/services/routines_provider.dart';
+import 'package:provider/provider.dart';
 
 class WeeklyChart extends StatelessWidget {
   const WeeklyChart({
@@ -9,167 +14,85 @@ class WeeklyChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        color: Theme.of(context).colorScheme.onSurface,
-        child: SizedBox(
-          height: 280,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    "Weekly Activity",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .apply(color: Colors.white),
-                  ),
-                ),
-                SizedBox(
-                  height: 150,
-                  width: MediaQuery.of(context).size.width - 60,
-                  child: BarChart(
-                    BarChartData(
-                      borderData: FlBorderData(show: false),
-                      gridData: FlGridData(show: false),
-                      alignment: BarChartAlignment.spaceAround,
-                      titlesData: FlTitlesData(
-                        show: true,
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 30,
-                            getTitlesWidget: ((value, meta) => getTitles(value,
-                                meta, Theme.of(context).colorScheme.onPrimary)),
-                          ),
-                        ),
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        topTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        rightTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Text("Weekly Activity",
+                style: Theme.of(context).textTheme.titleMedium!),
+          ),
+          SizedBox(
+              height: 160,
+              child: Consumer<RoutineModel>(
+                builder: ((context, value, child) {
+                  var ok = value
+                      .getWeeklyStats()
+                      .asMap()
+                      .map((key, val) => MapEntry(
+                          key,
+                          BarChartGroupData(
+                            x: key,
+                            barRods: [
+                              BarChartRodData(
+                                width: 15,
+                                backDrawRodData: BackgroundBarChartRodData(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceVariant,
+                                  show: true,
+                                  toY: value
+                                              .getWeeklyStats()
+                                              .reduce(max)
+                                              .toDouble() ==
+                                          0
+                                      ? 10
+                                      : value
+                                          .getWeeklyStats()
+                                          .reduce(max)
+                                          .toDouble(),
+                                ),
+                                toY: val.toDouble(),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                              ),
+                            ],
+                          )))
+                      .values
+                      .toList();
+                  return BarChart(BarChartData(
+                    borderData: FlBorderData(show: false),
+                    gridData: FlGridData(show: false),
+                    alignment: BarChartAlignment.spaceAround,
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 30,
+                          getTitlesWidget: ((value, meta) => getTitles(
+                              value,
+                              meta,
+                              Theme.of(context).colorScheme.onBackground)),
                         ),
                       ),
-                      barGroups: [
-                        BarChartGroupData(
-                          x: 0,
-                          barRods: [
-                            BarChartRodData(
-                              width: 15,
-                              backDrawRodData: BackgroundBarChartRodData(
-                                color: Colors.white.withOpacity(0.2),
-                                show: true,
-                                toY: 15,
-                              ),
-                              toY: 5,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 1,
-                          barRods: [
-                            BarChartRodData(
-                              width: 15,
-                              backDrawRodData: BackgroundBarChartRodData(
-                                color: Colors.white.withOpacity(0.2),
-                                show: true,
-                                toY: 15,
-                              ),
-                              toY: 6,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 2,
-                          barRods: [
-                            BarChartRodData(
-                              width: 15,
-                              backDrawRodData: BackgroundBarChartRodData(
-                                color: Colors.white.withOpacity(0.2),
-                                show: true,
-                                toY: 15,
-                              ),
-                              toY: 8,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 1,
-                          barRods: [
-                            BarChartRodData(
-                              width: 15,
-                              backDrawRodData: BackgroundBarChartRodData(
-                                color: Colors.white.withOpacity(0.2),
-                                show: true,
-                                toY: 15,
-                              ),
-                              toY: 12,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 1,
-                          barRods: [
-                            BarChartRodData(
-                              width: 15,
-                              backDrawRodData: BackgroundBarChartRodData(
-                                color: Colors.white.withOpacity(0.2),
-                                show: true,
-                                toY: 15,
-                              ),
-                              toY: 15,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 1,
-                          barRods: [
-                            BarChartRodData(
-                              width: 15,
-                              backDrawRodData: BackgroundBarChartRodData(
-                                color: Colors.white.withOpacity(0.2),
-                                show: true,
-                                toY: 15,
-                              ),
-                              toY: 10,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 1,
-                          barRods: [
-                            BarChartRodData(
-                              width: 15,
-                              backDrawRodData: BackgroundBarChartRodData(
-                                color: Colors.white.withOpacity(0.2),
-                                show: true,
-                                toY: 15,
-                              ),
-                              toY: 10,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ],
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ));
+                    barGroups: ok,
+                  ));
+                }),
+              ))
+        ],
+      ),
+    );
   }
 }
 

@@ -58,6 +58,24 @@ class RoutineModel extends ChangeNotifier {
     return null;
   }
 
+  List<int> getWeeklyStats() {
+    var startOfWeek = DateTime(DateTime.now().year, DateTime.now().month,
+        DateTime.now().day - (DateTime.now().weekday - 1));
+    List<int> data = [];
+    for (var i = 0; i < 7; i++) {
+      var noOfTasks = 0;
+      _routines.map((e) => {
+            noOfTasks += e.getCompletedTasks(
+              startOfWeek.add(
+                Duration(days: i),
+              ),
+            )
+          });
+      data.add(noOfTasks);
+    }
+    return data;
+  }
+
   void completeTask(String id) {
     int index =
         _routines.indexWhere((element) => element.id.compareTo(id) == 0);
