@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
+import 'package:koduko/utils/date_time_extension.dart';
 import 'package:uuid/uuid.dart';
 
 part 'routine.g.dart';
@@ -37,6 +38,14 @@ class Routine {
     required this.days,
     required this.isCompleted,
   }) {
+    if (inCompletedTasks.isNotEmpty || isCompleted) {
+      if (history.isNotEmpty) {
+        if (!(history.first.time.isSameDate(DateTime.now()))) {
+          isCompleted = false;
+          inCompletedTasks = [];
+        }
+      }
+    }
     if (inCompletedTasks.isEmpty && !isCompleted) {
       inCompletedTasks = tasks;
     }
@@ -80,8 +89,12 @@ class Routine {
 
   Routine completeTask() {
     List<Task> r = List.from(inCompletedTasks);
-    r.removeAt(0);
-    return copyWith(inCompletedTasks: r, isCompleted: r.isEmpty ? true : false);
+    var t = r.removeAt(0);
+    List<TaskEvent> h = List.from(history);
+    h.add(
+        TaskEvent.create(taskName: t.name, taskId: t.id, time: DateTime.now()));
+    return copyWith(
+        inCompletedTasks: r, isCompleted: r.isEmpty ? true : false, history: h);
   }
 
   Routine replay() {

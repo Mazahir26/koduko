@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/models/task_event.dart';
 import 'package:koduko/screens/app.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/routines_provider.dart';
@@ -12,7 +13,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
   Hive.registerAdapter(RoutineAdapter());
-
+  Hive.registerAdapter(TaskEventAdapter());
   runApp(const MyApp());
 }
 

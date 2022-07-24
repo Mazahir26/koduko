@@ -24,6 +24,11 @@ class TaskEvent {
     required this.taskId,
   });
 
+  @override
+  String toString() {
+    return '[Id : $id, Name: $taskName, Time: $time, TaskId: $taskId]';
+  }
+
   TaskEvent.create({
     required this.taskName,
     required this.taskId,
