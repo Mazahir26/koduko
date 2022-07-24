@@ -29,7 +29,8 @@ class WeeklyChart extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 200,
+                  height: 150,
+                  width: MediaQuery.of(context).size.width - 60,
                   child: BarChart(
                     BarChartData(
                       borderData: FlBorderData(show: false),
@@ -41,7 +42,8 @@ class WeeklyChart extends StatelessWidget {
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 30,
-                            getTitlesWidget: getTitles,
+                            getTitlesWidget: ((value, meta) => getTitles(value,
+                                meta, Theme.of(context).colorScheme.onPrimary)),
                           ),
                         ),
                         leftTitles: AxisTitles(
@@ -171,9 +173,9 @@ class WeeklyChart extends StatelessWidget {
   }
 }
 
-Widget getTitles(double value, TitleMeta meta) {
-  const style = TextStyle(
-    color: Colors.white,
+Widget getTitles(double value, TitleMeta meta, Color color) {
+  var style = TextStyle(
+    color: color,
     fontWeight: FontWeight.bold,
     fontSize: 14,
   );
