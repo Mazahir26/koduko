@@ -26,6 +26,7 @@ class RoutineScreenState extends State<RoutineScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      // var routine = Provider.of<RoutineModel>()
       if (widget.routine.isCompleted) {
         Provider.of<RoutineModel>(context, listen: false)
             .replay(widget.routine.id);

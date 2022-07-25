@@ -16,7 +16,12 @@ class WeeklyChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.only(top: 20, bottom: 10),
+        padding: const EdgeInsets.only(
+          top: 20,
+          bottom: 10,
+          left: 10,
+          right: 10,
+        ),
         child: SizedBox(
             height: 180,
             child: Consumer<RoutineModel>(

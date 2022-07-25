@@ -56,7 +56,14 @@ class Header extends StatelessWidget {
                     Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+          child: Text(
+            'Weekly Activity',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+        ),
         const WeeklyChart()
       ],
     );
