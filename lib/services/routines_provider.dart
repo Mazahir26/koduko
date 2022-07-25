@@ -74,6 +74,26 @@ class RoutineModel extends ChangeNotifier {
     return data;
   }
 
+  int totalNoOfTasksToday() {
+    int noOfTasks = 0;
+    for (var element in _routines) {
+      if (element.isToday()) {
+        noOfTasks += element.tasks.length - element.inCompletedTasks.length;
+      }
+    }
+    return noOfTasks;
+  }
+
+  int totalNoOfCompletedTasksToday() {
+    int noOfTasks = 0;
+    for (var element in _routines) {
+      if (element.isToday()) {
+        noOfTasks += element.inCompletedTasks.length;
+      }
+    }
+    return noOfTasks;
+  }
+
   void completeTask(String id) {
     int index =
         _routines.indexWhere((element) => element.id.compareTo(id) == 0);

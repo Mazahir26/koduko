@@ -116,34 +116,50 @@ class RoutineTile extends StatelessWidget {
           ],
         ),
         child: Card(
-          child: ListTile(
-              title: Text(
-                routine.name,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              subtitle: isToday
-                  ? LinearPercentIndicator(
-                      animateFromLastPercent: true,
-                      animation: true,
-                      percent: routine.getPercentage(),
-                      barRadius: const Radius.circular(10),
-                      lineHeight: 8,
-                      progressColor:
-                          Theme.of(context).colorScheme.inversePrimary,
-                      padding: EdgeInsets.zero,
-                    )
-                  : Text(routine.getDays()),
-              trailing: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    onPress(context);
-                  },
-                  icon: Icon(
-                    routine.isCompleted
-                        ? Icons.replay_rounded
-                        : Icons.play_arrow_rounded,
-                    size: 30,
-                  ))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: ListTile(
+                title: Text(
+                  routine.name,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                subtitle: isToday
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            routine.inCompletedTasks.isEmpty
+                                ? const Text("Completed")
+                                : Text(
+                                    'Completed ${routine.tasks.length - routine.inCompletedTasks.length} out of ${routine.tasks.length}'),
+                            const SizedBox(height: 5),
+                            LinearPercentIndicator(
+                              animateFromLastPercent: true,
+                              animation: true,
+                              percent: routine.getPercentage(),
+                              barRadius: const Radius.circular(10),
+                              lineHeight: 3,
+                              progressColor:
+                                  Theme.of(context).colorScheme.inversePrimary,
+                              padding: EdgeInsets.zero,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Text(routine.getDays()),
+                trailing: IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      onPress(context);
+                    },
+                    icon: Icon(
+                      routine.isCompleted
+                          ? Icons.replay_rounded
+                          : Icons.play_arrow_rounded,
+                      size: 30,
+                    ))),
+          ),
         ),
       ),
     );

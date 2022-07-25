@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/utils/date_time_extension.dart';
@@ -137,6 +138,10 @@ class Routine {
     return days.length == 7
         ? "Daily"
         : days.map((e) => e.substring(0, 3)).join(", ");
+  }
+
+  bool isToday() {
+    return days.contains(DateFormat("EEEE").format(DateTime.now()));
   }
 
   double getPercentage() {
