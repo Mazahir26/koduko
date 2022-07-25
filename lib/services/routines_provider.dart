@@ -78,7 +78,7 @@ class RoutineModel extends ChangeNotifier {
     int noOfTasks = 0;
     for (var element in _routines) {
       if (element.isToday()) {
-        noOfTasks += element.tasks.length - element.inCompletedTasks.length;
+        noOfTasks += element.tasks.length;
       }
     }
     return noOfTasks;
@@ -88,7 +88,9 @@ class RoutineModel extends ChangeNotifier {
     int noOfTasks = 0;
     for (var element in _routines) {
       if (element.isToday()) {
-        noOfTasks += element.inCompletedTasks.length;
+        noOfTasks += (element.isCompleted
+            ? element.tasks.length
+            : element.tasks.length - element.inCompletedTasks.length);
       }
     }
     return noOfTasks;

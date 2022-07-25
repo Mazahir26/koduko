@@ -17,44 +17,55 @@ class TodayProgress extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
-        child: Consumer<RoutineModel>(
-          builder: ((context, value, child) => Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Consumer<RoutineModel>(builder: ((context, value, child) {
+          var inT = value.totalNoOfCompletedTasksToday();
+          var t = value.totalNoOfTasksToday();
+          double per;
+          if (t == 0) {
+            per = 0;
+          } else {
+            per = inT / t;
+          }
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${value.totalNoOfCompletedTasksToday()}/${value.totalNoOfTasksToday()}',
-                          style: textTheme.headlineLarge,
-                        ),
-                        Text(
-                          "Today's Progress",
-                          style: textTheme.titleMedium,
-                        )
-                      ]),
-                  Stack(alignment: AlignmentDirectional.center, children: [
-                    CircularPercentIndicator(
-                      percent: value.totalNoOfCompletedTasksToday() /
-                          value.totalNoOfTasksToday(),
-                      backgroundColor:
-                          Theme.of(context).colorScheme.surfaceVariant,
-                      backgroundWidth: 15,
-                      progressColor:
-                          Theme.of(context).colorScheme.inversePrimary,
-                      animation: true,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      radius: 40,
-                      lineWidth: 8,
-                    ),
-                    Text(
-                      '${((value.totalNoOfCompletedTasksToday() / value.totalNoOfTasksToday()) * 100).toInt()}%',
-                      style: textTheme.titleSmall!.apply(fontWeightDelta: 1),
-                    )
-                  ])
+                  Text(
+                    '${value.totalNoOfCompletedTasksToday()}/${value.totalNoOfTasksToday()}',
+                    style: textTheme.headlineLarge,
+                  ),
+                  Text(
+                    "Today's Progress",
+                    style: textTheme.titleMedium,
+                  )
                 ],
-              )),
-        ),
+              ),
+              Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  CircularPercentIndicator(
+                    percent: per,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.surfaceVariant,
+                    backgroundWidth: 15,
+                    progressColor: Theme.of(context).colorScheme.inversePrimary,
+                    animation: true,
+                    circularStrokeCap: CircularStrokeCap.round,
+                    radius: 40,
+                    lineWidth: 8,
+                  ),
+                  Text(
+                    '${(per * 100).toInt()}%',
+                    style: textTheme.titleSmall!.apply(fontWeightDelta: 1),
+                  )
+                ],
+              )
+            ],
+          );
+        })),
       ),
     );
   }

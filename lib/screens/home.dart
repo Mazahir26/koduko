@@ -26,6 +26,7 @@ class HomeScreen extends StatelessWidget {
         Header(textTheme: textTheme),
         const SizedBox(height: 20),
         WeeklyChart(textTheme: textTheme),
+        // TodayProgress(textTheme: textTheme),
         Align(
           alignment: Alignment.centerRight,
           child: TextButton.icon(

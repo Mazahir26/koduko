@@ -6,12 +6,19 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 
-class WeeklyChart extends StatelessWidget {
+class WeeklyChart extends StatefulWidget {
   const WeeklyChart({
     Key? key,
     required this.textTheme,
   }) : super(key: key);
   final TextTheme textTheme;
+
+  @override
+  State<WeeklyChart> createState() => _WeeklyChartState();
+}
+
+class _WeeklyChartState extends State<WeeklyChart> {
+  int index = -1;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -22,11 +29,12 @@ class WeeklyChart extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Weekly Activity',
-                  style: textTheme.headlineSmall!.apply(fontWeightDelta: 1)),
+                  style: widget.textTheme.headlineSmall!
+                      .apply(fontWeightDelta: 1)),
               Consumer<RoutineModel>(
                 builder: ((context, value, child) => Text(
                     'You have completed ${value.getWeeklyStats().sum} ${value.getWeeklyStats().sum > 1 ? "tasks" : "task"} this week.',
-                    style: textTheme.bodyMedium)),
+                    style: widget.textTheme.bodyMedium)),
               ),
               const SizedBox(height: 15),
               SizedBox(
@@ -60,45 +68,72 @@ class WeeklyChart extends StatelessWidget {
                                               .toDouble(),
                                     ),
                                     toY: val.toDouble(),
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary,
+                                    color: key == index
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(0.5)
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary,
                                   ),
                                 ],
                               )))
                           .values
                           .toList();
-                      return BarChart(BarChartData(
-                        borderData: FlBorderData(show: false),
-                        gridData: FlGridData(show: false),
-                        alignment: BarChartAlignment.spaceAround,
-                        titlesData: FlTitlesData(
-                          show: true,
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 40,
-                              getTitlesWidget: ((value, meta) => getTitles(
-                                  value,
-                                  meta,
-                                  Theme.of(context).colorScheme.onBackground,
-                                  Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary)),
+                      return BarChart(
+                          swapAnimationDuration:
+                              const Duration(milliseconds: 250), // Optional
+                          swapAnimationCurve: Curves.bounceOut,
+                          BarChartData(
+                            barTouchData: BarTouchData(
+                              touchTooltipData: barToolTipData(context),
+                              touchCallback:
+                                  (FlTouchEvent event, barTouchResponse) {
+                                setState(() {
+                                  if (!event.isInterestedForInteractions ||
+                                      barTouchResponse == null ||
+                                      barTouchResponse.spot == null) {
+                                    index = -1;
+                                    return;
+                                  }
+                                  index = barTouchResponse
+                                      .spot!.touchedBarGroupIndex;
+                                });
+                              },
                             ),
-                          ),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          topTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          rightTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                        ),
-                        barGroups: barGroupData,
-                      ));
+                            borderData: FlBorderData(show: false),
+                            gridData: FlGridData(show: false),
+                            alignment: BarChartAlignment.spaceAround,
+                            titlesData: FlTitlesData(
+                              show: true,
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 40,
+                                  getTitlesWidget: ((value, meta) => getTitles(
+                                      value,
+                                      meta,
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .onBackground,
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary)),
+                                ),
+                              ),
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                            ),
+                            barGroups: barGroupData,
+                          ));
                     }),
                   )),
             ],
@@ -150,5 +185,48 @@ Widget getTitles(double value, TitleMeta meta, Color color, Color backColor) {
                 ? backColor.withOpacity(0.5)
                 : null),
         child: Text(text, style: style)),
+  );
+}
+
+BarTouchTooltipData barToolTipData(BuildContext context) {
+  return BarTouchTooltipData(
+    tooltipBgColor: Theme.of(context).colorScheme.inversePrimary,
+    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+      String weekDay;
+      switch (group.x.toInt()) {
+        case 0:
+          weekDay = 'Monday';
+          break;
+        case 1:
+          weekDay = 'Tuesday';
+          break;
+        case 2:
+          weekDay = 'Wednesday';
+          break;
+        case 3:
+          weekDay = 'Thursday';
+          break;
+        case 4:
+          weekDay = 'Friday';
+          break;
+        case 5:
+          weekDay = 'Saturday';
+          break;
+        case 6:
+          weekDay = 'Sunday';
+          break;
+        default:
+          throw Error();
+      }
+      return BarTooltipItem(
+        '$weekDay\n',
+        Theme.of(context).textTheme.labelLarge!,
+        children: <TextSpan>[
+          TextSpan(
+              text: '${rod.toY}',
+              style: Theme.of(context).textTheme.labelMedium!),
+        ],
+      );
+    },
   );
 }
