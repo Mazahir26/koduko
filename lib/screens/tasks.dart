@@ -82,8 +82,8 @@ class TasksScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 20),
+                        padding:
+                            const EdgeInsets.only(top: 20, right: 10, left: 10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
