@@ -58,10 +58,28 @@ class RoutineTile extends StatelessWidget {
         key: Key(routine.id),
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
-          dismissible: DismissiblePane(onDismissed: () {
-            Provider.of<RoutineModel>(context, listen: false)
-                .delete(routine.id);
-          }),
+          dismissible: DismissiblePane(
+              closeOnCancel: true,
+              confirmDismiss: () async {
+                bool? tok = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertOnDelete(
+                          onCancel: () {
+                            Navigator.pop(context, false);
+                          },
+                          onDelete: () {
+                            Navigator.pop(context, true);
+                          },
+                        ));
+                if (tok != null) {
+                  return tok;
+                }
+                return false;
+              },
+              onDismissed: () {
+                Provider.of<RoutineModel>(context, listen: false)
+                    .delete(routine.id);
+              }),
           children: [
             Expanded(
               child: Padding(
@@ -69,8 +87,14 @@ class RoutineTile extends StatelessWidget {
                 child: Center(
                     child: TextButton.icon(
                   onPressed: (() {
-                    Provider.of<RoutineModel>(context, listen: false)
-                        .delete(routine.id);
+                    showDialog(
+                        context: context,
+                        builder: ((context) => AlertOnDelete(onCancel: () {
+                              Navigator.pop(context);
+                            }, onDelete: (() {
+                              Provider.of<RoutineModel>(context, listen: false)
+                                  .delete(routine.id);
+                            }))));
                   }),
                   icon: Icon(
                     Icons.delete,
@@ -162,6 +186,36 @@ class RoutineTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AlertOnDelete extends StatelessWidget {
+  const AlertOnDelete({
+    Key? key,
+    required this.onCancel,
+    required this.onDelete,
+  }) : super(key: key);
+  final void Function() onCancel;
+  final void Function() onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("Delete routine?"),
+      content: const Text(
+          "This routine will be deleted. This will remove all the history of this routine as well."),
+      actions: [
+        TextButton(
+          onPressed: onCancel,
+          child: const Text("CANCEL"),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(primary: Theme.of(context).errorColor),
+          onPressed: onDelete,
+          child: const Text("DELETE"),
+        )
+      ],
     );
   }
 }

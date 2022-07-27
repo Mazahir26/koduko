@@ -44,11 +44,36 @@ class TaskTile extends StatelessWidget {
                   },
                   icon: const Icon(Icons.edit)),
               IconButton(
-                  onPressed: () {
-                    Provider.of<TaskModel>(context, listen: false)
-                        .delete(task.id);
-                    Provider.of<RoutineModel>(context, listen: false)
-                        .removeTask(task);
+                  onPressed: () async {
+                    showDialog(
+                        context: context,
+                        builder: ((context) => AlertDialog(
+                              title: const Text("Delete task?"),
+                              content: const Text(
+                                  "This Task will be removed from all the routines. if the routine has only this task, then routine will also be deleted."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("CANCEL"),
+                                ),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                      primary: Theme.of(context).errorColor),
+                                  onPressed: () {
+                                    Provider.of<TaskModel>(context,
+                                            listen: false)
+                                        .delete(task.id);
+                                    Provider.of<RoutineModel>(context,
+                                            listen: false)
+                                        .removeTask(task);
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("DELETE"),
+                                )
+                              ],
+                            )));
                   },
                   icon: Icon(
                     Icons.delete,
