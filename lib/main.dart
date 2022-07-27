@@ -7,6 +7,7 @@ import 'package:koduko/screens/app.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/tasks_provider.dart';
+import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       future: Future.wait([
         Hive.openBox<Routine>("Routines"),
         Hive.openBox<Task>("Tasks"),
+        Hive.openBox<bool>("Theme"),
       ]),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -47,24 +49,38 @@ class MyApp extends StatelessWidget {
               ),
               ChangeNotifierProvider(
                 create: (context) => TaskModel(),
-              )
+              ),
+              ChangeNotifierProvider(
+                create: ((context) => ThemeModel()),
+              ),
             ],
-            child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: 'Flutter Demo',
-                theme: ThemeData(
-                  colorSchemeSeed: Colors.lightBlue,
-                  // colorScheme: ColorScheme.fromSwatch(
-                  //   primarySwatch: Colors.deepPurple,
-                  // ),
-                  useMaterial3: true,
-                  brightness: Brightness.light,
-                ),
-                initialRoute: '/',
-                routes: {
-                  TasksScreen.routeName: (context) => const TasksScreen(),
-                  App.routeName: (context) => const App()
-                }),
+            child: Consumer<ThemeModel>(
+              builder: (context, value, child) => MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  title: 'Flutter Demo',
+                  themeMode: value.getTheme,
+                  theme: ThemeData(
+                    colorSchemeSeed: Colors.lightBlue,
+                    // colorScheme: ColorScheme.fromSwatch(
+                    //   primarySwatch: Colors.deepPurple,
+                    // ),
+                    useMaterial3: true,
+                    brightness: Brightness.light,
+                  ),
+                  darkTheme: ThemeData(
+                    colorSchemeSeed: Colors.deepPurple,
+                    // colorScheme: ColorScheme.fromSwatch(
+                    //   primarySwatch: Colors.deepPurple,
+                    // ),
+                    useMaterial3: true,
+                    brightness: Brightness.dark,
+                  ),
+                  initialRoute: '/',
+                  routes: {
+                    TasksScreen.routeName: (context) => const TasksScreen(),
+                    App.routeName: (context) => const App()
+                  }),
+            ),
           );
         }
         return const MaterialApp(

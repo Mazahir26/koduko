@@ -125,7 +125,8 @@ class TaskCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey[300]!,
+                            color:
+                                Theme.of(context).shadowColor.withOpacity(0.4),
                             blurRadius: 4.0,
                             spreadRadius: 0.2,
                           )
@@ -168,6 +169,7 @@ class TaskCard extends StatelessWidget {
                               );
                             },
                           ),
+                    // Display's the remaining time of the Task
                     Positioned(
                       bottom: 15,
                       left: 10,
@@ -190,6 +192,8 @@ class TaskCard extends StatelessWidget {
                                     ),
                                   ))),
                     ),
+
+                    // The Play-Pause Button on the Card
                     GestureDetector(
                       onTapUp: onTap,
                       child: Padding(
@@ -202,6 +206,8 @@ class TaskCard extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    // The Name of the Task
                     Positioned.fill(
                         child: Align(
                       child: Text(

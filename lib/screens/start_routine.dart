@@ -4,6 +4,8 @@ import 'package:koduko/components/card.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/services/routines_provider.dart';
+import 'package:koduko/services/theme_provider.dart';
+import 'package:koduko/utils/colors_util.dart';
 import 'package:koduko/utils/parse_duration.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +28,6 @@ class RoutineScreenState extends State<RoutineScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // var routine = Provider.of<RoutineModel>()
       if (widget.routine.isCompleted) {
         Provider.of<RoutineModel>(context, listen: false)
             .replay(widget.routine.id);
@@ -171,32 +172,42 @@ class RoutineScreenState extends State<RoutineScreen>
                     child: Stack(
                       alignment: AlignmentDirectional.center,
                       children: [
-                        const SizedBox(
+                        SizedBox(
                           height: 300,
                           child: Center(
-                              child: Text(
-                            "Good Work",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 48,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )),
+                            child: Text("Good Work",
+                                style: GoogleFonts.lato(
+                                  fontWeight: FontWeight.bold,
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .displayMedium!
+                                      .apply(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .color),
+                                )),
+                          ),
                         ),
                         ...value
                             .asMap()
                             .entries
-                            .map((e) => TaskCard(
-                                  isSkipped: _isSkipped,
-                                  isCompleted: _isComplete,
-                                  buttonController: _buttonController,
-                                  isPlaying: _isPlaying,
-                                  onTap: onTap,
-                                  name: e.value.name,
-                                  controller: e.key == 0 ? _controller : null,
-                                  color: Color(e.value.color),
-                                  index: (e.key) * 1.0,
-                                  onDismissed: onDismiss,
+                            .map((e) => Consumer<ThemeModel>(
+                                  builder: (context, themeData, child) =>
+                                      TaskCard(
+                                    isSkipped: _isSkipped,
+                                    isCompleted: _isComplete,
+                                    buttonController: _buttonController,
+                                    isPlaying: _isPlaying,
+                                    onTap: onTap,
+                                    name: e.value.name,
+                                    controller: e.key == 0 ? _controller : null,
+                                    color: themeData.isDark()
+                                        ? darken(Color(e.value.color))
+                                        : Color(e.value.color),
+                                    index: (e.key) * 1.0,
+                                    onDismissed: onDismiss,
+                                  ),
                                 ))
                             .toList()
                             .reversed,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/screens/tasks.dart';
+import 'package:koduko/services/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -12,7 +14,8 @@ class SettingsScreen extends StatelessWidget {
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: ListView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 25),
           Text(
@@ -48,7 +51,9 @@ class SettingsScreen extends StatelessWidget {
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                Provider.of<ThemeModel>(context, listen: false).toggleTheme();
+              },
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
@@ -59,8 +64,16 @@ class SettingsScreen extends StatelessWidget {
                       style: textTheme.titleLarge,
                     ),
                     IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.light_mode_rounded)),
+                      onPressed: () {
+                        Provider.of<ThemeModel>(context, listen: false)
+                            .toggleTheme();
+                      },
+                      icon: Consumer<ThemeModel>(
+                          builder: (context, value, child) =>
+                              value.getTheme == ThemeMode.dark
+                                  ? const Icon(Icons.dark_mode_rounded)
+                                  : const Icon(Icons.light_mode_rounded)),
+                    ),
                   ],
                 ),
               ),
@@ -107,14 +120,23 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 100),
+          const Spacer(),
           Center(
             child: Text(
-              "Version: 0.3 beta",
+              "Version: 0.1 beta",
               style: textTheme.labelMedium!
                   .apply(color: textTheme.labelMedium!.color!.withOpacity(0.5)),
             ),
-          )
+          ),
+          const SizedBox(height: 5),
+          Center(
+            child: Text(
+              "Made in India with ❤️",
+              style: textTheme.labelMedium!
+                  .apply(color: textTheme.labelMedium!.color!.withOpacity(0.5)),
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );
