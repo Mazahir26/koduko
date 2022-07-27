@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:koduko/components/daily_activity.dart';
-import 'package:koduko/components/routine_tile.dart';
 import 'package:koduko/components/weekly_chart.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/utils/greetings.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
-// import 'package:koduko/components/weekly_chart.dart';
-// import 'package:koduko/models/task.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);

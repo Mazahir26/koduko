@@ -159,7 +159,7 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
             padding: const EdgeInsets.all(15),
             child: SizedBox(
               height: MediaQuery.of(context).size.height *
-                  (pageIndex == 1 ? 0.6 : 0.3),
+                  (pageIndex == 1 ? 0.6 : 0.35),
               child: PageView(
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
@@ -478,37 +478,31 @@ class RepeatPage extends StatelessWidget {
           height: 15,
         ),
         Wrap(
-          spacing: 8,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: ChoiceChip(
-                elevation: 5,
-                label: const Text("Daily"),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                selected: !selectedDays.values.contains(false),
-                backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
-                onSelected: (value) => onChangeRepeatType(RepeatType.daily),
-                selectedColor: Theme.of(context).colorScheme.inversePrimary,
-                labelStyle: Theme.of(context).textTheme.titleMedium,
+            ChoiceChip(
+              label: const Text("Daily"),
+              pressElevation: 0,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.horizontal(left: Radius.circular(5)),
               ),
+              selected: !selectedDays.values.contains(false),
+              backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
+              onSelected: (value) => onChangeRepeatType(RepeatType.daily),
+              selectedColor: Theme.of(context).colorScheme.inversePrimary,
+              labelStyle: Theme.of(context).textTheme.titleMedium,
             ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: ChoiceChip(
-                elevation: 5,
-                label: const Text("Only on"),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                selected: selectedDays.values.contains(false),
-                backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
-                onSelected: (value) => onChangeRepeatType(RepeatType.onlyOn),
-                selectedColor: Theme.of(context).colorScheme.inversePrimary,
-                labelStyle: Theme.of(context).textTheme.titleMedium,
+            ChoiceChip(
+              label: const Text("Only on"),
+              shape: const RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.horizontal(right: Radius.circular(5)),
               ),
+              pressElevation: 0,
+              selected: selectedDays.values.contains(false),
+              backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
+              onSelected: (value) => onChangeRepeatType(RepeatType.onlyOn),
+              selectedColor: Theme.of(context).colorScheme.inversePrimary,
+              labelStyle: Theme.of(context).textTheme.titleMedium,
             ),
           ],
         ),
@@ -521,7 +515,7 @@ class RepeatPage extends StatelessWidget {
                       (e) => Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: ChoiceChip(
-                          elevation: 5,
+                          elevation: 3,
                           label: Text(e),
                           selected: selectedDays[e] ?? false,
                           backgroundColor:
