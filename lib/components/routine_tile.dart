@@ -177,12 +177,17 @@ class RoutineTile extends StatelessWidget {
                     onPressed: () {
                       onPress(context);
                     },
-                    icon: Icon(
-                      routine.isCompleted
-                          ? Icons.replay_rounded
-                          : Icons.play_arrow_rounded,
-                      size: 30,
-                    ))),
+                    icon: isToday
+                        ? Icon(
+                            routine.isCompleted
+                                ? Icons.replay_rounded
+                                : Icons.play_arrow_rounded,
+                            size: 30,
+                          )
+                        : const Icon(
+                            Icons.play_arrow_rounded,
+                            size: 30,
+                          ))),
           ),
         ),
       ),
