@@ -159,7 +159,7 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
             padding: const EdgeInsets.all(15),
             child: SizedBox(
               height: MediaQuery.of(context).size.height *
-                  (pageIndex == 1 ? 0.6 : 0.35),
+                  (pageIndex == 1 ? 0.7 : 0.35),
               child: PageView(
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
@@ -172,8 +172,24 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                     title: "Routine Name",
                   ),
                   TaskSelectPage(
+                    onChangeOrder: (oldIndex, newIndex) {
+                      setState(() {
+                        if (oldIndex < newIndex) {
+                          newIndex -= 1;
+                        }
+                        final item = selectedTask.removeAt(oldIndex);
+                        selectedTask.insert(newIndex, item);
+                      });
+                    },
+                    onTapDelete: ((index) => setState(() {
+                          selectedTask.removeAt(index);
+                        })),
                     selectedTask: selectedTask,
-                    onTap: onTap,
+                    onTapAdd: (Task t) {
+                      setState(() {
+                        selectedTask.add(t);
+                      });
+                    },
                   ),
                   RepeatPage(
                     onDayChange: onDayChange,
@@ -337,121 +353,155 @@ class TaskSelectPage extends StatelessWidget {
   const TaskSelectPage({
     Key? key,
     required this.selectedTask,
-    required this.onTap,
+    required this.onTapAdd,
+    required this.onTapDelete,
+    required this.onChangeOrder,
   }) : super(key: key);
   final List<Task> selectedTask;
-  final void Function(bool, int, BuildContext) onTap;
-
+  final void Function(Task task) onTapAdd;
+  final void Function(int index) onTapDelete;
+  final void Function(int oldIndex, int newIndex) onChangeOrder;
   @override
   Widget build(BuildContext context) {
-    return Consumer<TaskModel>(
-        builder: ((context, value, child) => value.tasks.isEmpty
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Looks like you haven't created any tasks",
-                      style: Theme.of(context).textTheme.titleLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            TasksScreen.routeName,
-                          );
-                        },
-                        child: const Text(
-                          "Create One",
-                          style: TextStyle(fontSize: 18),
-                        ))
-                  ],
-                ),
-              )
-            : ListView.builder(
-                itemCount: value.tasks.length,
-                itemBuilder: (context, index) {
-                  bool isSelected = selectedTask.indexWhere((element) =>
-                          element.id.compareTo(value.tasks[index].id) == 0) >
-                      -1;
-                  Widget card = Card(
-                    child: ListTile(
-                      selected: isSelected,
-                      onTap: () => onTap(isSelected, index, context),
-                      trailing: isSelected
-                          ? const Icon(Icons.check_box_rounded)
-                          : const Icon(Icons.check_box_outline_blank_rounded),
-                      subtitle: Text(
-                        'Duration : ${durationToString(parseDuration(value.tasks[index].duration))} Min',
-                        style: Theme.of(context).textTheme.bodyMedium!.apply(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onBackground
-                                .withOpacity(0.8)),
-                      ),
-                      title: Text(
-                        value.tasks[index].name,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                  );
-                  if (index == 0) {
-                    return Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Select Tasks',
-                                style: Theme.of(context).textTheme.titleLarge!),
-                            AnimatedCrossFade(
-                              firstChild: TextButton.icon(
-                                onPressed: (() {
-                                  Navigator.pushNamed(
-                                    context,
-                                    TasksScreen.routeName,
-                                  );
-                                }),
-                                icon: const Icon(Icons.edit_rounded),
-                                label: Text(
-                                  'Edit Tasks',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium!
-                                      .apply(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                ),
-                              ),
-                              secondChild: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text(
-                                  'Selected (${selectedTask.length})',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium!
-                                      .apply(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                ),
-                              ),
-                              crossFadeState: selectedTask.isEmpty
-                                  ? CrossFadeState.showFirst
-                                  : CrossFadeState.showSecond,
-                              duration: const Duration(milliseconds: 250),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        card
-                      ],
+    return Consumer<TaskModel>(builder: ((context, value, child) {
+      if (value.tasks.isEmpty) {
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Looks like you haven't created any tasks",
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      TasksScreen.routeName,
                     );
-                  }
-                  return card;
-                })));
+                  },
+                  child: const Text(
+                    "Create One",
+                    style: TextStyle(fontSize: 18),
+                  ))
+            ],
+          ),
+        );
+      }
+
+      return ReorderableListView(
+        header: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Select Tasks',
+                    style: Theme.of(context).textTheme.headlineMedium!.apply(
+                        color: Theme.of(context).colorScheme.onBackground)),
+                TextButton.icon(
+                  onPressed: (() {
+                    Navigator.pushNamed(
+                      context,
+                      TasksScreen.routeName,
+                    );
+                  }),
+                  icon: const Icon(Icons.edit_rounded),
+                  label: Text(
+                    'Edit Tasks',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .apply(color: Theme.of(context).colorScheme.primary),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 35),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Selected Tasks',
+                    style: Theme.of(context).textTheme.titleLarge!),
+                Text(
+                  'Selected (${selectedTask.length})',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .apply(color: Theme.of(context).colorScheme.primary),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+        footer: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 15),
+            Text('Tasks', style: Theme.of(context).textTheme.titleLarge!),
+            const SizedBox(height: 10),
+            ...value.tasks
+                .asMap()
+                .map((key, value) => MapEntry(
+                    key,
+                    Card(
+                      key: Key('$key+${value.id}'),
+                      child: ListTile(
+                          trailing: TextButton.icon(
+                            icon: const Icon(Icons.add),
+                            label: const Text("ADD"),
+                            onPressed: () => onTapAdd(value),
+                          ),
+                          subtitle: Text(
+                            'Duration : ${durationToString(parseDuration(value.duration))} Min',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .apply(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground
+                                        .withOpacity(0.8)),
+                          ),
+                          title: Text(
+                            value.name,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          )),
+                    )))
+                .values
+                .toList()
+          ],
+        ),
+        onReorder: onChangeOrder,
+        children: [
+          for (int index = 0; index < selectedTask.length; index++)
+            Card(
+              key: Key('$index'),
+              child: ListTile(
+                  leading: IconButton(
+                    icon: const Icon(Icons.remove),
+                    color: Theme.of(context).errorColor,
+                    onPressed: () => onTapDelete(index),
+                  ),
+                  trailing: const Icon(Icons.drag_handle_rounded),
+                  subtitle: Text(
+                    'Duration : ${durationToString(parseDuration(selectedTask[index].duration))} Min',
+                    style: Theme.of(context).textTheme.bodyMedium!.apply(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onBackground
+                            .withOpacity(0.8)),
+                  ),
+                  title: Text(
+                    selectedTask[index].name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  )),
+            ),
+        ],
+      );
+    }));
   }
 }
 
