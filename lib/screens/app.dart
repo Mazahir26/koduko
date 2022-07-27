@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/screens/home.dart';
 import 'package:koduko/screens/routines.dart';
+import 'package:koduko/screens/settings.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class _AppState extends State<App> {
     final List<Widget> widgetOptions = <Widget>[
       const HomeScreen(),
       const RoutinesScreen(),
-      const HomeScreen(),
+      const SettingsScreen(),
     ];
     return Scaffold(
       bottomNavigationBar: NavigationBar(
