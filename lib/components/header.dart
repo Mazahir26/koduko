@@ -21,13 +21,16 @@ class ScreenHeader extends StatelessWidget {
         ),
         Expanded(
           flex: 10,
-          child: Text(
-            text,
-            style: Theme.of(context)
-                .textTheme
-                .headlineLarge!
-                .apply(color: Theme.of(context).colorScheme.onBackground),
-            textAlign: TextAlign.center,
+          child: Hero(
+            tag: "header",
+            child: Text(
+              text,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge!
+                  .apply(color: Theme.of(context).colorScheme.onBackground),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ],

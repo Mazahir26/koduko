@@ -35,9 +35,12 @@ class SettingsScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "My Tasks",
-                      style: textTheme.titleLarge,
+                    Hero(
+                      tag: "header",
+                      child: Text(
+                        "My Tasks",
+                        style: textTheme.titleLarge,
+                      ),
                     ),
                     IconButton(
                         onPressed: () =>

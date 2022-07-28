@@ -38,7 +38,11 @@ class Routine {
     required this.id,
     required this.days,
     required this.isCompleted,
+    bool isSkip = false,
   }) {
+    if (isSkip) {
+      return;
+    }
     if (inCompletedTasks.isNotEmpty || isCompleted) {
       if (history.isNotEmpty) {
         bool isNewDay = true;
@@ -77,6 +81,7 @@ class Routine {
     String? name,
     List<String>? days,
     bool? isCompleted,
+    bool isSkip = false,
   }) {
     return Routine(
         name: name ?? this.name,
@@ -85,14 +90,17 @@ class Routine {
         history: history ?? this.history,
         id: id ?? this.id,
         days: days ?? this.days,
-        isCompleted: isCompleted ?? this.isCompleted);
+        isCompleted: isCompleted ?? this.isCompleted,
+        isSkip: isSkip);
   }
 
   Routine skipTask() {
     List<Task> r = List.from(inCompletedTasks);
     Task t = r.removeAt(0);
     r.add(t);
-    return copyWith(inCompletedTasks: r);
+
+    final g = copyWith(inCompletedTasks: r, isSkip: true);
+    return g;
   }
 
   Routine completeTask() {

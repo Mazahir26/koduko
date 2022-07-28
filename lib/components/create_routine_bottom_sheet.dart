@@ -475,29 +475,36 @@ class TaskSelectPage extends StatelessWidget {
           ],
         ),
         onReorder: onChangeOrder,
+        buildDefaultDragHandles: false,
         children: [
           for (int index = 0; index < selectedTask.length; index++)
             Card(
               key: Key('$index'),
-              child: ListTile(
-                  leading: IconButton(
-                    icon: const Icon(Icons.remove),
-                    color: Theme.of(context).errorColor,
-                    onPressed: () => onTapDelete(index),
-                  ),
-                  trailing: const Icon(Icons.drag_handle_rounded),
-                  subtitle: Text(
-                    'Duration : ${durationToString(parseDuration(selectedTask[index].duration))} Min',
-                    style: Theme.of(context).textTheme.bodyMedium!.apply(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onBackground
-                            .withOpacity(0.8)),
-                  ),
-                  title: Text(
-                    selectedTask[index].name,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  )),
+              child: ReorderableDelayedDragStartListener(
+                index: index,
+                child: ListTile(
+                    leading: IconButton(
+                      icon: const Icon(Icons.remove),
+                      color: Theme.of(context).errorColor,
+                      onPressed: () => onTapDelete(index),
+                    ),
+                    trailing: ReorderableDragStartListener(
+                      index: index,
+                      child: const Icon(Icons.drag_handle_rounded),
+                    ),
+                    subtitle: Text(
+                      'Duration : ${durationToString(parseDuration(selectedTask[index].duration))} Min',
+                      style: Theme.of(context).textTheme.bodyMedium!.apply(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onBackground
+                              .withOpacity(0.8)),
+                    ),
+                    title: Text(
+                      selectedTask[index].name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    )),
+              ),
             ),
         ],
       );
