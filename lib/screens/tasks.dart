@@ -104,7 +104,10 @@ class TasksScreen extends StatelessWidget {
                           onEdit: _onEdit,
                         ));
                   })),
-          child: const ScreenHeader(text: "Tasks")),
+          child: const ScreenHeader(
+            text: "Tasks",
+            tag: "Tasks",
+          )),
     );
   }
 }

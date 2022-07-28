@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ScreenHeader extends StatelessWidget {
-  const ScreenHeader({Key? key, required this.text}) : super(key: key);
+  const ScreenHeader({Key? key, required this.text, required this.tag})
+      : super(key: key);
   final String text;
+  final String tag;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -22,7 +24,7 @@ class ScreenHeader extends StatelessWidget {
         Expanded(
           flex: 10,
           child: Hero(
-            tag: "header",
+            tag: tag,
             child: Text(
               text,
               style: Theme.of(context)

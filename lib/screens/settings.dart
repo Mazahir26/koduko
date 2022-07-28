@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -29,14 +30,14 @@ class SettingsScreen extends StatelessWidget {
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
             child: InkWell(
-              onTap: () {},
+              onTap: () => Navigator.pushNamed(context, TasksScreen.routeName),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Hero(
-                      tag: "header",
+                      tag: "Tasks",
                       child: Text(
                         "My Tasks",
                         style: textTheme.titleLarge,
@@ -106,7 +107,7 @@ class SettingsScreen extends StatelessWidget {
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
             child: InkWell(
-              onTap: () {},
+              onTap: () => Navigator.pushNamed(context, AboutScreen.routeName),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
@@ -117,7 +118,9 @@ class SettingsScreen extends StatelessWidget {
                       style: textTheme.titleLarge,
                     ),
                     IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.person)),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, AboutScreen.routeName),
+                        icon: const Icon(Icons.person)),
                   ],
                 ),
               ),
