@@ -143,9 +143,12 @@ class RoutineTile extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: ListTile(
-                title: Text(
-                  routine.name,
-                  style: Theme.of(context).textTheme.titleLarge,
+                title: Hero(
+                  tag: "Header",
+                  child: Text(
+                    routine.name,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
                 subtitle: isToday
                     ? Padding(

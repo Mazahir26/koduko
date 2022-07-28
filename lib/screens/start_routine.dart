@@ -145,16 +145,20 @@ class RoutineScreenState extends State<RoutineScreen>
         ),
         title: Selector<RoutineModel, String>(
           selector: (p0, p1) => p1.getRoutine(widget.routine.id)!.name,
-          builder: (context, value, child) => Text(
-            value,
-            style: GoogleFonts.lato(
-              fontWeight: FontWeight.bold,
-              textStyle: Theme.of(context)
-                  .textTheme
-                  .apply(displayColor: Theme.of(context).colorScheme.onSurface)
-                  .headlineLarge,
+          builder: (context, value, child) => Hero(
+            tag: "Header",
+            child: Text(
+              value,
+              style: GoogleFonts.lato(
+                fontWeight: FontWeight.bold,
+                textStyle: Theme.of(context)
+                    .textTheme
+                    .apply(
+                        displayColor: Theme.of(context).colorScheme.onSurface)
+                    .headlineLarge,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
         ),
       ),
