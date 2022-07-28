@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:koduko/components/weekly_chart.dart';
+import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/utils/greetings.dart';
@@ -9,8 +10,8 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
+  const HomeScreen({Key? key, required this.onTapChange}) : super(key: key);
+  final void Function() onTapChange;
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context)
@@ -36,14 +37,39 @@ class HomeScreen extends StatelessWidget {
               textStyle: textTheme.headlineMedium,
             )),
         const SizedBox(height: 10),
-        Consumer<RoutineModel>(builder: (context, value, child) {
-          return Column(
-            children: value.routines
-                .asMap()
-                .map((key, value) => MapEntry(
-                    key,
-                    value.isToday()
-                        ? Row(
+        Consumer<RoutineModel>(
+          builder: (context, value, child) {
+            List<Routine> todayRoutines =
+                value.routines.where((element) => element.isToday()).toList();
+            return Column(
+              children: todayRoutines.isEmpty
+                  ? [
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      Center(
+                        child: Text(
+                          "You seem free today!",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                      Center(
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                              textStyle:
+                                  Theme.of(context).textTheme.titleMedium),
+                          onPressed: onTapChange,
+                          child: const Text(
+                            "Change that?",
+                          ),
+                        ),
+                      )
+                    ]
+                  : todayRoutines
+                      .asMap()
+                      .map((key, value) => MapEntry(
+                          key,
+                          Row(
                             children: [
                               Expanded(
                                 flex: 1,
@@ -115,12 +141,12 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          )
-                        : Container()))
-                .values
-                .toList(),
-          );
-        })
+                          )))
+                      .values
+                      .toList(),
+            );
+          },
+        )
       ],
     );
   }

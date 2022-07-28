@@ -26,7 +26,9 @@ class _AppState extends State<App> {
     //     .textTheme
     //     .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     final List<Widget> widgetOptions = <Widget>[
-      const HomeScreen(),
+      HomeScreen(
+        onTapChange: () => _onItemTapped(1),
+      ),
       const RoutinesScreen(),
       const SettingsScreen(),
     ];
