@@ -199,6 +199,7 @@ class RoutineScreenState extends State<RoutineScreen>
                             .map((e) => Consumer<ThemeModel>(
                                   builder: (context, themeData, child) =>
                                       TaskCard(
+                                    isSwipeDisabled: value.length == 1,
                                     isSkipped: _isSkipped,
                                     isCompleted: _isComplete,
                                     buttonController: _buttonController,

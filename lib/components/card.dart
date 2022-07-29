@@ -36,20 +36,21 @@ class TaskCard extends StatelessWidget {
 
   late final Tween<double> tween;
   late final Color textColor;
-
-  TaskCard({
-    Key? key,
-    required this.name,
-    required this.controller,
-    required this.color,
-    required this.index,
-    required this.onDismissed,
-    required this.isPlaying,
-    required this.buttonController,
-    required this.onTap,
-    required this.isCompleted,
-    required this.isSkipped,
-  }) : super(key: key) {
+  final bool isSwipeDisabled;
+  TaskCard(
+      {Key? key,
+      required this.name,
+      required this.controller,
+      required this.color,
+      required this.index,
+      required this.onDismissed,
+      required this.isPlaying,
+      required this.buttonController,
+      required this.onTap,
+      required this.isCompleted,
+      required this.isSkipped,
+      required this.isSwipeDisabled})
+      : super(key: key) {
     if (controller != null) {
       if (isCompleted) {
         tween = Tween(
@@ -114,6 +115,13 @@ class TaskCard extends StatelessWidget {
               padding: EdgeInsets.only(left: index * 10, bottom: index * 10),
               child: Dismissible(
                 key: Key(name),
+                confirmDismiss: (direction) {
+                  if (direction == DismissDirection.endToStart &&
+                      isSwipeDisabled) {
+                    return Future((() => false));
+                  }
+                  return Future((() => true));
+                },
                 onDismissed: ((direction) => onDismissed(direction, context)),
                 child: Stack(
                   alignment: AlignmentDirectional.bottomEnd,
