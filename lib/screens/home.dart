@@ -18,8 +18,9 @@ class HomeScreen extends StatelessWidget {
         .textTheme
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+      padding: const EdgeInsets.all(15),
       children: [
+        const SizedBox(height: 20),
         Header(textTheme: textTheme),
         const SizedBox(height: 20),
         WeeklyChart(textTheme: textTheme),

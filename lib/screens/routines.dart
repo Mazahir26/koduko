@@ -49,6 +49,7 @@ class RoutinesScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 20),
                     Expanded(
                       flex: 1,
                       child: Text(
@@ -103,10 +104,11 @@ class RoutinesScreen extends StatelessWidget {
                       return Container();
                     }
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(15),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const SizedBox(height: 20),
                             Text(
                               "Today's Routines",
                               style: GoogleFonts.lato(
@@ -120,7 +122,7 @@ class RoutinesScreen extends StatelessWidget {
                                     .headlineMedium,
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             ...t
                           ]),
                     );
@@ -140,7 +142,7 @@ class RoutinesScreen extends StatelessWidget {
                       return Container();
                     }
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(15),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -156,7 +158,7 @@ class RoutinesScreen extends StatelessWidget {
                                               .onSurface)
                                       .headlineMedium),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             ...t
                           ]),
                     );

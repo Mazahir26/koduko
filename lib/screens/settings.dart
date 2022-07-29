@@ -18,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 25),
+          const SizedBox(height: 35),
           Text(
             "Settings",
             style: GoogleFonts.lato(

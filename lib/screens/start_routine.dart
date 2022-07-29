@@ -132,7 +132,7 @@ class RoutineScreenState extends State<RoutineScreen>
       appBar: AppBar(
         centerTitle: true,
         leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -163,7 +163,7 @@ class RoutineScreenState extends State<RoutineScreen>
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: Selector<RoutineModel, List<Task>>(
           selector: (p0, p1) =>
               p1.getRoutine(widget.routine.id)!.inCompletedTasks,
