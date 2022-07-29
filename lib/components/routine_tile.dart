@@ -144,7 +144,7 @@ class RoutineTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: ListTile(
                 title: Hero(
-                  tag: "Header",
+                  tag: routine.name,
                   child: Text(
                     routine.name,
                     style: Theme.of(context).textTheme.titleLarge,

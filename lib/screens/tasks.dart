@@ -105,8 +105,8 @@ class TasksScreen extends StatelessWidget {
                         ));
                   })),
           child: const ScreenHeader(
-            text: "Tasks",
-            tag: "Tasks",
+            text: "My Tasks",
+            tag: "My Tasks",
           )),
     );
   }

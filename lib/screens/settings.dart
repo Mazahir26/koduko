@@ -37,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Hero(
-                      tag: "Tasks",
+                      tag: "My Tasks",
                       child: Text(
                         "My Tasks",
                         style: textTheme.titleLarge,

@@ -146,7 +146,7 @@ class RoutineScreenState extends State<RoutineScreen>
         title: Selector<RoutineModel, String>(
           selector: (p0, p1) => p1.getRoutine(widget.routine.id)!.name,
           builder: (context, value, child) => Hero(
-            tag: "Header",
+            tag: value,
             child: Text(
               value,
               style: GoogleFonts.lato(
