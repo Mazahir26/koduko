@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:koduko/components/weekly_chart.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
+import 'package:koduko/screens/stats.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/utils/greetings.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -27,7 +28,7 @@ class HomeScreen extends StatelessWidget {
         Align(
           alignment: Alignment.centerRight,
           child: TextButton.icon(
-            onPressed: () {},
+            onPressed: () => Navigator.pushNamed(context, Statistics.routeName),
             icon: const Text("More Stats"),
             label: const Icon(Icons.chevron_right_rounded),
           ),

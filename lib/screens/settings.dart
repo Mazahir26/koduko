@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/screens/about.dart';
+import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +16,7 @@ class SettingsScreen extends StatelessWidget {
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
         children: [
           const SizedBox(height: 35),
           Text(
@@ -46,6 +46,31 @@ class SettingsScreen extends StatelessWidget {
                     IconButton(
                         onPressed: () =>
                             Navigator.pushNamed(context, TasksScreen.routeName),
+                        icon: const Icon(Icons.chevron_right_rounded)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Card(
+            margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+            child: InkWell(
+              onTap: () => Navigator.pushNamed(context, Statistics.routeName),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Hero(
+                      tag: "Statistics",
+                      child: Text(
+                        "Statistics",
+                        style: textTheme.titleLarge,
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () =>
+                            Navigator.pushNamed(context, Statistics.routeName),
                         icon: const Icon(Icons.chevron_right_rounded)),
                   ],
                 ),
@@ -126,7 +151,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 25),
           Center(
             child: Text(
               "Version: 0.1 beta",

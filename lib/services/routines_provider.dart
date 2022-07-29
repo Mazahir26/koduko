@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/models/task_event.dart';
 
 class RoutineModel extends ChangeNotifier {
   late final List<Routine> _routines;
@@ -36,6 +37,15 @@ class RoutineModel extends ChangeNotifier {
       _routines[index] = routine;
       notifyListeners();
     }
+  }
+
+  List<TaskEvent> getHistory() {
+    List<TaskEvent> list = [];
+    for (var element in _routines) {
+      list.addAll(element.history);
+      list.sort(((a, b) => a.time.compareTo(b.time)));
+    }
+    return list;
   }
 
   void skipTask(String id) {

@@ -5,6 +5,7 @@ import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/app.dart';
+import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/tasks_provider.dart';
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
                     TasksScreen.routeName: (context) => const TasksScreen(),
                     App.routeName: (context) => const App(),
                     AboutScreen.routeName: (context) => const AboutScreen(),
+                    Statistics.routeName: ((context) => const Statistics())
                   }),
             ),
           );
