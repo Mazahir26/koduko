@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
@@ -7,17 +8,29 @@ import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/app.dart';
 import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
+import 'package:koduko/services/notification_service.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/tasks_provider.dart';
 import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
   Hive.registerAdapter(RoutineAdapter());
   Hive.registerAdapter(TaskEventAdapter());
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().initialize();
+  _configureLocalTimeZone();
   runApp(const MyApp());
+}
+
+Future<void> _configureLocalTimeZone() async {
+  tz.initializeTimeZones();
+  final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 class MyApp extends StatelessWidget {

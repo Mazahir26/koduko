@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:koduko/screens/home.dart';
 import 'package:koduko/screens/routines.dart';
 import 'package:koduko/screens/settings.dart';
+import 'package:koduko/services/notification_service.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -13,11 +16,25 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   int _selectedIndex = 0;
-
+  late final NotificationService service;
+  late final StreamSubscription<String?> stream;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    service = NotificationService();
+    stream = service.onNotificationClick.stream.listen(onNotificationListener);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    stream.cancel();
+    super.dispose();
   }
 
   @override
@@ -59,5 +76,14 @@ class _AppState extends State<App> {
         child: widgetOptions.elementAt(_selectedIndex),
       ),
     );
+  }
+
+  void onNotificationListener(String? payload) {
+    if (payload != null && payload.isNotEmpty) {
+      // Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: ((context) => SecondScreen(payload: payload))));
+    }
   }
 }

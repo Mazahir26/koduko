@@ -44,11 +44,14 @@ dependencies:
   percent_indicator: ^4.2.2
   collection: ^1.16.0
   flutter_local_notifications: ^9.7.0
+  rxdart: ^0.27.5
+  timezone: ^0.8.0
+  flutter_native_timezone: ^2.0.0
 
-flutter_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/icon/icon.png"
+# flutter_icons:
+#   android: "launcher_icon"
+#   ios: true
+#   image_path: "assets/icon/icon.png"
 
 dev_dependencies:
   flutter_test:

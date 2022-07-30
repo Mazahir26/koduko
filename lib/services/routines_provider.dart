@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
+import 'package:koduko/services/notification_service.dart';
 
 class RoutineModel extends ChangeNotifier {
   late final List<Routine> _routines;
@@ -26,6 +27,13 @@ class RoutineModel extends ChangeNotifier {
   void add(Routine routine) {
     _routines.add(routine);
     _box.add(routine);
+    print(routine.id);
+    NotificationService().scheduleDaily(
+      des: routine.name,
+      title: "Just a Title",
+      id: _routines.length,
+      time: 9,
+    );
     notifyListeners();
   }
 
