@@ -99,29 +99,48 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
     });
   }
 
-  void onTap(bool selected, int index, BuildContext context) {
-    if (selected) {
-      if (selectedTask.length == 1) {
-        setState(() {
-          selectedTask.removeWhere((element) =>
-              element.id ==
-              Provider.of<TaskModel>(context, listen: false).tasks[index].id);
-          pageComplected = false;
-        });
-      } else {
-        setState(() {
-          selectedTask.removeWhere((element) =>
-              element.id ==
-              Provider.of<TaskModel>(context, listen: false).tasks[index].id);
-        });
-      }
-    } else {
+  // void onTap(bool selected, int index, BuildContext context) {
+  //   if (selected) {
+  //     if (selectedTask.length == 1) {
+  //       setState(() {
+  //         selectedTask.removeWhere((element) =>
+  //             element.id ==
+  //             Provider.of<TaskModel>(context, listen: false).tasks[index].id);
+  //         pageComplected = false;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         selectedTask.removeWhere((element) =>
+  //             element.id ==
+  //             Provider.of<TaskModel>(context, listen: false).tasks[index].id);
+  //       });
+  //     }
+  //   } else {
+  //     setState(() {
+  //       selectedTask
+  //           .add(Provider.of<TaskModel>(context, listen: false).tasks[index]);
+  //       pageComplected = true;
+  //     });
+  //   }
+  // }
+  void onAdd(Task t) {
+    setState(() {
+      selectedTask.add(t);
+      pageComplected = true;
+    });
+  }
+
+  void onRemove(int index) {
+    if (selectedTask.length == 1) {
       setState(() {
-        selectedTask
-            .add(Provider.of<TaskModel>(context, listen: false).tasks[index]);
-        pageComplected = true;
+        selectedTask.removeAt(index);
+        pageComplected = false;
       });
+      return;
     }
+    setState(() {
+      selectedTask.removeAt(index);
+    });
   }
 
   @override
@@ -181,15 +200,9 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                         selectedTask.insert(newIndex, item);
                       });
                     },
-                    onTapDelete: ((index) => setState(() {
-                          selectedTask.removeAt(index);
-                        })),
+                    onTapDelete: onRemove,
                     selectedTask: selectedTask,
-                    onTapAdd: (Task t) {
-                      setState(() {
-                        selectedTask.add(t);
-                      });
-                    },
+                    onTapAdd: onAdd,
                   ),
                   RepeatPage(
                     onDayChange: onDayChange,
