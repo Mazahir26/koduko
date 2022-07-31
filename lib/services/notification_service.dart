@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/subjects.dart';
@@ -19,39 +20,42 @@ class NotificationService {
   final BehaviorSubject<String?> onNotificationClick = BehaviorSubject();
 
   Future<void> showNotification({
-    required int id,
     required String title,
     required String body,
+    required String uId,
   }) async {
     await _flutterLocalNotificationsPlugin.show(
-      id,
+      0,
       title,
       body,
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           '001',
           'Notifications',
           channelDescription: 'Notifications',
+          tag: uId,
         ),
       ),
     );
   }
 
-  Future<void> scheduleDaily(
-      {required int time,
-      required String title,
-      required String des,
-      required int id}) async {
+  Future<void> scheduleDaily({
+    required TimeOfDay time,
+    required String title,
+    required String des,
+    required String uId,
+  }) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
+      0,
       title,
       des,
       _dailyAt(time),
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           '002',
           'Daily Routine Notifications',
           channelDescription: 'Daily Routine Notifications',
+          tag: uId,
         ),
       ),
       androidAllowWhileIdle: true,
@@ -62,22 +66,23 @@ class NotificationService {
   }
 
   Future<void> scheduleWeekly({
-    required int time,
+    required TimeOfDay time,
     required String title,
     required String des,
-    required int id,
     required List<String> days,
+    required String uId,
   }) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
+      0,
       title,
       des,
       _scheduleWeekly(time, days),
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           '003',
           'Weekly Routine Notifications',
           channelDescription: 'Weekly Routine Notifications',
+          tag: uId,
         ),
       ),
       androidAllowWhileIdle: true,
@@ -87,14 +92,18 @@ class NotificationService {
     );
   }
 
-  Future<void> cancelNotification(int id) async {
-    await _flutterLocalNotificationsPlugin.cancel(id);
+  Future<void> cancelNotification(String id) async {
+    await _flutterLocalNotificationsPlugin.cancel(0, tag: id);
   }
 
-  tz.TZDateTime _dailyAt(int time) {
+  Future<void> cancelAllNotifications() async {
+    await _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  tz.TZDateTime _dailyAt(TimeOfDay time) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, time);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+        tz.local, now.year, now.month, now.day, time.hour, time.minute);
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
@@ -102,7 +111,7 @@ class NotificationService {
   }
 
   tz.TZDateTime _scheduleWeekly(
-    int time,
+    TimeOfDay time,
     List<String> days,
   ) {
     tz.TZDateTime scheduledDate = _dailyAt(time);

@@ -6,10 +6,12 @@ import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/services/notification_service.dart';
+import 'package:koduko/utils/time_of_day_util.dart';
 
 class RoutineModel extends ChangeNotifier {
   late final List<Routine> _routines;
   final _box = Hive.box<Routine>('Routines');
+  bool notifications = true;
 
   RoutineModel() {
     _init();
@@ -20,6 +22,12 @@ class RoutineModel extends ChangeNotifier {
     } else {
       await Hive.openBox("Routines");
     }
+    final box = Hive.box<bool>('Theme');
+    if (box.isOpen) {
+      notifications = box.get("notifications") ?? false;
+    } else {
+      await Hive.openBox("Theme");
+    }
   }
 
   UnmodifiableListView<Routine> get routines => UnmodifiableListView(_routines);
@@ -27,22 +35,36 @@ class RoutineModel extends ChangeNotifier {
   void add(Routine routine) {
     _routines.add(routine);
     _box.add(routine);
-    print(routine.id);
-    NotificationService().scheduleDaily(
-      des: routine.name,
-      title: "Just a Title",
-      id: _routines.length,
-      time: 9,
-    );
+    if (routine.days.length == 7) {
+      if (routine.time != null) {
+        NotificationService().scheduleDaily(
+          time: dateTimeToTimeOfDay(routine.time!),
+          title: routine.name,
+          des: "Tap to Start",
+          uId: routine.id,
+        );
+      }
+    } else {
+      if (routine.time != null) {
+        NotificationService().scheduleWeekly(
+          days: routine.days,
+          time: dateTimeToTimeOfDay(routine.time!),
+          title: routine.name,
+          des: "Tap to Start",
+          uId: routine.id,
+        );
+      }
+    }
     notifyListeners();
   }
 
-  void edit(Routine routine) {
+  void edit(Routine routine) async {
     int index = _routines
         .indexWhere((element) => element.id.compareTo(routine.id) == 0);
     if (index > -1) {
       _box.putAt(index, routine);
       _routines[index] = routine;
+      await NotificationService().cancelAllNotifications();
       notifyListeners();
     }
   }
@@ -163,9 +185,54 @@ class RoutineModel extends ChangeNotifier {
     int index =
         _routines.indexWhere((element) => element.id.compareTo(id) == 0);
     if (index > -1) {
+      NotificationService().cancelNotification(id);
       _box.deleteAt(index);
       _routines.removeWhere((element) => element.id.compareTo(id) == 0);
       notifyListeners();
     }
+  }
+
+  void toggleNotifications() {
+    final box = Hive.box<bool>('Theme');
+    if (notifications) {
+      box.put("notifications", false);
+      cancelAllNotifications();
+      notifications = false;
+      notifyListeners();
+    } else {
+      box.put("notifications", true);
+      enableAllNotifications();
+      notifications = true;
+      notifyListeners();
+    }
+  }
+
+  void enableAllNotifications() {
+    for (var element in _routines) {
+      if (element.days.length == 7) {
+        if (element.time != null) {
+          NotificationService().scheduleDaily(
+            time: dateTimeToTimeOfDay(element.time!),
+            title: element.name,
+            des: "Tap to Start",
+            uId: element.id,
+          );
+        }
+      } else {
+        if (element.time != null) {
+          NotificationService().scheduleWeekly(
+            days: element.days,
+            time: dateTimeToTimeOfDay(element.time!),
+            title: element.name,
+            des: "Tap to Start",
+            uId: element.id,
+          );
+        }
+      }
+    }
+  }
+
+  void cancelAllNotifications() {
+    NotificationService().cancelAllNotifications();
   }
 }

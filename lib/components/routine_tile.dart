@@ -4,6 +4,7 @@ import 'package:koduko/components/create_routine_bottom_sheet.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
+import 'package:koduko/utils/time_of_day_util.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +38,7 @@ class RoutineTile extends StatelessWidget {
         name: r.name,
         tasks: r.tasks,
         days: r.days,
+        time: r.time != null ? dateTimeToTimeOfDay(r.time!) : null,
       ));
     }
   }
@@ -94,6 +96,7 @@ class RoutineTile extends StatelessWidget {
                             }, onDelete: (() {
                               Provider.of<RoutineModel>(context, listen: false)
                                   .delete(routine.id);
+                              Navigator.pop(context);
                             }))));
                   }),
                   icon: Icon(

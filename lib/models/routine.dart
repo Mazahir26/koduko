@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/utils/date_time_extension.dart';
+import 'package:koduko/utils/time_of_day_util.dart';
 import 'package:uuid/uuid.dart';
 
 part 'routine.g.dart';
@@ -30,6 +32,9 @@ class Routine {
   @HiveField(6)
   List<String> days;
 
+  @HiveField(7, defaultValue: null)
+  DateTime? time;
+
   Routine({
     required this.name,
     required this.tasks,
@@ -38,6 +43,7 @@ class Routine {
     required this.id,
     required this.days,
     required this.isCompleted,
+    required this.time,
     bool isSkip = false,
   }) {
     if (isSkip) {
@@ -67,6 +73,7 @@ class Routine {
     required this.name,
     required this.tasks,
     required this.days,
+    required this.time,
   }) {
     id = const Uuid().v4();
     isCompleted = false;
@@ -81,6 +88,7 @@ class Routine {
     String? name,
     List<String>? days,
     bool? isCompleted,
+    TimeOfDay? time,
     bool isSkip = false,
   }) {
     return Routine(
@@ -91,6 +99,7 @@ class Routine {
         id: id ?? this.id,
         days: days ?? this.days,
         isCompleted: isCompleted ?? this.isCompleted,
+        time: timeOfDayToDateTime(time) ?? this.time,
         isSkip: isSkip);
   }
 

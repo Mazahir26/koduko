@@ -6,6 +6,7 @@ import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/tasks_provider.dart';
 import 'package:koduko/utils/duration_to_string.dart';
 import 'package:koduko/utils/parse_duration.dart';
+import 'package:koduko/utils/time_of_day_util.dart';
 import 'package:provider/provider.dart';
 
 enum RepeatType {
@@ -41,6 +42,8 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
   };
   int pageIndex = 0;
   bool pageComplected = false;
+  bool notifications = true;
+  TimeOfDay? time;
   @override
   void initState() {
     _pageController = PageController();
@@ -54,6 +57,13 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
 
       for (var element in widget.editRoutine!.tasks) {
         selectedTask.add(element);
+      }
+      if (widget.editRoutine!.time != null) {
+        time = dateTimeToTimeOfDay(widget.editRoutine!.time!);
+      } else {
+        notifications = false;
+        time = TimeOfDay(
+            hour: TimeOfDay.now().hour + 1, minute: TimeOfDay.now().minute);
       }
       pageComplected = true;
     }
@@ -176,9 +186,19 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
           ),
           Padding(
             padding: const EdgeInsets.all(15),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height *
-                  (pageIndex == 1 ? 0.7 : 0.35),
+            child: TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 250),
+              tween: Tween<double>(
+                  begin: 0.25,
+                  end: pageIndex == 1
+                      ? 0.7
+                      : pageIndex == 0
+                          ? 0.25
+                          : 0.45),
+              builder: (context, value, child) => SizedBox(
+                height: MediaQuery.of(context).size.height * value,
+                child: child,
+              ),
               child: PageView(
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
@@ -205,6 +225,14 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                     onTapAdd: onAdd,
                   ),
                   RepeatPage(
+                    notification: notifications,
+                    onChangeTime: ((t) => setState(() {
+                          time = t;
+                        })),
+                    onToggleNotification: () => setState(() {
+                      notifications = !notifications;
+                    }),
+                    time: time,
                     onDayChange: onDayChange,
                     selectedDays: selectedDays,
                     onChangeRepeatType: onChangeRepeatType,
@@ -253,6 +281,9 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                             name: _nameController.text,
                             tasks: selectedTask,
                             days: temp,
+                            time: notifications
+                                ? timeOfDayToDateTime(time)
+                                : null,
                           ),
                         );
                       }
@@ -526,17 +557,40 @@ class TaskSelectPage extends StatelessWidget {
 }
 
 class RepeatPage extends StatelessWidget {
-  const RepeatPage(
-      {Key? key,
-      required this.onDayChange,
-      required this.selectedDays,
-      required this.onChangeRepeatType})
-      : super(key: key);
+  const RepeatPage({
+    Key? key,
+    required this.onDayChange,
+    required this.selectedDays,
+    required this.onChangeRepeatType,
+    required this.time,
+    required this.onChangeTime,
+    required this.onToggleNotification,
+    required this.notification,
+  }) : super(key: key);
   final void Function(String, bool) onDayChange;
   final Map<String, bool> selectedDays;
   final void Function(RepeatType) onChangeRepeatType;
+  final TimeOfDay? time;
+  final void Function(TimeOfDay time) onChangeTime;
+  final void Function() onToggleNotification;
+  final bool notification;
+
   @override
   Widget build(BuildContext context) {
+    Future<void> _selectTime(BuildContext context) async {
+      TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: time ?? TimeOfDay.now(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child ?? Container(),
+        ),
+      );
+      if (pickedTime != null && pickedTime != time) {
+        onChangeTime(pickedTime);
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -598,6 +652,51 @@ class RepeatPage extends StatelessWidget {
                       ),
                     )
                     .toList())
+            : Container(),
+        const SizedBox(
+          height: 15,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Notification",
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            IconButton(
+              onPressed: onToggleNotification,
+              icon: notification
+                  ? const Icon(Icons.notifications_active_rounded)
+                  : const Icon(Icons.notifications_off_rounded),
+            )
+          ],
+        ),
+        notification
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Select Time",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () => _selectTime(context),
+                      child: time == null
+                          ? const Text("Select Time")
+                          : Text(
+                              time!.format(context),
+                            ),
+                    ),
+                  ],
+                ),
+              )
             : Container()
       ],
     );

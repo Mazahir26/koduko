@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
+import 'package:koduko/services/notification_service.dart';
+import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -110,7 +112,10 @@ class SettingsScreen extends StatelessWidget {
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                Provider.of<RoutineModel>(context, listen: false)
+                    .toggleNotifications();
+              },
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
@@ -121,8 +126,16 @@ class SettingsScreen extends StatelessWidget {
                       style: textTheme.titleLarge,
                     ),
                     IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.notifications_active_rounded)),
+                        onPressed: () {
+                          Provider.of<RoutineModel>(context, listen: false)
+                              .toggleNotifications();
+                        },
+                        icon: Selector<RoutineModel, bool>(
+                          builder: (context, value, child) => value
+                              ? const Icon(Icons.notifications_active_rounded)
+                              : const Icon(Icons.notifications_off_rounded),
+                          selector: (p0, p1) => p1.notifications,
+                        )),
                   ],
                 ),
               ),
