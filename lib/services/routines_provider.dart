@@ -24,7 +24,7 @@ class RoutineModel extends ChangeNotifier {
     }
     final box = Hive.box<bool>('Theme');
     if (box.isOpen) {
-      notifications = box.get("notifications") ?? false;
+      notifications = box.get("notifications") ?? true;
     } else {
       await Hive.openBox("Theme");
     }
@@ -66,6 +66,7 @@ class RoutineModel extends ChangeNotifier {
       _routines[index] = routine;
       await NotificationService().cancelAllNotifications();
       notifyListeners();
+      enableAllNotifications();
     }
   }
 

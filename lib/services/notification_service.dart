@@ -115,9 +115,12 @@ class NotificationService {
     List<String> days,
   ) {
     tz.TZDateTime scheduledDate = _dailyAt(time);
-    while (!days.contains(DateFormat("EEEE").format(scheduledDate))) {
+    bool t = days.contains(DateFormat("EEEE").format(scheduledDate));
+    while (!t) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
+      t = days.contains(DateFormat("EEEE").format(scheduledDate));
     }
+
     return scheduledDate;
   }
 

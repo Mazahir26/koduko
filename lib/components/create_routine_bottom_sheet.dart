@@ -454,10 +454,9 @@ class TaskSelectPage extends StatelessWidget {
                   icon: const Icon(Icons.edit_rounded),
                   label: Text(
                     'Edit Tasks',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .apply(color: Theme.of(context).colorScheme.primary),
+                    style: Theme.of(context).textTheme.titleMedium!.apply(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                   ),
                 )
               ],
@@ -486,41 +485,69 @@ class TaskSelectPage extends StatelessWidget {
             const SizedBox(height: 15),
             Text('Tasks', style: Theme.of(context).textTheme.titleLarge!),
             const SizedBox(height: 10),
-            ...value.tasks
-                .asMap()
-                .map((key, value) => MapEntry(
-                    key,
-                    Card(
-                      key: Key('$key+${value.id}'),
-                      child: ListTile(
-                          trailing: TextButton.icon(
-                            icon: const Icon(Icons.add),
-                            label: const Text("ADD"),
-                            onPressed: () => onTapAdd(value),
-                          ),
-                          subtitle: Text(
-                            'Duration : ${durationToString(parseDuration(value.duration))} Min',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .apply(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground
-                                        .withOpacity(0.8)),
-                          ),
-                          title: Text(
-                            value.name,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          )),
-                    )))
-                .values
-                .toList()
+            if (value.tasks.isEmpty)
+              Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Center(
+                    child: Text('Looks Empty! ',
+                        style: Theme.of(context).textTheme.titleMedium!),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          TasksScreen.routeName,
+                        );
+                      },
+                      child: const Text("Add a Task?"))
+                ],
+              )
+            else
+              ...value.tasks
+                  .asMap()
+                  .map((key, value) => MapEntry(
+                      key,
+                      Card(
+                        key: Key('$key+${value.id}'),
+                        child: ListTile(
+                            trailing: TextButton.icon(
+                              icon: const Icon(Icons.add),
+                              label: const Text("ADD"),
+                              onPressed: () => onTapAdd(value),
+                            ),
+                            subtitle: Text(
+                              'Duration : ${durationToString(parseDuration(value.duration))} Min',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .apply(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground
+                                          .withOpacity(0.8)),
+                            ),
+                            title: Text(
+                              value.name,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            )),
+                      )))
+                  .values
+                  .toList()
           ],
         ),
         onReorder: onChangeOrder,
         buildDefaultDragHandles: false,
         children: [
+          if (selectedTask.isEmpty)
+            Padding(
+              key: const Key("empty"),
+              padding: const EdgeInsets.symmetric(vertical: 25),
+              child: Center(
+                child: Text('Select a task and it appears here!',
+                    style: Theme.of(context).textTheme.titleMedium!),
+              ),
+            ),
           for (int index = 0; index < selectedTask.length; index++)
             Card(
               key: Key('$index'),
