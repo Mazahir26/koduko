@@ -278,6 +278,7 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                         if (widget.editRoutine != null) {
                           List<Task> diff = Routine.taskDiff(
                               widget.editRoutine!.tasks, selectedTask);
+
                           if (selectedTask.length >
                               widget.editRoutine!.tasks.length) {
                             diff.addAll(widget.editRoutine!.inCompletedTasks);
@@ -293,6 +294,7 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                                 days: temp,
                                 time: notifications ? time : null,
                                 inCompletedTasks: diff,
+                                isCompleted: diff.isEmpty,
                               ));
                         } else {
                           return Navigator.pop(
