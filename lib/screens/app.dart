@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:koduko/screens/home.dart';
 import 'package:koduko/screens/routines.dart';
 import 'package:koduko/screens/settings.dart';
+import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/notification_service.dart';
 
 class App extends StatefulWidget {
@@ -80,10 +81,12 @@ class _AppState extends State<App> {
 
   void onNotificationListener(String? payload) {
     if (payload != null && payload.isNotEmpty) {
-      // Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: ((context) => SecondScreen(payload: payload))));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: ((context) => RoutineScreen(
+                    routine: payload,
+                  ))));
     }
   }
 }

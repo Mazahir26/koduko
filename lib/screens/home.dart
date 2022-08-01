@@ -131,7 +131,7 @@ class HomeScreen extends StatelessWidget {
                                                 MaterialPageRoute(
                                                     builder: ((context) =>
                                                         RoutineScreen(
-                                                          routine: value,
+                                                          routine: value.id,
                                                         ))));
                                           },
                                           icon: Icon(

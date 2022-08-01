@@ -10,7 +10,7 @@ import 'package:koduko/utils/parse_duration.dart';
 import 'package:provider/provider.dart';
 
 class RoutineScreen extends StatefulWidget {
-  final Routine routine;
+  final String routine;
   const RoutineScreen({Key? key, required this.routine}) : super(key: key);
 
   @override
@@ -28,12 +28,16 @@ class RoutineScreenState extends State<RoutineScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (widget.routine.isCompleted) {
-        Provider.of<RoutineModel>(context, listen: false)
-            .replay(widget.routine.id);
+      var routine = Provider.of<RoutineModel>(context, listen: false)
+          .getRoutine(widget.routine);
+      if (routine == null) {
+        return;
+      }
+      if (routine.isCompleted) {
+        Provider.of<RoutineModel>(context, listen: false).replay(routine.id);
         _controller.duration = parseDuration(
           Provider.of<RoutineModel>(context, listen: false)
-              .getRoutine(widget.routine.id)!
+              .getRoutine(routine.id)!
               .tasks
               .first
               .duration,
@@ -41,7 +45,7 @@ class RoutineScreenState extends State<RoutineScreen>
       } else {
         _controller.duration = parseDuration(
           Provider.of<RoutineModel>(context, listen: false)
-              .getRoutine(widget.routine.id)!
+              .getRoutine(routine.id)!
               .inCompletedTasks
               .first
               .duration,
@@ -81,7 +85,7 @@ class RoutineScreenState extends State<RoutineScreen>
   void onDismiss(DismissDirection t, BuildContext context) {
     if (t == DismissDirection.endToStart) {
       Provider.of<RoutineModel>(context, listen: false)
-          .skipTask(widget.routine.id);
+          .skipTask(widget.routine);
       setState(() {
         _controller.reset();
         if (_isSkipped) {
@@ -89,7 +93,7 @@ class RoutineScreenState extends State<RoutineScreen>
         }
       });
       var ts = Provider.of<RoutineModel>(context, listen: false)
-          .getRoutine(widget.routine.id)!
+          .getRoutine(widget.routine)!
           .inCompletedTasks;
       if (ts.isNotEmpty) {
         _controller.duration = parseDuration(ts.first.duration);
@@ -99,7 +103,7 @@ class RoutineScreenState extends State<RoutineScreen>
       }
     } else if (t == DismissDirection.startToEnd) {
       Provider.of<RoutineModel>(context, listen: false)
-          .completeTask(widget.routine.id);
+          .completeTask(widget.routine);
       _controller.reset();
       setState(() {
         if (_isComplete) {
@@ -107,7 +111,7 @@ class RoutineScreenState extends State<RoutineScreen>
         }
       });
       var ts = Provider.of<RoutineModel>(context, listen: false)
-          .getRoutine(widget.routine.id)!
+          .getRoutine(widget.routine)!
           .inCompletedTasks;
       if (ts.isNotEmpty) {
         _controller.duration = parseDuration(ts.first.duration);
@@ -144,7 +148,7 @@ class RoutineScreenState extends State<RoutineScreen>
           ),
         ),
         title: Selector<RoutineModel, String>(
-          selector: (p0, p1) => p1.getRoutine(widget.routine.id)!.name,
+          selector: (p0, p1) => p1.getRoutine(widget.routine)!.name,
           builder: (context, value, child) => Hero(
             tag: value,
             child: Text(
@@ -165,8 +169,7 @@ class RoutineScreenState extends State<RoutineScreen>
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: Selector<RoutineModel, List<Task>>(
-          selector: (p0, p1) =>
-              p1.getRoutine(widget.routine.id)!.inCompletedTasks,
+          selector: (p0, p1) => p1.getRoutine(widget.routine)!.inCompletedTasks,
           builder: ((context, value, child) => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.center,
