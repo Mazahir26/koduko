@@ -74,12 +74,15 @@ class Routine {
     required this.tasks,
     required this.days,
     required this.time,
+    // List<Task>? inCompletedTasks,
   }) {
     id = const Uuid().v4();
     isCompleted = false;
     history = [];
+    tasks = tasks;
     inCompletedTasks = tasks;
   }
+
   Routine copyWith({
     List<Task>? tasks,
     List<Task>? inCompletedTasks,
@@ -155,6 +158,28 @@ class Routine {
     return days.length == 7
         ? "Daily"
         : days.map((e) => e.substring(0, 3)).join(", ");
+  }
+
+  static List<Task> taskDiff(List<Task> first, List<Task> second) {
+    var a = [...first];
+    var b = [...second];
+    if (a.length > b.length) {
+      for (int i = 0; i < b.length; i++) {
+        int index = a.indexWhere((t) => t.id == b[i].id);
+        if (index > -1) {
+          a.removeAt(index);
+        }
+      }
+      return a;
+    } else {
+      for (int i = 0; i < a.length; i++) {
+        int index = b.indexWhere((t) => t.id == a[i].id);
+        if (index > -1) {
+          b.removeAt(index);
+        }
+      }
+      return b;
+    }
   }
 
   bool isToday() {

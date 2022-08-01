@@ -52,7 +52,6 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
 
     if (widget.editRoutine != null) {
       _nameController.text = widget.editRoutine!.name;
-
       selectedDays = selectedDays.map((key, value) =>
           MapEntry(key, widget.editRoutine!.days.contains(key)));
 
@@ -276,17 +275,38 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                             temp.add(key);
                           }
                         });
-                        Navigator.pop(
-                          context,
-                          Routine.create(
-                            name: _nameController.text,
-                            tasks: selectedTask,
-                            days: temp,
-                            time: notifications
-                                ? timeOfDayToDateTime(time)
-                                : null,
-                          ),
-                        );
+                        if (widget.editRoutine != null) {
+                          List<Task> diff = Routine.taskDiff(
+                              widget.editRoutine!.tasks, selectedTask);
+                          if (selectedTask.length >
+                              widget.editRoutine!.tasks.length) {
+                            diff.addAll(widget.editRoutine!.inCompletedTasks);
+                          } else {
+                            diff = Routine.taskDiff(
+                                diff, widget.editRoutine!.inCompletedTasks);
+                          }
+                          return Navigator.pop(
+                              context,
+                              widget.editRoutine!.copyWith(
+                                tasks: selectedTask,
+                                name: _nameController.text,
+                                days: temp,
+                                time: notifications ? time : null,
+                                inCompletedTasks: diff,
+                              ));
+                        } else {
+                          return Navigator.pop(
+                            context,
+                            Routine.create(
+                              name: _nameController.text,
+                              tasks: selectedTask,
+                              days: temp,
+                              time: notifications
+                                  ? timeOfDayToDateTime(time)
+                                  : null,
+                            ),
+                          );
+                        }
                       }
 
                       _pageController.nextPage(

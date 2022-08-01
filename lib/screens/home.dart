@@ -111,7 +111,9 @@ class HomeScreen extends StatelessWidget {
                                             LinearPercentIndicator(
                                               animateFromLastPercent: true,
                                               animation: true,
-                                              percent: value.getPercentage(),
+                                              percent: value
+                                                  .getPercentage()
+                                                  .clamp(0, 1),
                                               barRadius:
                                                   const Radius.circular(10),
                                               lineHeight: 3,
