@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
-import 'package:koduko/services/notification_service.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -93,17 +92,23 @@ class SettingsScreen extends StatelessWidget {
                       "Dark Mode",
                       style: textTheme.titleLarge,
                     ),
-                    IconButton(
-                      onPressed: () {
-                        Provider.of<ThemeModel>(context, listen: false)
-                            .toggleTheme();
-                      },
-                      icon: Consumer<ThemeModel>(
-                          builder: (context, value, child) =>
-                              value.getTheme == ThemeMode.dark
+                    Consumer<ThemeModel>(
+                      builder: (context, value, child) => TextButton.icon(
+                          label: value.getTheme == ThemeMode.system
+                              ? const Text("System")
+                              : value.getTheme == ThemeMode.dark
+                                  ? const Text("Dark")
+                                  : const Text("Light"),
+                          onPressed: () {
+                            Provider.of<ThemeModel>(context, listen: false)
+                                .toggleTheme();
+                          },
+                          icon: value.getTheme == ThemeMode.system
+                              ? const Icon(Icons.settings)
+                              : value.getTheme == ThemeMode.dark
                                   ? const Icon(Icons.dark_mode_rounded)
                                   : const Icon(Icons.light_mode_rounded)),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -125,17 +130,19 @@ class SettingsScreen extends StatelessWidget {
                       "Notifications ",
                       style: textTheme.titleLarge,
                     ),
-                    IconButton(
+                    Selector<RoutineModel, bool>(
+                      selector: (p0, p1) => p1.notifications,
+                      builder: (context, value, child) => TextButton.icon(
+                        label: value ? const Text("ON") : const Text("OFF"),
                         onPressed: () {
                           Provider.of<RoutineModel>(context, listen: false)
                               .toggleNotifications();
                         },
-                        icon: Selector<RoutineModel, bool>(
-                          builder: (context, value, child) => value
-                              ? const Icon(Icons.notifications_active_rounded)
-                              : const Icon(Icons.notifications_off_rounded),
-                          selector: (p0, p1) => p1.notifications,
-                        )),
+                        icon: value
+                            ? const Icon(Icons.notifications_active_rounded)
+                            : const Icon(Icons.notifications_off_rounded),
+                      ),
+                    )
                   ],
                 ),
               ),

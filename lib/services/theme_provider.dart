@@ -13,10 +13,13 @@ class ThemeModel with ChangeNotifier {
   }
 
   bool isDark() => _themeMode == ThemeMode.dark;
+
   ThemeModel() {
     if (_box.isOpen) {
       if (_box.get("darkMode") != null) {
         _themeMode = _box.get("darkMode")! ? ThemeMode.dark : ThemeMode.light;
+      } else {
+        _themeMode = ThemeMode.system;
       }
     }
   }
@@ -28,13 +31,12 @@ class ThemeModel with ChangeNotifier {
         _box.put("darkMode", false);
         break;
       case ThemeMode.light:
+        _themeMode = ThemeMode.system;
+        _box.delete('darkMode');
+        break;
+      case ThemeMode.system:
         _themeMode = ThemeMode.dark;
         _box.put("darkMode", true);
-        break;
-
-      case ThemeMode.system:
-        _themeMode = ThemeMode.light;
-        _box.put("darkMode", false);
         break;
       default:
         _themeMode = _themeMode;

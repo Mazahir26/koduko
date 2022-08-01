@@ -43,7 +43,8 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
   int pageIndex = 0;
   bool pageComplected = false;
   bool notifications = true;
-  TimeOfDay? time;
+  TimeOfDay? time =
+      TimeOfDay(hour: TimeOfDay.now().hour + 1, minute: TimeOfDay.now().minute);
   @override
   void initState() {
     _pageController = PageController();
@@ -194,7 +195,7 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
                       ? 0.7
                       : pageIndex == 0
                           ? 0.25
-                          : 0.45),
+                          : 0.4),
               builder: (context, value, child) => SizedBox(
                 height: MediaQuery.of(context).size.height * value,
                 child: child,
@@ -618,8 +619,7 @@ class RepeatPage extends StatelessWidget {
       }
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
       children: [
         Text(
           "Repeat",
@@ -690,12 +690,12 @@ class RepeatPage extends StatelessWidget {
               "Notification",
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            IconButton(
-              onPressed: onToggleNotification,
-              icon: notification
-                  ? const Icon(Icons.notifications_active_rounded)
-                  : const Icon(Icons.notifications_off_rounded),
-            )
+            TextButton.icon(
+                onPressed: onToggleNotification,
+                icon: notification
+                    ? const Icon(Icons.notifications_active_rounded)
+                    : const Icon(Icons.notifications_off_rounded),
+                label: notification ? const Text("ON") : const Text("OFF"))
           ],
         ),
         notification
