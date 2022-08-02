@@ -15,10 +15,10 @@ class SettingsScreen extends StatelessWidget {
         .textTheme
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.all(15),
       child: ListView(
         children: [
-          const SizedBox(height: 35),
+          const SizedBox(height: 20),
           Text(
             "Settings",
             style: GoogleFonts.lato(

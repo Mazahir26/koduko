@@ -72,21 +72,15 @@ class MyApp extends StatelessWidget {
             child: Consumer<ThemeModel>(
               builder: (context, value, child) => MaterialApp(
                   debugShowCheckedModeBanner: false,
-                  title: 'Flutter Demo',
+                  title: 'KudoKo',
                   themeMode: value.getTheme,
                   theme: ThemeData(
                     colorSchemeSeed: Colors.lightBlue,
-                    // colorScheme: ColorScheme.fromSwatch(
-                    //   primarySwatch: Colors.deepPurple,
-                    // ),
                     useMaterial3: true,
                     brightness: Brightness.light,
                   ),
                   darkTheme: ThemeData(
                     colorSchemeSeed: Colors.deepPurple,
-                    // colorScheme: ColorScheme.fromSwatch(
-                    //   primarySwatch: Colors.deepPurple,
-                    // ),
                     useMaterial3: true,
                     brightness: Brightness.dark,
                   ),

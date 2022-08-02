@@ -44,8 +44,7 @@ class RoutinesScreen extends StatelessWidget {
       body: Consumer<RoutineModel>(
         builder: ((context, value, child) => value.routines.isEmpty
             ? Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                padding: const EdgeInsets.all(15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -146,6 +145,7 @@ class RoutinesScreen extends StatelessWidget {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const SizedBox(height: 20),
                             Text(
                               "All Routines",
                               style: GoogleFonts.lato(
