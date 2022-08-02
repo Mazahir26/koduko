@@ -30,9 +30,7 @@ Alternatively you can build the app yourself if u wish to you can follow the gui
 
 ## Preview
 
-![ScreenShort 1](github_assets/image1.png)
-![ScreenShort 2](github_assets/image2.png)
-![ScreenShort 3](github_assets/image3.png)
+<img src="github_assets/image1.png " alt="ScreenShort 1" width="300"/><img src="github_assets/image2.png " alt="ScreenShort 2" width="300"/><img src="github_assets/image3.png " alt="ScreenShort 3" width="300"/>
 
 ## Features
 
