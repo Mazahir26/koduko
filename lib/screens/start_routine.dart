@@ -26,6 +26,8 @@ class RoutineScreenState extends State<RoutineScreen>
   bool _isSkipped = false;
   @override
   void initState() {
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(minutes: 1));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var routine = Provider.of<RoutineModel>(context, listen: false)
           .getRoutine(widget.routine);
@@ -50,9 +52,11 @@ class RoutineScreenState extends State<RoutineScreen>
               .duration,
         );
       }
+      setState(() {
+        _isPlaying = false;
+      });
     });
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(minutes: 1));
+
     _buttonController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 250));
     _controller.addStatusListener((status) {
