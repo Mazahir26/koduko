@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:koduko/screens/home.dart';
 import 'package:koduko/screens/routines.dart';
 import 'package:koduko/screens/settings.dart';
@@ -19,8 +20,25 @@ class _AppState extends State<App> {
   int _selectedIndex = 0;
   late final NotificationService service;
   late final StreamSubscription<String?> stream;
+  NotificationAppLaunchDetails? notificationAppLaunchDetails;
+  late final PageController _pageController;
+
+  getDeviceLaunch() async {
+    notificationAppLaunchDetails = await service.getDeviceLaunchInfo();
+    if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+      if ((notificationAppLaunchDetails!.payload?.isNotEmpty ?? false)) {
+        onNotificationListener(notificationAppLaunchDetails!.payload);
+      }
+    }
+  }
+
   void _onItemTapped(int index) {
     setState(() {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOutCirc,
+      );
       _selectedIndex = index;
     });
   }
@@ -28,6 +46,8 @@ class _AppState extends State<App> {
   @override
   void initState() {
     service = NotificationService();
+    getDeviceLaunch();
+    _pageController = PageController();
     stream = service.onNotificationClick.stream.listen(onNotificationListener);
     super.initState();
   }
@@ -40,9 +60,6 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    // final textTheme = Theme.of(context)
-    //     .textTheme
-    //     .apply(displayColor: Theme.of(context).colorScheme.onSurface);
     final List<Widget> widgetOptions = <Widget>[
       HomeScreen(
         onTapChange: () => _onItemTapped(1),
@@ -74,7 +91,13 @@ class _AppState extends State<App> {
         ],
       ),
       body: SafeArea(
-        child: widgetOptions.elementAt(_selectedIndex),
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (value) => setState(() {
+            _selectedIndex = value;
+          }),
+          children: widgetOptions,
+        ),
       ),
     );
   }

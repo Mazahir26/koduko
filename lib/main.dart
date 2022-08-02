@@ -6,6 +6,7 @@ import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/app.dart';
+import 'package:koduko/screens/onboadring.dart';
 import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/notification_service.dart';
@@ -57,6 +58,12 @@ class MyApp extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasData) {
+          final box = Hive.box<bool>('Theme');
+          String initRoute = '/';
+          if (box.isOpen) {
+            initRoute =
+                (box.get('isNewUser') ?? true) ? OnBoarding.routeName : '/';
+          }
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(
@@ -71,7 +78,6 @@ class MyApp extends StatelessWidget {
             ],
             child: Consumer<ThemeModel>(
               builder: (context, value, child) => MaterialApp(
-                  debugShowCheckedModeBanner: false,
                   title: 'KudoKo',
                   themeMode: value.getTheme,
                   theme: ThemeData(
@@ -84,12 +90,13 @@ class MyApp extends StatelessWidget {
                     useMaterial3: true,
                     brightness: Brightness.dark,
                   ),
-                  initialRoute: '/',
+                  initialRoute: initRoute,
                   routes: {
                     TasksScreen.routeName: (context) => const TasksScreen(),
                     App.routeName: (context) => const App(),
                     AboutScreen.routeName: (context) => const AboutScreen(),
-                    Statistics.routeName: ((context) => const Statistics())
+                    Statistics.routeName: ((context) => const Statistics()),
+                    OnBoarding.routeName: (((context) => const OnBoarding()))
                   }),
             ),
           );

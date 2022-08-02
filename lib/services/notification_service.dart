@@ -58,6 +58,7 @@ class NotificationService {
           tag: uId,
         ),
       ),
+      payload: uId,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
@@ -85,11 +86,17 @@ class NotificationService {
           tag: uId,
         ),
       ),
+      payload: uId,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
+  }
+
+  Future<NotificationAppLaunchDetails?> getDeviceLaunchInfo() async {
+    return await _flutterLocalNotificationsPlugin
+        .getNotificationAppLaunchDetails();
   }
 
   Future<void> cancelNotification(String id) async {

@@ -64,6 +64,7 @@ class RoutinesScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 30),
                     Expanded(
                       flex: 10,
                       child: Center(
@@ -121,7 +122,7 @@ class RoutinesScreen extends StatelessWidget {
                                     .headlineMedium,
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
                             ...t
                           ]),
                     );
@@ -145,7 +146,16 @@ class RoutinesScreen extends StatelessWidget {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 20),
+                            value.routines
+                                    .where(
+                                      (element) => element.days.contains(
+                                        DateFormat('EEEE')
+                                            .format(DateTime.now()),
+                                      ),
+                                    )
+                                    .isEmpty
+                                ? const SizedBox(height: 20)
+                                : Container(),
                             Text(
                               "All Routines",
                               style: GoogleFonts.lato(
@@ -158,7 +168,7 @@ class RoutinesScreen extends StatelessWidget {
                                               .onSurface)
                                       .headlineMedium),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
                             ...t
                           ]),
                     );
