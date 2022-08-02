@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             home: Scaffold(
               body: Center(
                 child: Text(
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
             ],
             child: Consumer<ThemeModel>(
               builder: (context, value, child) => MaterialApp(
+                  debugShowCheckedModeBanner: false,
                   title: 'KudoKo',
                   themeMode: value.getTheme,
                   theme: ThemeData(

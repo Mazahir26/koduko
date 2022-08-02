@@ -30,8 +30,9 @@ Alternatively you can build the app yourself if u wish to you can follow the gui
 
 ## Preview
 
-<!-- <img  src = "https://user-images.githubusercontent.com/46394948/137863725-f34337b8-d6ac-4006-a6ad-49d2e393e508.png" width="200"/> <img src = "https://user-images.githubusercontent.com/46394948/137863733-190e0af1-3499-4bf2-ae52-267a78f5de7f.png" width="200"/>
-<img src = "https://user-images.githubusercontent.com/46394948/137863736-83c400b4-bacd-4732-a705-c01b6db2ceee.png" width="200"/> <img src = "https://user-images.githubusercontent.com/46394948/137863741-1d709431-d02a-4cd0-9126-12f257d7ed79.png" width="200"/> -->
+![ScreenShort 1](github_assets\image1.png)
+![ScreenShort 2](github_assets\image2.png)
+![ScreenShort 3](github_assets\image3.png)
 
 ## Features
 
