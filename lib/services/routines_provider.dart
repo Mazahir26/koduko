@@ -159,6 +159,19 @@ class RoutineModel extends ChangeNotifier {
     }
   }
 
+  void editTask(Task t) {
+    List<Routine> temp = List.from(_routines);
+    temp.asMap().map((key, value) {
+      Routine? r = value.editTasks(t);
+      if (r != null) {
+        _box.putAt(key, r);
+        _routines[key] = r;
+      }
+      return MapEntry(key, value);
+    });
+    notifyListeners();
+  }
+
   void removeTask(Task t) {
     List<Routine> temp = List.from(_routines);
     temp.asMap().map((key, value) {
