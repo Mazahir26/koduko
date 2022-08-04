@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/components/card.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/services/notification_service.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/theme_provider.dart';
 import 'package:koduko/utils/colors_util.dart';
@@ -61,6 +62,15 @@ class RoutineScreenState extends State<RoutineScreen>
         vsync: this, duration: const Duration(milliseconds: 250));
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
+        var task = Provider.of<RoutineModel>(context, listen: false)
+            .getRoutine(widget.routine)!
+            .inCompletedTasks
+            .first;
+        NotificationService().showNotification(
+          title: task.name,
+          body: "Completed",
+          uId: task.id,
+        );
         setState(() {
           _isComplete = true;
         });
