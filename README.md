@@ -37,7 +37,7 @@ Alternatively you can build the app yourself if u wish to you can follow the gui
 - Notification Support
 - Material 3 Design
 - No ads
-- Analytics
+- no analytics
 - and much more..
 
 ## Found a Bug
