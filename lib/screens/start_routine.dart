@@ -25,6 +25,9 @@ class RoutineScreenState extends State<RoutineScreen>
   bool _isPlaying = false;
   bool _isComplete = false;
   bool _isSkipped = false;
+
+  DateTime _playedOn = DateTime.now();
+
   @override
   void initState() {
     _controller =
@@ -61,6 +64,9 @@ class RoutineScreenState extends State<RoutineScreen>
     _buttonController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 250));
     _controller.addStatusListener((status) {
+      if (status == AnimationStatus.forward) {
+        // _controller.value = _playedOn.compareTo(DateTime.now()) < 0 ? DateTime.now().difference(_playedOn).compareTo()
+      }
       if (status == AnimationStatus.completed) {
         var task = Provider.of<RoutineModel>(context, listen: false)
             .getRoutine(widget.routine)!
@@ -88,6 +94,9 @@ class RoutineScreenState extends State<RoutineScreen>
       _buttonController.reverse();
     } else {
       setState(() {
+        Duration d =
+            _controller.duration! - (_controller.duration! * _controller.value);
+        _playedOn = DateTime.now().subtract(d);
         _isPlaying = true;
       });
       _controller.forward();
