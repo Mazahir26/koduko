@@ -3,6 +3,7 @@ import 'package:koduko/components/create_task_bottom_sheet.dart';
 import 'package:koduko/components/header.dart';
 import 'package:koduko/components/task_tile.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/tasks_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ class TasksScreen extends StatelessWidget {
 
     void _onEdit(Task t) {
       Provider.of<TaskModel>(context, listen: false).edit(t);
+      Provider.of<RoutineModel>(context, listen: false).editTask(t);
     }
 
     void _onCreateTask() async {

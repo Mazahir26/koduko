@@ -154,6 +154,19 @@ class Routine {
     return null;
   }
 
+  Routine? editTasks(Task t) {
+    if (tasks.isNotEmpty) {
+      List<Task> tep = [];
+      List<Task> temp = tasks.map((e) => e.id == t.id ? t : e).toList();
+      if (inCompletedTasks.isNotEmpty) {
+        tep = inCompletedTasks.map((e) => e.id == t.id ? t : e).toList();
+      }
+      return copyWith(tasks: temp, inCompletedTasks: tep);
+    }
+
+    return null;
+  }
+
   String getDays() {
     return days.length == 7
         ? "Daily"
