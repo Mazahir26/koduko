@@ -1,24 +1,20 @@
-# Kudoku
+# Koduko
 
 Yet another Habit tracker made with flutter.
 
-## Table of Contents
 
-- [About](#about)
-- [Getting Started](#getting-started)
-- [Features](#features)
 
-## About
+## ❓ About
 
-Its an open source and free app where you can manage your daily or weekly habits. It uses Material 3 design.
+It's an open source and free app where you can manage your daily or weekly habits.
 
-## Getting Started
+## 📢 Getting Started
 
-You can install the apk found in the release tab.
+You can install the apk from releases tab.
 
-Alternatively you can build the app yourself if u wish to you can follow the guid [here](#build)
+Alternatively you can build the app yourself. See below for further information.
 
-## Build
+## 🔨 Build
 
 - Clone the repo using `git clone https://github.com/Mazahir26/koduko.git`
 
@@ -26,32 +22,33 @@ Alternatively you can build the app yourself if u wish to you can follow the gui
 
 - To test it out locally you can check this [guide](https://docs.flutter.dev/development/tools/vs-code)
 
-- To Build the apk follow this [guide](https://docs.flutter.dev/deployment/android)
+- To build the apk follow this [guide](https://docs.flutter.dev/deployment/android)
 
-## Preview
+## 👀 Preview 
 
 <img src="github_assets/image1.png " alt="ScreenShort 1" width="300"/><img src="github_assets/image2.png " alt="ScreenShort 2" width="300"/><img src="github_assets/image3.png " alt="ScreenShort 3" width="300"/>
 
-## Features
+## ⛩️ Features 
 
-- Notification Support
-- Material 3 Design
-- No ads
-- insightful stats
-- and much more..
+- Notification Support,
+- Material 3 Design,
+- No ads,
+- Insightful stats,
+- And much more..
 
-## Found a Bug
+## 🐞 Found a Bug 
 
-The app has only been tested on android.
 
-- if you find any bugs, please raise an issue
-- or, [contact me](http://mazahir26.github.io/)
 
-## License
+If you found any bugs, please open an issue
+ or [contact me](http://mazahir26.github.io/)
+ 
+_The app has only been tested on Android._
+## 📝 License 
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the [MIT License](LICENSE.md).
 
-## Thank You
+## ❤️ Thank You 
 
 Thanks for checking out my project, I would love to hear feedback, you can [contact](http://mazahir26.github.io/) me via Mail or Telegram.
 
