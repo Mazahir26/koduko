@@ -63,10 +63,21 @@ class RoutineScreenState extends State<RoutineScreen>
 
     _buttonController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 250));
-    _controller.addStatusListener((status) {
-      if (status == AnimationStatus.forward) {
-        // _controller.value = _playedOn.compareTo(DateTime.now()) < 0 ? DateTime.now().difference(_playedOn).compareTo()
+    _controller.addListener(() {
+      if (_controller.status == AnimationStatus.forward) {
+        final diff = DateTime.now().difference(_playedOn);
+
+        //Check if the difference is more that 100 milliseconds
+        if ((diff - (_controller.duration! * _controller.value))
+                .abs()
+                .inMilliseconds >
+            100) {
+          _controller.value =
+              diff.inMilliseconds / _controller.duration!.inMilliseconds;
+        }
       }
+    });
+    _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         var task = Provider.of<RoutineModel>(context, listen: false)
             .getRoutine(widget.routine)!
@@ -94,8 +105,7 @@ class RoutineScreenState extends State<RoutineScreen>
       _buttonController.reverse();
     } else {
       setState(() {
-        Duration d =
-            _controller.duration! - (_controller.duration! * _controller.value);
+        Duration d = (_controller.duration! * _controller.value);
         _playedOn = DateTime.now().subtract(d);
         _isPlaying = true;
       });
@@ -112,6 +122,10 @@ class RoutineScreenState extends State<RoutineScreen>
         _controller.reset();
         if (_isSkipped) {
           _isSkipped = false;
+          if (_isPlaying) {
+            _isPlaying = false;
+            _buttonController.reverse();
+          }
         }
       });
       var ts = Provider.of<RoutineModel>(context, listen: false)
@@ -119,17 +133,19 @@ class RoutineScreenState extends State<RoutineScreen>
           .inCompletedTasks;
       if (ts.isNotEmpty) {
         _controller.duration = parseDuration(ts.first.duration);
-        if (_isPlaying) {
-          _controller.forward();
-        }
       }
     } else if (t == DismissDirection.startToEnd) {
       Provider.of<RoutineModel>(context, listen: false)
           .completeTask(widget.routine);
       _controller.reset();
       setState(() {
+        if (_isPlaying) {
+          _isPlaying = false;
+          _buttonController.reverse();
+        }
         if (_isComplete) {
           _isComplete = false;
+          _playedOn = DateTime.now();
         }
       });
       var ts = Provider.of<RoutineModel>(context, listen: false)
@@ -137,9 +153,6 @@ class RoutineScreenState extends State<RoutineScreen>
           .inCompletedTasks;
       if (ts.isNotEmpty) {
         _controller.duration = parseDuration(ts.first.duration);
-        if (_isPlaying) {
-          _controller.forward();
-        }
       }
     }
   }
@@ -221,24 +234,39 @@ class RoutineScreenState extends State<RoutineScreen>
                         ...value
                             .asMap()
                             .entries
-                            .map((e) => Consumer<ThemeModel>(
-                                  builder: (context, themeData, child) =>
-                                      TaskCard(
-                                    isSwipeDisabled: value.length == 1,
-                                    isSkipped: _isSkipped,
-                                    isCompleted: _isComplete,
-                                    buttonController: _buttonController,
-                                    isPlaying: _isPlaying,
-                                    onTap: onTap,
-                                    name: e.value.name,
-                                    controller: e.key == 0 ? _controller : null,
-                                    color: themeData.isDark()
-                                        ? darken(Color(e.value.color))
-                                        : Color(e.value.color),
-                                    index: (e.key) * 1.0,
-                                    onDismissed: onDismiss,
-                                  ),
-                                ))
+                            .map(
+                              (e) => Consumer<ThemeModel>(
+                                  builder: (context, themeData, child) {
+                                bool isSwipeDis = false;
+                                if (e.key == 0) {
+                                  int count = 0;
+                                  for (var element in value) {
+                                    if (element.id == e.value.id) {
+                                      count++;
+                                    }
+                                  }
+                                  if (count == value.length) {
+                                    isSwipeDis = true;
+                                  }
+                                }
+                                return TaskCard(
+                                  isSwipeDisabled:
+                                      value.length == 1 || isSwipeDis,
+                                  isSkipped: _isSkipped,
+                                  isCompleted: _isComplete,
+                                  buttonController: _buttonController,
+                                  isPlaying: _isPlaying,
+                                  onTap: onTap,
+                                  name: e.value.name,
+                                  controller: e.key == 0 ? _controller : null,
+                                  color: themeData.isDark()
+                                      ? darken(Color(e.value.color))
+                                      : Color(e.value.color),
+                                  index: (e.key) * 1.0,
+                                  onDismissed: onDismiss,
+                                );
+                              }),
+                            )
                             .toList()
                             .reversed,
                       ],
