@@ -72,8 +72,9 @@ class RoutineScreenState extends State<RoutineScreen>
                 .abs()
                 .inMilliseconds >
             100) {
-          _controller.value =
-              diff.inMilliseconds / _controller.duration!.inMilliseconds;
+          _controller.forward(
+              from: (diff.inMilliseconds / _controller.duration!.inMilliseconds)
+                  .clamp(0, 1));
         }
       }
     });
