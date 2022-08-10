@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
@@ -208,6 +209,50 @@ class RoutineModel extends ChangeNotifier {
       NotificationService().cancelNotification(id);
       _box.deleteAt(index);
       _routines.removeWhere((element) => element.id.compareTo(id) == 0);
+      notifyListeners();
+    }
+  }
+
+  List<Routine> todaysRoutines() {
+    return routines
+        .where((element) => element.isArchive == false)
+        .where(
+          (element) => element.days.contains(
+            DateFormat('EEEE').format(DateTime.now()),
+          ),
+        )
+        .toList();
+  }
+
+  List<Routine> allRoutines() {
+    return routines
+        .where((element) => element.isArchive == false)
+        .where(
+          (element) => !element.days.contains(
+            DateFormat('EEEE').format(DateTime.now()),
+          ),
+        )
+        .toList();
+  }
+
+  void addToArchive(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      var r = _routines[index].addToArchive();
+      _box.putAt(index, r);
+      _routines[index] = r;
+      notifyListeners();
+    }
+  }
+
+  void removeFromArchive(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      var r = _routines[index].removeFromArchive();
+      _box.putAt(index, r);
+      _routines[index] = r;
       notifyListeners();
     }
   }

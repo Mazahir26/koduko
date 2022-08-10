@@ -25,13 +25,14 @@ class RoutineAdapter extends TypeAdapter<Routine> {
       days: (fields[6] as List).cast<String>(),
       isCompleted: fields[5] == null ? true : fields[5] as bool,
       time: fields[7] as DateTime?,
+      isArchive: fields[8] == null ? false : fields[8] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Routine obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class RoutineAdapter extends TypeAdapter<Routine> {
       ..writeByte(6)
       ..write(obj.days)
       ..writeByte(7)
-      ..write(obj.time);
+      ..write(obj.time)
+      ..writeByte(8)
+      ..write(obj.isArchive);
   }
 
   @override

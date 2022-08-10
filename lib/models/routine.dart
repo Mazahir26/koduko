@@ -35,6 +35,9 @@ class Routine {
   @HiveField(7, defaultValue: null)
   DateTime? time;
 
+  @HiveField(8, defaultValue: false)
+  late bool isArchive;
+
   Routine({
     required this.name,
     required this.tasks,
@@ -44,6 +47,7 @@ class Routine {
     required this.days,
     required this.isCompleted,
     required this.time,
+    required this.isArchive,
     bool isSkip = false,
   }) {
     if (isSkip) {
@@ -81,6 +85,7 @@ class Routine {
     history = [];
     tasks = tasks;
     inCompletedTasks = tasks;
+    isArchive = false;
   }
 
   Routine copyWith({
@@ -93,6 +98,7 @@ class Routine {
     bool? isCompleted,
     TimeOfDay? time,
     bool isSkip = false,
+    bool? isArchive,
   }) {
     return Routine(
         name: name ?? this.name,
@@ -103,7 +109,8 @@ class Routine {
         days: days ?? this.days,
         isCompleted: isCompleted ?? this.isCompleted,
         time: timeOfDayToDateTime(time) ?? this.time,
-        isSkip: isSkip);
+        isSkip: isSkip,
+        isArchive: isArchive ?? this.isArchive);
   }
 
   Routine skipTask() {
@@ -142,6 +149,14 @@ class Routine {
       }
     }
     return count;
+  }
+
+  Routine addToArchive() {
+    return copyWith(isArchive: true);
+  }
+
+  Routine removeFromArchive() {
+    return copyWith(isArchive: false);
   }
 
   Routine? taskExists(Task t) {
