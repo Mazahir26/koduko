@@ -106,9 +106,10 @@ class RoutineScreenState extends State<RoutineScreen>
   }
 
   void onTap(TapUpDetails? _) async {
-    final r = Provider.of<RoutineModel>(context, listen: false)
-        .getRoutine(widget.routine)!;
-    final task = r.inCompletedTasks.first;
+    final task = Provider.of<RoutineModel>(context, listen: false)
+        .getRoutine(widget.routine)!
+        .inCompletedTasks
+        .first;
     if (_isPlaying) {
       setState(() {
         _isPlaying = false;
@@ -133,7 +134,11 @@ class RoutineScreenState extends State<RoutineScreen>
 
   void onDismiss(DismissDirection t, BuildContext context) {
     NotificationService().cancelNotificationWithId(777);
-
+    final task = Provider.of<RoutineModel>(context, listen: false)
+        .getRoutine(widget.routine)!
+        .inCompletedTasks
+        .first;
+    NotificationService().cancelNotification(task.id + widget.routine);
     if (t == DismissDirection.endToStart) {
       Provider.of<RoutineModel>(context, listen: false)
           .skipTask(widget.routine);
@@ -195,6 +200,18 @@ class RoutineScreenState extends State<RoutineScreen>
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: IconButton(
             onPressed: () {
+              if (Provider.of<RoutineModel>(context, listen: false)
+                  .getRoutine(widget.routine)!
+                  .inCompletedTasks
+                  .isNotEmpty) {
+                final task = Provider.of<RoutineModel>(context, listen: false)
+                    .getRoutine(widget.routine)!
+                    .inCompletedTasks
+                    .first;
+                NotificationService()
+                    .cancelNotification(task.id + widget.routine);
+              }
+
               Navigator.pop(context);
             },
             icon: const Icon(
