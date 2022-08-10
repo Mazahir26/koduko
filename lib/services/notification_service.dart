@@ -46,16 +46,15 @@ class NotificationService {
     required String uId,
   }) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
+      ValueKey(uId).hashCode,
       title,
       des,
       _dailyAt(time),
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           '002',
           'Daily Routine Notifications',
           channelDescription: 'Daily Routine Notifications',
-          tag: uId,
         ),
       ),
       payload: uId,
@@ -70,27 +69,26 @@ class NotificationService {
     required TimeOfDay time,
     required String title,
     required String des,
-    required List<String> days,
+    required String day,
     required String uId,
   }) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
+      ValueKey(uId + day).hashCode,
       title,
       des,
-      _scheduleWeekly(time, days),
-      NotificationDetails(
+      _scheduleWeekly(time, day),
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           '003',
           'Weekly Routine Notifications',
           channelDescription: 'Weekly Routine Notifications',
-          tag: uId,
         ),
       ),
       payload: uId,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
+      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
   }
 
@@ -100,7 +98,7 @@ class NotificationService {
   }
 
   Future<void> cancelNotification(String id) async {
-    await _flutterLocalNotificationsPlugin.cancel(0, tag: id);
+    await _flutterLocalNotificationsPlugin.cancel(ValueKey(id).hashCode);
   }
 
   Future<void> cancelAllNotifications() async {
@@ -119,13 +117,13 @@ class NotificationService {
 
   tz.TZDateTime _scheduleWeekly(
     TimeOfDay time,
-    List<String> days,
+    String day,
   ) {
     tz.TZDateTime scheduledDate = _dailyAt(time);
-    bool t = days.contains(DateFormat("EEEE").format(scheduledDate));
-    while (!t) {
+    var cDay = DateFormat('EEEE').format(scheduledDate);
+    while (cDay != day) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
-      t = days.contains(DateFormat("EEEE").format(scheduledDate));
+      cDay = DateFormat('EEEE').format(scheduledDate);
     }
 
     return scheduledDate;
