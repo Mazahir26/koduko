@@ -122,6 +122,29 @@ class NotificationService {
     );
   }
 
+  Future<void> showProgressNotification2(
+      int maxProgress, int progress, String name, String sub) async {
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'task progress channel', 'task progress channel',
+            channelDescription: 'displays current task progress',
+            channelShowBadge: false,
+            importance: Importance.max,
+            priority: Priority.high,
+            onlyAlertOnce: true,
+            showProgress: true,
+            maxProgress: maxProgress,
+            progress: progress);
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.show(
+      777,
+      name,
+      sub,
+      platformChannelSpecifics,
+    );
+  }
+
   Future<void> scheduledNotification(
       Duration dur, String id, String title, String des) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
