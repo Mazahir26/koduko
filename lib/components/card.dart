@@ -2,26 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/utils/duration_to_string.dart';
 
-// class TaskCard extends StatelessWidget {
-//   final String name;
-//   final AnimationController? controller;
-//   final Color color;
-//   final double index;
-//   final void Function(DismissDirection direction) onDismissed;
-//   final bool isPlaying;
-//   final AnimationController buttonController;
-//   const TaskCard({
-//     Key? key,
-//     required this.name,
-//     required this.controller,
-//     required this.color,
-//     required this.index,
-//     required this.onDismissed,
-//     required this.isPlaying, required this.buttonController,
-//   }) : super(key: key);
-
-// }
-
 class TaskCard extends StatelessWidget {
   final String name;
   final AnimationController? controller;
@@ -108,13 +88,15 @@ class TaskCard extends StatelessWidget {
           child: AnimatedRotation(
             duration: const Duration(milliseconds: 100),
             curve: Curves.easeInCirc,
-            turns: index / 200,
+            turns: index < 6 ? index / 200 : 5 / 200,
             child: AnimatedPadding(
               duration: const Duration(milliseconds: 100),
               curve: Curves.easeInCirc,
-              padding: EdgeInsets.only(left: index * 10, bottom: index * 10),
+              padding: EdgeInsets.only(
+                  left: index < 6 ? index * 10 : 5 * 10,
+                  bottom: index < 6 ? index * 10 : 5 * 10),
               child: Dismissible(
-                key: Key(name),
+                key: UniqueKey(),
                 confirmDismiss: (direction) {
                   if (direction == DismissDirection.endToStart &&
                       isSwipeDisabled) {
