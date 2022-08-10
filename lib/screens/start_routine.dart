@@ -66,6 +66,14 @@ class RoutineScreenState extends State<RoutineScreen>
     _controller.addListener(() {
       if (_controller.status == AnimationStatus.forward) {
         final diff = DateTime.now().difference(_playedOn);
+        NotificationService().showProgressNotification(
+            _controller.value,
+            Provider.of<RoutineModel>(context, listen: false)
+                .getRoutine(widget.routine)!
+                .inCompletedTasks
+                .first
+                .name,
+            "Keep going");
 
         //Check if the difference is more that 100 milliseconds
         if ((diff - (_controller.duration! * _controller.value))
@@ -80,15 +88,8 @@ class RoutineScreenState extends State<RoutineScreen>
     });
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        var task = Provider.of<RoutineModel>(context, listen: false)
-            .getRoutine(widget.routine)!
-            .inCompletedTasks
-            .first;
-        NotificationService().showNotification(
-          title: task.name,
-          body: "Completed",
-          uId: task.id,
-        );
+        NotificationService().cancelNotificationWithId(777);
+
         setState(() {
           _isComplete = true;
         });
@@ -98,18 +99,26 @@ class RoutineScreenState extends State<RoutineScreen>
   }
 
   void onTap(TapUpDetails? _) {
+    final task = Provider.of<RoutineModel>(context, listen: false)
+        .getRoutine(widget.routine)!
+        .inCompletedTasks
+        .first;
     if (_isPlaying) {
       setState(() {
         _isPlaying = false;
       });
+      NotificationService().cancelNotification(task.id + widget.routine);
+
       _controller.stop();
       _buttonController.reverse();
     } else {
+      Duration d = (_controller.duration! * _controller.value);
       setState(() {
-        Duration d = (_controller.duration! * _controller.value);
         _playedOn = DateTime.now().subtract(d);
         _isPlaying = true;
       });
+      NotificationService().scheduledNotification((_controller.duration! - d),
+          task.id + widget.routine, task.name, 'Completed!');
       _controller.forward();
       _buttonController.forward();
     }
@@ -160,6 +169,7 @@ class RoutineScreenState extends State<RoutineScreen>
 
   @override
   void dispose() {
+    NotificationService().cancelNotificationWithId(777);
     _controller.dispose();
     _buttonController.dispose();
 

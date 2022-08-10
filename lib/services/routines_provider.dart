@@ -46,13 +46,7 @@ class RoutineModel extends ChangeNotifier {
       }
     } else {
       if (routine.time != null) {
-        NotificationService().scheduleWeekly(
-          days: routine.days,
-          time: dateTimeToTimeOfDay(routine.time!),
-          title: routine.name,
-          des: "Tap to Start",
-          uId: routine.id,
-        );
+        scheduleWeekly(routine);
       }
     }
     notifyListeners();
@@ -64,9 +58,21 @@ class RoutineModel extends ChangeNotifier {
     if (index > -1) {
       _box.putAt(index, routine);
       _routines[index] = routine;
-      await NotificationService().cancelAllNotifications();
+      if (routine.days.length == 7) {
+        if (routine.time != null) {
+          NotificationService().scheduleDaily(
+            time: dateTimeToTimeOfDay(routine.time!),
+            title: routine.name,
+            des: "Tap to Start",
+            uId: routine.id,
+          );
+        }
+      } else {
+        if (routine.time != null) {
+          scheduleWeekly(routine);
+        }
+      }
       notifyListeners();
-      enableAllNotifications();
     }
   }
 
@@ -234,15 +240,21 @@ class RoutineModel extends ChangeNotifier {
         }
       } else {
         if (element.time != null) {
-          NotificationService().scheduleWeekly(
-            days: element.days,
-            time: dateTimeToTimeOfDay(element.time!),
-            title: element.name,
-            des: "Tap to Start",
-            uId: element.id,
-          );
+          scheduleWeekly(element);
         }
       }
+    }
+  }
+
+  void scheduleWeekly(Routine r) {
+    for (var day in r.days) {
+      NotificationService().scheduleWeekly(
+        day: day,
+        time: dateTimeToTimeOfDay(r.time!),
+        title: r.name,
+        des: "Tap to Start",
+        uId: r.id,
+      );
     }
   }
 
