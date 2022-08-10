@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
@@ -92,6 +94,50 @@ class NotificationService {
     );
   }
 
+  Future<void> showProgressNotification(
+    double value,
+    String name,
+    String sub,
+  ) async {
+    final progress = (value * 100).toInt();
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'task progress channel',
+      'task progress channel',
+      channelDescription: 'displays current task progress',
+      channelShowBadge: false,
+      priority: Priority.high,
+      onlyAlertOnce: true,
+      showProgress: true,
+      maxProgress: 100,
+      progress: progress,
+    );
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.show(
+      777,
+      name,
+      sub,
+      platformChannelSpecifics,
+    );
+  }
+
+  Future<void> scheduledNotification(
+      Duration dur, String id, String title, String des) async {
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        ValueKey(id).hashCode,
+        title,
+        des,
+        tz.TZDateTime.now(tz.local).add(dur),
+        const NotificationDetails(
+            android: AndroidNotificationDetails(
+                'TaskCompleted', 'Task Completed',
+                channelDescription: 'Task Completed Notification')),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
+  }
+
   Future<NotificationAppLaunchDetails?> getDeviceLaunchInfo() async {
     return await _flutterLocalNotificationsPlugin
         .getNotificationAppLaunchDetails();
@@ -99,6 +145,10 @@ class NotificationService {
 
   Future<void> cancelNotification(String id) async {
     await _flutterLocalNotificationsPlugin.cancel(ValueKey(id).hashCode);
+  }
+
+  Future<void> cancelNotificationWithId(int id) async {
+    await _flutterLocalNotificationsPlugin.cancel(id);
   }
 
   Future<void> cancelAllNotifications() async {
@@ -131,7 +181,7 @@ class NotificationService {
 
   Future<void> initialize() async {
     const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('icon');
+        AndroidInitializationSettings('app_icon');
 
     const InitializationSettings settings = InitializationSettings(
       android: androidInitializationSettings,
