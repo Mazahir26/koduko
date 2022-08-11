@@ -2,11 +2,13 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/services/notification_service.dart';
 import 'package:koduko/utils/time_of_day_util.dart';
+import 'package:koduko/utils/date_time_extension.dart';
 
 class RoutineModel extends ChangeNotifier {
   late final List<Routine> _routines;
@@ -121,11 +123,67 @@ class RoutineModel extends ChangeNotifier {
     return data;
   }
 
+  int getRoutineStartMaxDays(String id) {
+    final r = getRoutine(id);
+    if (r != null) {
+      return (DateTime.now().difference(r.history.last.time).inHours / 24)
+          .ceil();
+    }
+    return 0;
+  }
+
+  List<int> getRoutineStats(String id) {
+    final r = getRoutine(id);
+    List<int> data = [];
+    if (r != null) {
+      var start = r.history.last.time;
+      var d = getRoutineStartMaxDays(id);
+      for (var i = 0; i <= getRoutineStartMaxDays(id); i++) {
+        var noOfTasks = 0;
+        for (var element in r.history) {
+          if (element.time.isSameDate(start)) {
+            noOfTasks++;
+          }
+        }
+        start = start.add(const Duration(days: 1));
+        data.add(noOfTasks);
+      }
+    }
+    return data;
+  }
+
+  DateTime getStartDate(String id) {
+    final r = getRoutine(id);
+    if (r != null) {
+      return r.history.last.time;
+    }
+    return DateTime.now();
+  }
+
+  List<int> getRoutineDayFrequencyStats(String id) {
+    final r = getRoutine(id);
+    List<int> data = [];
+    if (r != null) {
+      for (var i = 0; i < 24; i++) {
+        var noOfTasks = 0;
+        for (var element in r.history) {
+          if (element.time.hour == i) {
+            noOfTasks++;
+          }
+        }
+        data.add(noOfTasks);
+      }
+    }
+    return data;
+  }
+
   int totalNoOfTasksToday() {
     int noOfTasks = 0;
     for (var element in _routines) {
       if (element.isToday()) {
-        noOfTasks += element.tasks.length;
+        if (element.isToday()) {
+          noOfTasks += element.tasks.length;
+        }
       }
     }
     return noOfTasks;
@@ -134,10 +192,12 @@ class RoutineModel extends ChangeNotifier {
   int totalNoOfCompletedTasksToday() {
     int noOfTasks = 0;
     for (var element in _routines) {
-      if (element.isToday()) {
-        noOfTasks += (element.isCompleted
-            ? element.tasks.length
-            : element.tasks.length - element.inCompletedTasks.length);
+      if (!element.isArchive) {
+        if (element.isToday()) {
+          noOfTasks += (element.isCompleted
+              ? element.tasks.length
+              : element.tasks.length - element.inCompletedTasks.length);
+        }
       }
     }
     return noOfTasks;
@@ -178,6 +238,22 @@ class RoutineModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleMarkAsCompleted(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      var r = _routines[index];
+      if (_routines[index].isCompleted) {
+        r = _routines[index].markAsInCompleted();
+      } else {
+        r = _routines[index].markAsCompleted();
+      }
+      _box.putAt(index, r);
+      _routines[index] = r;
+      notifyListeners();
+    }
+  }
+
   void removeTask(Task t) {
     List<Routine> temp = List.from(_routines);
     temp.asMap().map((key, value) {
@@ -212,6 +288,69 @@ class RoutineModel extends ChangeNotifier {
     }
   }
 
+  List<Routine> todaysRoutines() {
+    return routines
+        .where((element) => element.isArchive == false)
+        .where(
+          (element) => element.days.contains(
+            DateFormat('EEEE').format(DateTime.now()),
+          ),
+        )
+        .toList();
+  }
+
+  List<Routine> allRoutines() {
+    return routines
+        .where((element) => element.isArchive == false)
+        .where(
+          (element) => !element.days.contains(
+            DateFormat('EEEE').format(DateTime.now()),
+          ),
+        )
+        .toList();
+  }
+
+  List<Routine> archiveRoutines() {
+    return routines.where((element) => element.isArchive == true).toList();
+  }
+
+  void addToArchive(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      var r = _routines[index].addToArchive();
+      NotificationService().cancelNotification(r.id);
+      _box.putAt(index, r);
+      _routines[index] = r;
+      notifyListeners();
+    }
+  }
+
+  void removeFromArchive(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      var r = _routines[index].removeFromArchive();
+      _box.putAt(index, r);
+      _routines[index] = r;
+      if (r.days.length == 7) {
+        if (r.time != null) {
+          NotificationService().scheduleDaily(
+            time: dateTimeToTimeOfDay(r.time!),
+            title: r.name,
+            des: "Tap to Start",
+            uId: r.id,
+          );
+        }
+      } else {
+        if (r.time != null) {
+          scheduleWeekly(r);
+        }
+      }
+      notifyListeners();
+    }
+  }
+
   void toggleNotifications() {
     final box = Hive.box<bool>('Theme');
     if (notifications) {
@@ -229,18 +368,20 @@ class RoutineModel extends ChangeNotifier {
 
   void enableAllNotifications() {
     for (var element in _routines) {
-      if (element.days.length == 7) {
-        if (element.time != null) {
-          NotificationService().scheduleDaily(
-            time: dateTimeToTimeOfDay(element.time!),
-            title: element.name,
-            des: "Tap to Start",
-            uId: element.id,
-          );
-        }
-      } else {
-        if (element.time != null) {
-          scheduleWeekly(element);
+      if (!element.isArchive) {
+        if (element.days.length == 7) {
+          if (element.time != null) {
+            NotificationService().scheduleDaily(
+              time: dateTimeToTimeOfDay(element.time!),
+              title: element.name,
+              des: "Tap to Start",
+              uId: element.id,
+            );
+          }
+        } else {
+          if (element.time != null) {
+            scheduleWeekly(element);
+          }
         }
       }
     }

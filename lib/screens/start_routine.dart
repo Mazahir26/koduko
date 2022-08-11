@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/components/card.dart';
@@ -27,7 +29,9 @@ class RoutineScreenState extends State<RoutineScreen>
   bool _isSkipped = false;
 
   DateTime _playedOn = DateTime.now();
-
+  final Stream _timer = Stream.periodic(
+      const Duration(seconds: 1), ((computationCount) => computationCount));
+  late final StreamSubscription _subscription;
   @override
   void initState() {
     _controller =
@@ -66,14 +70,6 @@ class RoutineScreenState extends State<RoutineScreen>
     _controller.addListener(() {
       if (_controller.status == AnimationStatus.forward) {
         final diff = DateTime.now().difference(_playedOn);
-        NotificationService().showProgressNotification(
-            _controller.value,
-            Provider.of<RoutineModel>(context, listen: false)
-                .getRoutine(widget.routine)!
-                .inCompletedTasks
-                .first
-                .name,
-            "Keep going");
 
         //Check if the difference is more that 100 milliseconds
         if ((diff - (_controller.duration! * _controller.value))
@@ -86,10 +82,21 @@ class RoutineScreenState extends State<RoutineScreen>
         }
       }
     });
+    _subscription = _timer.listen((event) {
+      if (_controller.status == AnimationStatus.forward) {
+        NotificationService().showProgressNotification(
+            _controller.value,
+            Provider.of<RoutineModel>(context, listen: false)
+                .getRoutine(widget.routine)!
+                .inCompletedTasks
+                .first
+                .name,
+            "Keep going");
+      }
+    });
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         NotificationService().cancelNotificationWithId(777);
-
         setState(() {
           _isComplete = true;
         });
@@ -98,7 +105,7 @@ class RoutineScreenState extends State<RoutineScreen>
     super.initState();
   }
 
-  void onTap(TapUpDetails? _) {
+  void onTap(TapUpDetails? _) async {
     final task = Provider.of<RoutineModel>(context, listen: false)
         .getRoutine(widget.routine)!
         .inCompletedTasks
@@ -107,6 +114,7 @@ class RoutineScreenState extends State<RoutineScreen>
       setState(() {
         _isPlaying = false;
       });
+
       NotificationService().cancelNotification(task.id + widget.routine);
 
       _controller.stop();
@@ -125,6 +133,12 @@ class RoutineScreenState extends State<RoutineScreen>
   }
 
   void onDismiss(DismissDirection t, BuildContext context) {
+    NotificationService().cancelNotificationWithId(777);
+    final task = Provider.of<RoutineModel>(context, listen: false)
+        .getRoutine(widget.routine)!
+        .inCompletedTasks
+        .first;
+    NotificationService().cancelNotification(task.id + widget.routine);
     if (t == DismissDirection.endToStart) {
       Provider.of<RoutineModel>(context, listen: false)
           .skipTask(widget.routine);
@@ -172,6 +186,7 @@ class RoutineScreenState extends State<RoutineScreen>
     NotificationService().cancelNotificationWithId(777);
     _controller.dispose();
     _buttonController.dispose();
+    _subscription.cancel();
 
     super.dispose();
   }
@@ -185,6 +200,18 @@ class RoutineScreenState extends State<RoutineScreen>
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: IconButton(
             onPressed: () {
+              if (Provider.of<RoutineModel>(context, listen: false)
+                  .getRoutine(widget.routine)!
+                  .inCompletedTasks
+                  .isNotEmpty) {
+                final task = Provider.of<RoutineModel>(context, listen: false)
+                    .getRoutine(widget.routine)!
+                    .inCompletedTasks
+                    .first;
+                NotificationService()
+                    .cancelNotification(task.id + widget.routine);
+              }
+
               Navigator.pop(context);
             },
             icon: const Icon(

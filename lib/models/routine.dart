@@ -35,6 +35,9 @@ class Routine {
   @HiveField(7, defaultValue: null)
   DateTime? time;
 
+  @HiveField(8, defaultValue: false)
+  late bool isArchive;
+
   Routine({
     required this.name,
     required this.tasks,
@@ -44,6 +47,7 @@ class Routine {
     required this.days,
     required this.isCompleted,
     required this.time,
+    required this.isArchive,
     bool isSkip = false,
   }) {
     if (isSkip) {
@@ -81,6 +85,7 @@ class Routine {
     history = [];
     tasks = tasks;
     inCompletedTasks = tasks;
+    isArchive = false;
   }
 
   Routine copyWith({
@@ -93,6 +98,7 @@ class Routine {
     bool? isCompleted,
     TimeOfDay? time,
     bool isSkip = false,
+    bool? isArchive,
   }) {
     return Routine(
         name: name ?? this.name,
@@ -103,7 +109,8 @@ class Routine {
         days: days ?? this.days,
         isCompleted: isCompleted ?? this.isCompleted,
         time: timeOfDayToDateTime(time) ?? this.time,
-        isSkip: isSkip);
+        isSkip: isSkip,
+        isArchive: isArchive ?? this.isArchive);
   }
 
   Routine skipTask() {
@@ -142,6 +149,41 @@ class Routine {
       }
     }
     return count;
+  }
+
+  Routine addToArchive() {
+    return copyWith(isArchive: true);
+  }
+
+  Routine removeFromArchive() {
+    return copyWith(isArchive: false);
+  }
+
+  Routine markAsCompleted() {
+    List<TaskEvent> h = List.from(history);
+    for (var i = 0; i < inCompletedTasks.length; i++) {
+      final task = inCompletedTasks[i];
+      h.add(TaskEvent.create(
+        taskName: task.name,
+        taskId: task.id,
+        time: DateTime.now().add(Duration(seconds: i)),
+      ));
+    }
+    h.sort((a, b) => b.time.compareTo(a.time));
+
+    return copyWith(isCompleted: true, inCompletedTasks: [], history: h);
+  }
+
+  Routine markAsInCompleted() {
+    List<TaskEvent> h = List.from(history);
+    for (var task in tasks) {
+      final i = h.indexWhere((element) => element.taskId == task.id);
+      if (i > -1) {
+        h.removeAt(i);
+      }
+    }
+    h.sort((a, b) => b.time.compareTo(a.time));
+    return copyWith(isCompleted: false, inCompletedTasks: tasks, history: h);
   }
 
   Routine? taskExists(Task t) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/screens/about.dart';
+import 'package:koduko/screens/archive_routines.dart';
 import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/routines_provider.dart';
@@ -46,6 +47,32 @@ class SettingsScreen extends StatelessWidget {
                     IconButton(
                         onPressed: () =>
                             Navigator.pushNamed(context, TasksScreen.routeName),
+                        icon: const Icon(Icons.chevron_right_rounded)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Card(
+            margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+            child: InkWell(
+              onTap: () =>
+                  Navigator.pushNamed(context, ArchiveRoutinesScreen.routeName),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Hero(
+                      tag: "Archived",
+                      child: Text(
+                        "Archived",
+                        style: textTheme.titleLarge,
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () => Navigator.pushNamed(
+                            context, ArchiveRoutinesScreen.routeName),
                         icon: const Icon(Icons.chevron_right_rounded)),
                   ],
                 ),
