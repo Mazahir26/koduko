@@ -159,6 +159,33 @@ class Routine {
     return copyWith(isArchive: false);
   }
 
+  Routine markAsCompleted() {
+    List<TaskEvent> h = List.from(history);
+    for (var i = 0; i < inCompletedTasks.length; i++) {
+      final task = inCompletedTasks[i];
+      h.add(TaskEvent.create(
+        taskName: task.name,
+        taskId: task.id,
+        time: DateTime.now().add(Duration(seconds: i)),
+      ));
+    }
+    h.sort((a, b) => b.time.compareTo(a.time));
+
+    return copyWith(isCompleted: true, inCompletedTasks: [], history: h);
+  }
+
+  Routine markAsInCompleted() {
+    List<TaskEvent> h = List.from(history);
+    for (var task in tasks) {
+      final i = h.indexWhere((element) => element.taskId == task.id);
+      if (i > -1) {
+        h.removeAt(i);
+      }
+    }
+    h.sort((a, b) => b.time.compareTo(a.time));
+    return copyWith(isCompleted: false, inCompletedTasks: tasks, history: h);
+  }
+
   Routine? taskExists(Task t) {
     int index = tasks.indexWhere((element) => element.id.compareTo(t.id) == 0);
     if (index > -1) {

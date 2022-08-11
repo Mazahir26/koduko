@@ -183,6 +183,22 @@ class RoutineModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleMarkAsCompleted(String id) {
+    int index =
+        _routines.indexWhere((element) => element.id.compareTo(id) == 0);
+    if (index > -1) {
+      var r = _routines[index];
+      if (_routines[index].isCompleted) {
+        r = _routines[index].markAsInCompleted();
+      } else {
+        r = _routines[index].markAsCompleted();
+      }
+      _box.putAt(index, r);
+      _routines[index] = r;
+      notifyListeners();
+    }
+  }
+
   void removeTask(Task t) {
     List<Routine> temp = List.from(_routines);
     temp.asMap().map((key, value) {

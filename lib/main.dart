@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
                   title: 'KudoKo',
                   themeMode: value.getTheme,
                   theme: ThemeData(
-                    colorSchemeSeed: Colors.lightBlue,
+                    colorSchemeSeed: Colors.deepPurple,
                     useMaterial3: true,
                     brightness: Brightness.light,
                   ),

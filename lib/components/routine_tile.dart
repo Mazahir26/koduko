@@ -74,10 +74,20 @@ class RoutineTile extends StatelessWidget {
           ],
         ),
         endActionPane: ActionPane(
+          // dismissible: DismissiblePane(
+          //     confirmDismiss: () => Future(() => false),
+          //     closeOnCancel: true,
+          //     onDismissed: () {
+          //       Provider.of<RoutineModel>(context, listen: false)
+          //           .toggleMarkAsCompleted(routine.id);
+          //     }),
           motion: const ScrollMotion(),
           children: [
             Action(
-              onPress: ((context) {}),
+              onPress: ((context) {
+                Provider.of<RoutineModel>(context, listen: false)
+                    .toggleMarkAsCompleted(routine.id);
+              }),
               color: Colors.blue[300]!,
               icon: Icons.checklist_rounded,
               label: routine.isCompleted
