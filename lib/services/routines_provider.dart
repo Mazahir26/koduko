@@ -8,6 +8,7 @@ import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/services/notification_service.dart';
 import 'package:koduko/utils/time_of_day_util.dart';
+import 'package:koduko/utils/date_time_extension.dart';
 
 class RoutineModel extends ChangeNotifier {
   late final List<Routine> _routines;
@@ -118,6 +119,60 @@ class RoutineModel extends ChangeNotifier {
       }
 
       data.add(noOfTasks);
+    }
+    return data;
+  }
+
+  int getRoutineStartMaxDays(String id) {
+    final r = getRoutine(id);
+    if (r != null) {
+      return (DateTime.now().difference(r.history.last.time).inHours / 24)
+          .ceil();
+    }
+    return 0;
+  }
+
+  List<int> getRoutineStats(String id) {
+    final r = getRoutine(id);
+    List<int> data = [];
+    if (r != null) {
+      var start = r.history.last.time;
+      var d = getRoutineStartMaxDays(id);
+      for (var i = 0; i <= getRoutineStartMaxDays(id); i++) {
+        var noOfTasks = 0;
+        for (var element in r.history) {
+          if (element.time.isSameDate(start)) {
+            noOfTasks++;
+          }
+        }
+        start = start.add(const Duration(days: 1));
+        data.add(noOfTasks);
+      }
+    }
+    return data;
+  }
+
+  DateTime getStartDate(String id) {
+    final r = getRoutine(id);
+    if (r != null) {
+      return r.history.last.time;
+    }
+    return DateTime.now();
+  }
+
+  List<int> getRoutineDayFrequencyStats(String id) {
+    final r = getRoutine(id);
+    List<int> data = [];
+    if (r != null) {
+      for (var i = 0; i < 24; i++) {
+        var noOfTasks = 0;
+        for (var element in r.history) {
+          if (element.time.hour == i) {
+            noOfTasks++;
+          }
+        }
+        data.add(noOfTasks);
+      }
     }
     return data;
   }

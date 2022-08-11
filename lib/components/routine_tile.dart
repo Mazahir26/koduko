@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:koduko/components/create_routine_bottom_sheet.dart';
+import 'package:koduko/components/routine_chart.dart';
 import 'package:koduko/components/weekly_chart.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
@@ -74,13 +75,6 @@ class RoutineTile extends StatelessWidget {
           ],
         ),
         endActionPane: ActionPane(
-          // dismissible: DismissiblePane(
-          //     confirmDismiss: () => Future(() => false),
-          //     closeOnCancel: true,
-          //     onDismissed: () {
-          //       Provider.of<RoutineModel>(context, listen: false)
-          //           .toggleMarkAsCompleted(routine.id);
-          //     }),
           motion: const ScrollMotion(),
           children: [
             Action(
@@ -269,7 +263,7 @@ class CustomTile extends StatelessWidget {
                 ),
         ),
         children: [
-          WeeklyChart(textTheme: Theme.of(context).textTheme),
+          RoutineChart(routine: routine),
           Theme(
             data: Theme.of(context),
             child: Row(
