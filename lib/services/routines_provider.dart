@@ -126,7 +126,9 @@ class RoutineModel extends ChangeNotifier {
     int noOfTasks = 0;
     for (var element in _routines) {
       if (element.isToday()) {
-        noOfTasks += element.tasks.length;
+        if (element.isToday()) {
+          noOfTasks += element.tasks.length;
+        }
       }
     }
     return noOfTasks;
@@ -135,10 +137,12 @@ class RoutineModel extends ChangeNotifier {
   int totalNoOfCompletedTasksToday() {
     int noOfTasks = 0;
     for (var element in _routines) {
-      if (element.isToday()) {
-        noOfTasks += (element.isCompleted
-            ? element.tasks.length
-            : element.tasks.length - element.inCompletedTasks.length);
+      if (!element.isArchive) {
+        if (element.isToday()) {
+          noOfTasks += (element.isCompleted
+              ? element.tasks.length
+              : element.tasks.length - element.inCompletedTasks.length);
+        }
       }
     }
     return noOfTasks;
@@ -235,11 +239,16 @@ class RoutineModel extends ChangeNotifier {
         .toList();
   }
 
+  List<Routine> archiveRoutines() {
+    return routines.where((element) => element.isArchive == true).toList();
+  }
+
   void addToArchive(String id) {
     int index =
         _routines.indexWhere((element) => element.id.compareTo(id) == 0);
     if (index > -1) {
       var r = _routines[index].addToArchive();
+      NotificationService().cancelNotification(r.id);
       _box.putAt(index, r);
       _routines[index] = r;
       notifyListeners();
@@ -253,6 +262,20 @@ class RoutineModel extends ChangeNotifier {
       var r = _routines[index].removeFromArchive();
       _box.putAt(index, r);
       _routines[index] = r;
+      if (r.days.length == 7) {
+        if (r.time != null) {
+          NotificationService().scheduleDaily(
+            time: dateTimeToTimeOfDay(r.time!),
+            title: r.name,
+            des: "Tap to Start",
+            uId: r.id,
+          );
+        }
+      } else {
+        if (r.time != null) {
+          scheduleWeekly(r);
+        }
+      }
       notifyListeners();
     }
   }
@@ -274,18 +297,20 @@ class RoutineModel extends ChangeNotifier {
 
   void enableAllNotifications() {
     for (var element in _routines) {
-      if (element.days.length == 7) {
-        if (element.time != null) {
-          NotificationService().scheduleDaily(
-            time: dateTimeToTimeOfDay(element.time!),
-            title: element.name,
-            des: "Tap to Start",
-            uId: element.id,
-          );
-        }
-      } else {
-        if (element.time != null) {
-          scheduleWeekly(element);
+      if (!element.isArchive) {
+        if (element.days.length == 7) {
+          if (element.time != null) {
+            NotificationService().scheduleDaily(
+              time: dateTimeToTimeOfDay(element.time!),
+              title: element.name,
+              des: "Tap to Start",
+              uId: element.id,
+            );
+          }
+        } else {
+          if (element.time != null) {
+            scheduleWeekly(element);
+          }
         }
       }
     }

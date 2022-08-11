@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:koduko/components/create_routine_bottom_sheet.dart';
+import 'package:koduko/components/weekly_chart.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
@@ -56,140 +57,59 @@ class RoutineTile extends StatelessWidget {
           motion: const ScrollMotion(),
           dismissible: DismissiblePane(
               closeOnCancel: true,
-              confirmDismiss: () async {
-                bool? tok = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertOnDelete(
-                          onCancel: () {
-                            Navigator.pop(context, false);
-                          },
-                          onDelete: () {
-                            Navigator.pop(context, true);
-                          },
-                        ));
-                if (tok != null) {
-                  return tok;
-                }
-                return false;
-              },
               onDismissed: () {
                 Provider.of<RoutineModel>(context, listen: false)
-                    .delete(routine.id);
+                    .addToArchive(routine.id);
               }),
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Center(
-                    child: TextButton.icon(
-                  onPressed: (() {
-                    showDialog(
-                        context: context,
-                        builder: ((context) => AlertOnDelete(onCancel: () {
-                              Navigator.pop(context);
-                            }, onDelete: (() {
-                              Provider.of<RoutineModel>(context, listen: false)
-                                  .delete(routine.id);
-                              Navigator.pop(context);
-                            }))));
-                  }),
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.red[300],
-                  ),
-                  label: Text(
-                    "Delete",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge!
-                        .apply(color: Colors.red[300]),
-                  ),
-                )),
-              ),
-            )
+            Action(
+              onPress: ((context) {
+                Provider.of<RoutineModel>(context, listen: false)
+                    .addToArchive(routine.id);
+              }),
+              color: Colors.brown[300]!,
+              icon: Icons.archive_rounded,
+              label: 'Archive',
+            ),
           ],
         ),
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Center(
-                    child: TextButton.icon(
-                  onPressed: (() {
-                    onLongPress(context);
-                  }),
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.blue[300],
-                  ),
-                  label: Text(
-                    "Edit",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge!
-                        .apply(color: Colors.blue[300]),
-                  ),
-                )),
-              ),
-            )
+            Action(
+              onPress: ((context) {}),
+              color: Colors.blue[300]!,
+              icon: Icons.checklist_rounded,
+              label: routine.isCompleted
+                  ? 'Mark as Incomplete'
+                  : 'Mark as Completed',
+            ),
           ],
         ),
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: ListTile(
-                title: Hero(
-                  tag: routine.name,
-                  child: Text(
-                    routine.name,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                subtitle: isToday
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 3),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            routine.inCompletedTasks.isEmpty
-                                ? const Text("Completed")
-                                : Text(
-                                    'Completed ${routine.tasks.length - routine.inCompletedTasks.length} out of ${routine.tasks.length}'),
-                            const SizedBox(height: 5),
-                            LinearPercentIndicator(
-                              animateFromLastPercent: true,
-                              animation: true,
-                              percent: routine.getPercentage().clamp(0, 1),
-                              barRadius: const Radius.circular(10),
-                              lineHeight: 3,
-                              progressColor:
-                                  Theme.of(context).colorScheme.inversePrimary,
-                              padding: EdgeInsets.zero,
-                            ),
-                          ],
-                        ),
-                      )
-                    : Text(routine.getDays()),
-                trailing: IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      onPress(context);
-                    },
-                    icon: isToday
-                        ? Icon(
-                            routine.isCompleted
-                                ? Icons.replay_rounded
-                                : Icons.play_arrow_rounded,
-                            size: 30,
-                          )
-                        : const Icon(
-                            Icons.play_arrow_rounded,
-                            size: 30,
-                          ))),
-          ),
-        ),
+            child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: CustomTile(
+                  isToday: isToday,
+                  routine: routine,
+                  onPress: onPress,
+                  onEdit: onLongPress,
+                  onDelete: ((context) {
+                    showDialog(
+                      context: context,
+                      builder: ((context) => AlertOnDelete(
+                            onCancel: () {
+                              Navigator.pop(context);
+                            },
+                            onDelete: (() {
+                              Provider.of<RoutineModel>(context, listen: false)
+                                  .delete(routine.id);
+                              Navigator.pop(context);
+                            }),
+                          )),
+                    );
+                  }),
+                ))),
       ),
     );
   }
@@ -221,6 +141,166 @@ class AlertOnDelete extends StatelessWidget {
           child: const Text("DELETE"),
         )
       ],
+    );
+  }
+}
+
+class Action extends StatelessWidget {
+  const Action(
+      {Key? key,
+      required this.onPress,
+      required this.color,
+      required this.icon,
+      required this.label})
+      : super(key: key);
+
+  final Function(BuildContext context) onPress;
+  final Color color;
+  final IconData icon;
+  final String label;
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Center(
+            child: TextButton.icon(
+          onPressed: (() {
+            onPress(context);
+            Slidable.of(context)?.close();
+          }),
+          icon: Icon(
+            icon,
+            color: color,
+          ),
+          label: Text(
+            label,
+            style: Theme.of(context).textTheme.titleMedium!.apply(color: color),
+          ),
+        )),
+      ),
+    );
+  }
+}
+
+class CustomTile extends StatelessWidget {
+  const CustomTile(
+      {Key? key,
+      required this.isToday,
+      required this.routine,
+      required this.onPress,
+      required this.onDelete,
+      required this.onEdit})
+      : super(key: key);
+
+  final bool isToday;
+  final Routine routine;
+  final Function(BuildContext context) onPress;
+  final Function(BuildContext context) onDelete;
+  final Function(BuildContext context) onEdit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        dividerColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
+      ),
+      child: ExpansionTile(
+        onExpansionChanged: (value) => Slidable.of(context)?.close(),
+        title: Hero(
+          tag: routine.name,
+          child: Text(
+            routine.name,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+        ),
+        subtitle: isToday
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 3),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    routine.inCompletedTasks.isEmpty
+                        ? const Text("Completed")
+                        : Text(
+                            'Completed ${routine.tasks.length - routine.inCompletedTasks.length} out of ${routine.tasks.length}'),
+                    const SizedBox(height: 5),
+                    LinearPercentIndicator(
+                      animateFromLastPercent: true,
+                      animation: true,
+                      percent: routine.getPercentage().clamp(0, 1),
+                      barRadius: const Radius.circular(10),
+                      lineHeight: 3,
+                      progressColor:
+                          Theme.of(context).colorScheme.inversePrimary,
+                      padding: EdgeInsets.zero,
+                    ),
+                  ],
+                ),
+              )
+            : Text(routine.getDays()),
+        trailing: IconButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            onPress(context);
+          },
+          icon: isToday
+              ? Icon(
+                  routine.isCompleted
+                      ? Icons.replay_rounded
+                      : Icons.play_arrow_rounded,
+                  size: 30,
+                )
+              : const Icon(
+                  Icons.play_arrow_rounded,
+                  size: 30,
+                ),
+        ),
+        children: [
+          WeeklyChart(textTheme: Theme.of(context).textTheme),
+          Theme(
+            data: Theme.of(context),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () => onDelete(context),
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red[300],
+                    ),
+                    label: Text(
+                      'Delete',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .apply(color: Colors.red[300]),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () => onEdit(context),
+                    icon: Icon(
+                      Icons.edit,
+                      color: Colors.blue[300],
+                    ),
+                    label: Text(
+                      'Edit',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .apply(color: Colors.blue[300]),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

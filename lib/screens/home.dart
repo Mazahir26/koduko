@@ -41,8 +41,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 10),
         Consumer<RoutineModel>(
           builder: (context, value, child) {
-            List<Routine> todayRoutines =
-                value.routines.where((element) => element.isToday()).toList();
+            List<Routine> todayRoutines = value.todaysRoutines();
             return Column(
               children: todayRoutines.isEmpty
                   ? [

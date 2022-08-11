@@ -42,7 +42,8 @@ class RoutinesScreen extends StatelessWidget {
         },
       ),
       body: Consumer<RoutineModel>(
-        builder: ((context, value, child) => value.routines.isEmpty
+        builder: ((context, value, child) => value.todaysRoutines().isEmpty &&
+                value.allRoutines().isEmpty
             ? Padding(
                 padding: const EdgeInsets.all(15),
                 child: Column(
