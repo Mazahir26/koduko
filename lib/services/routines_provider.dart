@@ -126,8 +126,10 @@ class RoutineModel extends ChangeNotifier {
   int getRoutineStartMaxDays(String id) {
     final r = getRoutine(id);
     if (r != null) {
-      return (DateTime.now().difference(r.history.last.time).inHours / 24)
-          .ceil();
+      if (r.history.isNotEmpty) {
+        return (DateTime.now().difference(r.history.last.time).inHours / 24)
+            .ceil();
+      }
     }
     return 0;
   }
@@ -136,17 +138,18 @@ class RoutineModel extends ChangeNotifier {
     final r = getRoutine(id);
     List<int> data = [];
     if (r != null) {
-      var start = r.history.last.time;
-      var d = getRoutineStartMaxDays(id);
-      for (var i = 0; i <= getRoutineStartMaxDays(id); i++) {
-        var noOfTasks = 0;
-        for (var element in r.history) {
-          if (element.time.isSameDate(start)) {
-            noOfTasks++;
+      if (r.history.isNotEmpty) {
+        var start = r.history.last.time;
+        for (var i = 0; i <= getRoutineStartMaxDays(id); i++) {
+          var noOfTasks = 0;
+          for (var element in r.history) {
+            if (element.time.isSameDate(start)) {
+              noOfTasks++;
+            }
           }
+          start = start.add(const Duration(days: 1));
+          data.add(noOfTasks);
         }
-        start = start.add(const Duration(days: 1));
-        data.add(noOfTasks);
       }
     }
     return data;
@@ -155,7 +158,9 @@ class RoutineModel extends ChangeNotifier {
   DateTime getStartDate(String id) {
     final r = getRoutine(id);
     if (r != null) {
-      return r.history.last.time;
+      if (r.history.isNotEmpty) {
+        return r.history.last.time;
+      }
     }
     return DateTime.now();
   }

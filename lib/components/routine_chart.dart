@@ -19,10 +19,25 @@ class RoutineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RoutineModel>(builder: (context, value, child) {
       double maxX = value.getRoutineStartMaxDays(routine.id).toDouble();
-      double maxY = value.getRoutineStats(routine.id).reduce(max).toDouble();
+      double maxY = value.getRoutineStats(routine.id).isNotEmpty
+          ? value.getRoutineStats(routine.id).reduce(max).toDouble()
+          : 10;
       Color c = Theme.of(context).brightness == Brightness.light
           ? Colors.black12
           : Colors.grey[800]!;
+
+      final showChart = maxX >= 1 ? true : false;
+
+      if (!showChart) {
+        return Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Text(
+            'Complete some tasks and you will see a graph here',
+            style: Theme.of(context).textTheme.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
+        );
+      }
       return Padding(
         padding: const EdgeInsets.all(15.0),
         child: SizedBox(
@@ -45,7 +60,7 @@ class RoutineChart extends StatelessWidget {
                       reservedSize: 30,
                       interval: 1,
                       getTitlesWidget: ((v, meta) => bottomTitleWidgets(
-                          v, meta, value.getStartDate(routine.id))),
+                          v, c, meta, value.getStartDate(routine.id))),
                     ),
                   ),
                   leftTitles: AxisTitles(
@@ -53,7 +68,8 @@ class RoutineChart extends StatelessWidget {
                       showTitles: false,
                       reservedSize: 30,
                       interval: 1,
-                      getTitlesWidget: leftTitleWidgets,
+                      getTitlesWidget: ((v, meta) =>
+                          leftTitleWidgets(v, c, meta)),
                     ),
                   ),
                 ),
@@ -79,7 +95,7 @@ class RoutineChart extends StatelessWidget {
                     show: true, border: Border.all(color: c, width: 1)),
                 minX: 0,
                 maxX: maxX,
-                minY: -1,
+                minY: -0.2,
                 maxY: maxY + 2,
                 lineBarsData: [
                   LineChartBarData(
@@ -105,7 +121,7 @@ class RoutineChart extends StatelessWidget {
                       show: true,
                       gradient: LinearGradient(
                         colors: gradientColors
-                            .map((color) => color.withOpacity(0.3))
+                            .map((color) => color.withOpacity(0.4))
                             .toList(),
                         begin: Alignment.centerRight,
                         end: Alignment.centerLeft,
@@ -122,9 +138,10 @@ class RoutineChart extends StatelessWidget {
   }
 }
 
-Widget bottomTitleWidgets(double value, TitleMeta meta, DateTime start) {
-  const style = TextStyle(
-    color: Color(0xff68737d),
+Widget bottomTitleWidgets(
+    double value, Color c, TitleMeta meta, DateTime start) {
+  final style = TextStyle(
+    color: c,
     fontWeight: FontWeight.bold,
     fontSize: 12,
   );
@@ -138,9 +155,9 @@ Widget bottomTitleWidgets(double value, TitleMeta meta, DateTime start) {
   );
 }
 
-Widget leftTitleWidgets(double value, TitleMeta meta) {
-  const style = TextStyle(
-    color: Color(0xff67727d),
+Widget leftTitleWidgets(double value, Color c, TitleMeta meta) {
+  final style = TextStyle(
+    color: c,
     fontWeight: FontWeight.bold,
     fontSize: 12,
   );
