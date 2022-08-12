@@ -177,8 +177,10 @@ class RoutineModel extends ChangeNotifier {
     List<int> data = [];
     if (r != null) {
       if (r.history.isNotEmpty) {
-        var start = r.history.last.time;
-        for (var i = 0; i <= getRoutineStartMaxDays(id); i++) {
+        final max = getRoutineStartMaxDays(id);
+        var start =
+            r.history.last.time.add(Duration(days: max > 7 ? max - 7 : 0));
+        for (var i = max > 7 ? (max - 7) : 0; i <= max; i++) {
           var noOfTasks = 0;
           for (var element in r.history) {
             if (element.time.isSameDate(start)) {
@@ -191,6 +193,17 @@ class RoutineModel extends ChangeNotifier {
       }
     }
     return data;
+  }
+
+  DateTime getStartDate(String id) {
+    final r = getRoutine(id);
+    if (r != null) {
+      if (r.history.isNotEmpty) {
+        final max = getRoutineStartMaxDays(id);
+        return r.history.last.time.add(Duration(days: max > 7 ? max - 7 : 0));
+      }
+    }
+    return DateTime.now();
   }
 
   void removeHistory(String tid) {
@@ -213,16 +226,6 @@ class RoutineModel extends ChangeNotifier {
       }
       notifyListeners();
     }
-  }
-
-  DateTime getStartDate(String id) {
-    final r = getRoutine(id);
-    if (r != null) {
-      if (r.history.isNotEmpty) {
-        return r.history.last.time;
-      }
-    }
-    return DateTime.now();
   }
 
   List<int> getRoutineDayFrequencyStats(String id) {
