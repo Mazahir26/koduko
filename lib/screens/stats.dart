@@ -25,7 +25,7 @@ class Statistics extends StatelessWidget {
             const ScreenHeader(text: "Statistics", tag: "Statistics"),
             const SizedBox(height: 25),
             TodayProgress(textTheme: textTheme),
-            WeeklyChart(textTheme: textTheme),
+            Hero(tag: 'WeeklyChart', child: WeeklyChart(textTheme: textTheme)),
             const SizedBox(height: 15),
             Text(
               "History",
