@@ -159,6 +159,20 @@ class Routine {
     return copyWith(isArchive: false);
   }
 
+  Routine? removeHistory(String id) {
+    List<TaskEvent> h = List.from(history);
+    final index = h.indexWhere((element) => element.id == id);
+    if (index > -1) {
+      h.removeAt(index);
+      return copyWith(history: h);
+    }
+    return null;
+  }
+
+  Routine clearHistory() {
+    return copyWith(history: [], isCompleted: false);
+  }
+
   Routine markAsCompleted() {
     List<TaskEvent> h = List.from(history);
     for (var i = 0; i < inCompletedTasks.length; i++) {

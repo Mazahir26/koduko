@@ -155,6 +155,28 @@ class RoutineModel extends ChangeNotifier {
     return data;
   }
 
+  void removeHistory(String tid) {
+    for (var i = 0; i < _routines.length; i++) {
+      final r = _routines[i].removeHistory(tid);
+      if (r != null) {
+        _box.putAt(i, r);
+        _routines[i] = r;
+      }
+    }
+    notifyListeners();
+  }
+
+  void clearHistory() {
+    if (_routines.isNotEmpty) {
+      for (var i = 0; i < _routines.length; i++) {
+        final r = _routines[i].clearHistory();
+        _box.putAt(i, r);
+        _routines[i] = r;
+      }
+      notifyListeners();
+    }
+  }
+
   DateTime getStartDate(String id) {
     final r = getRoutine(id);
     if (r != null) {

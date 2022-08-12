@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/components/header.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
@@ -45,27 +44,9 @@ class ArchiveRoutinesScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 20),
-                            Text(
-                              "Archive",
-                              style: GoogleFonts.lato(
-                                fontWeight: FontWeight.bold,
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .apply(
-                                        displayColor: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface)
-                                    .headlineLarge,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 10),
+                        child: child ?? Container(),
                       );
                     }
                     index -= 1;
