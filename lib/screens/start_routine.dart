@@ -29,9 +29,7 @@ class RoutineScreenState extends State<RoutineScreen>
   bool _isSkipped = false;
 
   DateTime _playedOn = DateTime.now();
-  final Stream _timer = Stream.periodic(
-      const Duration(seconds: 1), ((computationCount) => computationCount));
-  late final StreamSubscription _subscription;
+
   @override
   void initState() {
     _controller =
@@ -82,18 +80,7 @@ class RoutineScreenState extends State<RoutineScreen>
         }
       }
     });
-    _subscription = _timer.listen((event) {
-      if (_controller.status == AnimationStatus.forward) {
-        NotificationService().showProgressNotification(
-            _controller.value,
-            Provider.of<RoutineModel>(context, listen: false)
-                .getRoutine(widget.routine)!
-                .inCompletedTasks
-                .first
-                .name,
-            "Keep going");
-      }
-    });
+
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         NotificationService().cancelNotificationWithId(777);
@@ -133,7 +120,6 @@ class RoutineScreenState extends State<RoutineScreen>
   }
 
   void onDismiss(DismissDirection t, BuildContext context) {
-    NotificationService().cancelNotificationWithId(777);
     final task = Provider.of<RoutineModel>(context, listen: false)
         .getRoutine(widget.routine)!
         .inCompletedTasks
@@ -186,7 +172,6 @@ class RoutineScreenState extends State<RoutineScreen>
     NotificationService().cancelNotificationWithId(777);
     _controller.dispose();
     _buttonController.dispose();
-    _subscription.cancel();
 
     super.dispose();
   }
