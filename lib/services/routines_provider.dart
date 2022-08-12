@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -85,6 +86,43 @@ class RoutineModel extends ChangeNotifier {
       list.sort(((a, b) => a.time.compareTo(b.time)));
     }
     return list;
+  }
+
+  int getMostProductiveHour() {
+    List<TaskEvent> list = getHistory();
+    List<int> hours = List.filled(24, 0);
+    for (var e in list) {
+      hours[e.time.hour] += 1;
+    }
+    int max = 0;
+    for (var i = 0; i < 24; i++) {
+      if (hours[i] > hours[max]) {
+        max = i;
+      }
+    }
+    return max;
+  }
+
+  DateTime? getMostProductiveDay() {
+    List<TaskEvent> list = getHistory();
+    final Map<DateTime, int> hours = HashMap();
+    for (var e in list) {
+      if (hours.containsKey(e.time)) {
+        hours.update(e.time, (value) => value + 1);
+      } else {
+        hours.addAll({e.time: 0});
+      }
+    }
+    if (hours.isNotEmpty) {
+      DateTime max = hours.keys.first;
+      hours.forEach((key, value) {
+        if (value > (hours[max] ?? 0)) {
+          max = key;
+        }
+      });
+      return max;
+    }
+    return null;
   }
 
   void skipTask(String id) {
@@ -207,9 +245,11 @@ class RoutineModel extends ChangeNotifier {
   int totalNoOfTasksToday() {
     int noOfTasks = 0;
     for (var element in _routines) {
-      if (element.isToday()) {
+      if (!element.isArchive) {
         if (element.isToday()) {
-          noOfTasks += element.tasks.length;
+          if (element.isToday()) {
+            noOfTasks += element.tasks.length;
+          }
         }
       }
     }

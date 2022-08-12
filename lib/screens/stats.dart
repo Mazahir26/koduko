@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:koduko/components/daily_activity.dart';
 import 'package:koduko/components/header.dart';
+import 'package:koduko/components/most_productive_hour.dart';
+import 'package:koduko/components/productive_day.dart';
 import 'package:koduko/components/weekly_chart.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/services/routines_provider.dart';
@@ -17,9 +19,9 @@ class Statistics extends StatelessWidget {
       Provider.of<RoutineModel>(context, listen: false).clearHistory();
     }
 
-    final textTheme = Theme.of(context)
-        .textTheme
-        .apply(displayColor: Theme.of(context).colorScheme.onSurface);
+    final textTheme = Theme.of(context).textTheme.apply(
+          displayColor: Theme.of(context).colorScheme.onSurface,
+        );
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -30,6 +32,14 @@ class Statistics extends StatelessWidget {
             const SizedBox(height: 25),
             TodayProgress(textTheme: textTheme),
             Hero(tag: 'WeeklyChart', child: WeeklyChart(textTheme: textTheme)),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(child: ProductiveHour(textTheme: textTheme)),
+                Expanded(child: ProductiveDay(textTheme: textTheme)),
+              ],
+            ),
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
