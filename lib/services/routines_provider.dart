@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -87,6 +88,43 @@ class RoutineModel extends ChangeNotifier {
     return list;
   }
 
+  int getMostProductiveHour() {
+    List<TaskEvent> list = getHistory();
+    List<int> hours = List.filled(24, 0);
+    for (var e in list) {
+      hours[e.time.hour] += 1;
+    }
+    int max = 0;
+    for (var i = 0; i < 24; i++) {
+      if (hours[i] > hours[max]) {
+        max = i;
+      }
+    }
+    return max;
+  }
+
+  DateTime? getMostProductiveDay() {
+    List<TaskEvent> list = getHistory();
+    final Map<DateTime, int> hours = HashMap();
+    for (var e in list) {
+      if (hours.containsKey(e.time)) {
+        hours.update(e.time, (value) => value + 1);
+      } else {
+        hours.addAll({e.time: 0});
+      }
+    }
+    if (hours.isNotEmpty) {
+      DateTime max = hours.keys.first;
+      hours.forEach((key, value) {
+        if (value > (hours[max] ?? 0)) {
+          max = key;
+        }
+      });
+      return max;
+    }
+    return null;
+  }
+
   void skipTask(String id) {
     int index =
         _routines.indexWhere((element) => element.id.compareTo(id) == 0);
@@ -126,8 +164,10 @@ class RoutineModel extends ChangeNotifier {
   int getRoutineStartMaxDays(String id) {
     final r = getRoutine(id);
     if (r != null) {
-      return (DateTime.now().difference(r.history.last.time).inHours / 24)
-          .ceil();
+      if (r.history.isNotEmpty) {
+        return (DateTime.now().difference(r.history.last.time).inHours / 24)
+            .ceil();
+      }
     }
     return 0;
   }
@@ -136,17 +176,20 @@ class RoutineModel extends ChangeNotifier {
     final r = getRoutine(id);
     List<int> data = [];
     if (r != null) {
-      var start = r.history.last.time;
-      var d = getRoutineStartMaxDays(id);
-      for (var i = 0; i <= getRoutineStartMaxDays(id); i++) {
-        var noOfTasks = 0;
-        for (var element in r.history) {
-          if (element.time.isSameDate(start)) {
-            noOfTasks++;
+      if (r.history.isNotEmpty) {
+        final max = getRoutineStartMaxDays(id);
+        var start =
+            r.history.last.time.add(Duration(days: max > 7 ? max - 7 : 0));
+        for (var i = max > 7 ? (max - 7) : 0; i <= max; i++) {
+          var noOfTasks = 0;
+          for (var element in r.history) {
+            if (element.time.isSameDate(start)) {
+              noOfTasks++;
+            }
           }
+          start = start.add(const Duration(days: 1));
+          data.add(noOfTasks);
         }
-        start = start.add(const Duration(days: 1));
-        data.add(noOfTasks);
       }
     }
     return data;
@@ -155,9 +198,34 @@ class RoutineModel extends ChangeNotifier {
   DateTime getStartDate(String id) {
     final r = getRoutine(id);
     if (r != null) {
-      return r.history.last.time;
+      if (r.history.isNotEmpty) {
+        final max = getRoutineStartMaxDays(id);
+        return r.history.last.time.add(Duration(days: max > 7 ? max - 7 : 0));
+      }
     }
     return DateTime.now();
+  }
+
+  void removeHistory(String tid) {
+    for (var i = 0; i < _routines.length; i++) {
+      final r = _routines[i].removeHistory(tid);
+      if (r != null) {
+        _box.putAt(i, r);
+        _routines[i] = r;
+      }
+    }
+    notifyListeners();
+  }
+
+  void clearHistory() {
+    if (_routines.isNotEmpty) {
+      for (var i = 0; i < _routines.length; i++) {
+        final r = _routines[i].clearHistory();
+        _box.putAt(i, r);
+        _routines[i] = r;
+      }
+      notifyListeners();
+    }
   }
 
   List<int> getRoutineDayFrequencyStats(String id) {
@@ -180,9 +248,11 @@ class RoutineModel extends ChangeNotifier {
   int totalNoOfTasksToday() {
     int noOfTasks = 0;
     for (var element in _routines) {
-      if (element.isToday()) {
+      if (!element.isArchive) {
         if (element.isToday()) {
-          noOfTasks += element.tasks.length;
+          if (element.isToday()) {
+            noOfTasks += element.tasks.length;
+          }
         }
       }
     }

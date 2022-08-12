@@ -53,7 +53,7 @@ class TasksScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         child ?? Container(),
-                        const SizedBox(height: 200),
+                        const Spacer(),
                         Text(
                           "Looks like you haven't created any tasks",
                           style: Theme.of(context)
@@ -74,7 +74,8 @@ class TasksScreen extends StatelessWidget {
                                 "Create One",
                                 style: TextStyle(fontSize: 18),
                               )),
-                        )
+                        ),
+                        const Spacer(),
                       ],
                     ),
                   ),

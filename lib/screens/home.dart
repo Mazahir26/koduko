@@ -24,7 +24,10 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 20),
         Header(textTheme: textTheme),
         const SizedBox(height: 20),
-        WeeklyChart(textTheme: textTheme),
+        Hero(
+          tag: 'WeeklyChart',
+          child: WeeklyChart(textTheme: textTheme),
+        ),
         Align(
           alignment: Alignment.centerRight,
           child: TextButton.icon(
