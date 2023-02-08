@@ -115,7 +115,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
         const NumberPickerColumn(begin: 0, end: 30, suffix: Text(' minutes')),
         const NumberPickerColumn(begin: 5, end: 60, suffix: Text(' seconds')),
       ]),
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       onBuilderItem: (context, text, child, selected, col, index) {
         String t = text == null
             ? ''
@@ -310,9 +310,10 @@ class Buttons extends StatelessWidget {
           child: pageIndex != 0
               ? ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    onPrimary:
+                    foregroundColor:
                         Theme.of(context).colorScheme.onSecondaryContainer,
-                    primary: Theme.of(context).colorScheme.secondaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
                   ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
                   onPressed: onPrevious,
                   icon: const Icon(Icons.chevron_left_sharp),
@@ -336,8 +337,9 @@ class Buttons extends StatelessWidget {
           flex: 3,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              onPrimary: Theme.of(context).colorScheme.onSecondaryContainer,
-              primary: Theme.of(context).colorScheme.secondaryContainer,
+              foregroundColor:
+                  Theme.of(context).colorScheme.onSecondaryContainer,
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
             onPressed: onNext,
             child: Row(

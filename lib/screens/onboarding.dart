@@ -215,7 +215,7 @@ class Buttons extends StatelessWidget {
               firstChild: TextButton.icon(
                 icon: const Icon(Icons.chevron_left_rounded),
                 style: TextButton.styleFrom(
-                  primary: textColor,
+                  foregroundColor: textColor,
                 ),
                 label: Text(
                   'Back',
@@ -227,7 +227,7 @@ class Buttons extends StatelessWidget {
               ),
               secondChild: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[900],
+                    backgroundColor: Colors.grey[900],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     )),
@@ -253,7 +253,7 @@ class Buttons extends StatelessWidget {
                   ? const Icon(Icons.chevron_right_rounded)
                   : Container(),
               style: TextButton.styleFrom(
-                primary: textColor,
+                foregroundColor: textColor,
               ),
               icon: Text(
                 'Next',
@@ -265,7 +265,7 @@ class Buttons extends StatelessWidget {
             ),
             secondChild: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Colors.white,
+                backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),
