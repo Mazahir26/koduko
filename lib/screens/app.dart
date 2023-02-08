@@ -26,8 +26,11 @@ class _AppState extends State<App> {
   getDeviceLaunch() async {
     notificationAppLaunchDetails = await service.getDeviceLaunchInfo();
     if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-      if ((notificationAppLaunchDetails!.payload?.isNotEmpty ?? false)) {
-        onNotificationListener(notificationAppLaunchDetails!.payload);
+      if ((notificationAppLaunchDetails!
+              .notificationResponse?.payload?.isNotEmpty ??
+          false)) {
+        onNotificationListener(
+            notificationAppLaunchDetails!.notificationResponse?.payload);
       }
     }
   }

@@ -12,11 +12,11 @@ class RoutinesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _addRoutine(Routine r) {
+    void addRoutine(Routine r) {
       Provider.of<RoutineModel>(context, listen: false).add(r);
     }
 
-    void _editRoutine(Routine r) {
+    void editRoutine(Routine r) {
       Provider.of<RoutineModel>(context, listen: false).edit(r);
     }
 
@@ -37,7 +37,7 @@ class RoutinesScreen extends StatelessWidget {
               builder: ((context) => const CreateRoutineBottomSheet()));
 
           if (r != null) {
-            _addRoutine(r);
+            addRoutine(r);
           }
         },
       ),
@@ -113,7 +113,7 @@ class RoutinesScreen extends StatelessWidget {
                                     .map((e) => RoutineTile(
                                           routine: e,
                                           isToday: true,
-                                          onEdit: _editRoutine,
+                                          onEdit: editRoutine,
                                         ))
                                     .toList()
                               ]),
@@ -152,7 +152,7 @@ class RoutinesScreen extends StatelessWidget {
                                     .allRoutines()
                                     .map((e) => RoutineTile(
                                           routine: e,
-                                          onEdit: _editRoutine,
+                                          onEdit: editRoutine,
                                         ))
                                     .toList()
                               ]),

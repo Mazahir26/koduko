@@ -185,15 +185,17 @@ class NotificationService {
       android: androidInitializationSettings,
     );
 
-    void onSelectNotification(String? payload) {
-      if (payload != null && payload.isNotEmpty) {
-        onNotificationClick.add(payload);
+    void onSelectNotification(NotificationResponse? response) {
+      if (response != null) {
+        if (response.payload?.isNotEmpty ?? false) {
+          onNotificationClick.add(response.payload);
+        }
       }
     }
 
     await _flutterLocalNotificationsPlugin.initialize(
       settings,
-      onSelectNotification: onSelectNotification,
+      onDidReceiveNotificationResponse: onSelectNotification,
     );
   }
 }

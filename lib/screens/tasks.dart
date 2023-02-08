@@ -12,16 +12,16 @@ class TasksScreen extends StatelessWidget {
   static const routeName = "/tasks";
   @override
   Widget build(BuildContext context) {
-    void _addTask(Task t) {
+    void addTask(Task t) {
       Provider.of<TaskModel>(context, listen: false).add(t);
     }
 
-    void _onEdit(Task t) {
+    void onEdit(Task t) {
       Provider.of<TaskModel>(context, listen: false).edit(t);
       Provider.of<RoutineModel>(context, listen: false).editTask(t);
     }
 
-    void _onCreateTask() async {
+    void onCreateTask() async {
       Task? t = await showModalBottomSheet<Task>(
           isScrollControlled: true,
           isDismissible: true,
@@ -34,13 +34,13 @@ class TasksScreen extends StatelessWidget {
           context: context,
           builder: ((context) => const CreateTaskBottomSheet()));
       if (t != null) {
-        _addTask(t);
+        addTask(t);
       }
     }
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: _onCreateTask,
+        onPressed: onCreateTask,
         child: const Icon(Icons.add),
       ),
       body: Consumer<TaskModel>(
@@ -69,7 +69,7 @@ class TasksScreen extends StatelessWidget {
                         Center(
                           child: TextButton.icon(
                               icon: const Icon(Icons.add),
-                              onPressed: _onCreateTask,
+                              onPressed: onCreateTask,
                               label: const Text(
                                 "Create One",
                                 style: TextStyle(fontSize: 18),
@@ -94,7 +94,7 @@ class TasksScreen extends StatelessWidget {
                             const SizedBox(height: 25),
                             TaskTile(
                               task: value.tasks[index],
-                              onEdit: _onEdit,
+                              onEdit: onEdit,
                             )
                           ],
                         ),
@@ -104,7 +104,7 @@ class TasksScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: TaskTile(
                           task: value.tasks[index],
-                          onEdit: _onEdit,
+                          onEdit: onEdit,
                         ));
                   })),
           child: const ScreenHeader(

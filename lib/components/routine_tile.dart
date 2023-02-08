@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:koduko/components/create_routine_bottom_sheet.dart';
 import 'package:koduko/components/routine_chart.dart';
-import 'package:koduko/components/weekly_chart.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
@@ -140,7 +139,8 @@ class AlertOnDelete extends StatelessWidget {
           child: const Text("CANCEL"),
         ),
         TextButton(
-          style: TextButton.styleFrom(primary: Theme.of(context).errorColor),
+          style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error),
           onPressed: onDelete,
           child: const Text("DELETE"),
         )

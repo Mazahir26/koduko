@@ -7,7 +7,7 @@ import 'package:koduko/models/task_event.dart';
 import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/app.dart';
 import 'package:koduko/screens/archive_routines.dart';
-import 'package:koduko/screens/onboadring.dart';
+import 'package:koduko/screens/onboarding.dart';
 import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/notification_service.dart';

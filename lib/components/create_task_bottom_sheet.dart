@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:koduko/components/name_page_bottom_sheet.dart';
 import 'package:koduko/models/task.dart';
+import 'package:koduko/utils/duration_to_string.dart';
 import 'package:koduko/utils/parse_duration.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {
   const CreateTaskBottomSheet({Key? key, this.task}) : super(key: key);
@@ -17,13 +19,14 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
   static const chipList = <String, Duration>{
     "30 sec": Duration(seconds: 30),
     "1 min": Duration(minutes: 1),
-    "2 min": Duration(minutes: 2),
-    "5 min": Duration(minutes: 5),
-    "10 min": Duration(minutes: 10),
+    "2 mins": Duration(minutes: 2),
+    "5 mins": Duration(minutes: 5),
+    "10 mins": Duration(minutes: 10),
     "15 mins": Duration(minutes: 15),
     "20 mins": Duration(minutes: 20),
     "25 mins": Duration(minutes: 25),
     "30 mins": Duration(minutes: 30),
+    "Custom": Duration(minutes: 30),
   };
   static const colorList = [
     Colors.blue,
@@ -35,6 +38,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     Colors.red,
   ];
 
+  Duration customTime = const Duration(seconds: 0);
   String? _value;
   int? _selectedColor;
   int pageIndex = 0;
@@ -92,11 +96,70 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     }
   }
 
-  void onChangeChip(bool selected, int index) {
+  void onChangeChip(bool selected, int index, BuildContext context) async {
+    if (chipList.keys.toList()[index] == 'Custom') {
+      final r = await onCustomDurationSelect(context);
+      if (!r) {
+        return;
+      }
+    }
     setState(() {
       _value = selected ? chipList.keys.toList()[index] : null;
     });
     validateDuration();
+  }
+
+  Future<bool> onCustomDurationSelect(BuildContext context) async {
+    final result = await Picker(
+      adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
+        const NumberPickerColumn(begin: 0, end: 30, suffix: Text(' minutes')),
+        const NumberPickerColumn(begin: 5, end: 60, suffix: Text(' seconds')),
+      ]),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      onBuilderItem: (context, text, child, selected, col, index) {
+        String t = text == null
+            ? ''
+            : col == 0
+                ? '$text min'
+                : '$text sec';
+        return Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                t,
+                style: selected
+                    ? Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .apply(color: Theme.of(context).colorScheme.primary)
+                    : Theme.of(context).textTheme.titleMedium,
+              )
+            ],
+          ),
+        );
+      },
+      looping: true,
+      magnification: 1.1,
+      itemExtent: 50,
+      hideHeader: true,
+      confirmText: 'Select',
+      title: const Text('Select duration'),
+      onConfirm: (Picker picker, List<int> value) {
+        Duration duration = Duration(
+            minutes: picker.getSelectedValues()[0],
+            seconds: picker.getSelectedValues()[1]);
+        setState(() {
+          customTime = duration;
+        });
+        validateDuration();
+      },
+    ).showDialog(context);
+    if (result == null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   void onChangeColor(int index) {
@@ -153,6 +216,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                     title: "Task Name",
                   ),
                   DurationPage(
+                    customDuration: customTime,
                     onChange: onChangeChip,
                     chipList: chipList,
                     value: _value,
@@ -201,10 +265,13 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                         validateColor();
                       }
                       if (pageIndex == 3) {
+                        final dur = _value! == 'Custom'
+                            ? customTime
+                            : chipList[_value]!;
                         Navigator.pop(
                             context,
                             Task.fromDuration(
-                                duration: chipList[_value]!,
+                                duration: dur,
                                 name: _nameController.text,
                                 color: colorList[_selectedColor!]));
                       }
@@ -243,9 +310,10 @@ class Buttons extends StatelessWidget {
           child: pageIndex != 0
               ? ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    onPrimary:
+                    foregroundColor:
                         Theme.of(context).colorScheme.onSecondaryContainer,
-                    primary: Theme.of(context).colorScheme.secondaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
                   ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
                   onPressed: onPrevious,
                   icon: const Icon(Icons.chevron_left_sharp),
@@ -269,8 +337,9 @@ class Buttons extends StatelessWidget {
           flex: 3,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              onPrimary: Theme.of(context).colorScheme.onSecondaryContainer,
-              primary: Theme.of(context).colorScheme.secondaryContainer,
+              foregroundColor:
+                  Theme.of(context).colorScheme.onSecondaryContainer,
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
             onPressed: onNext,
             child: Row(
@@ -297,18 +366,18 @@ class DurationPage extends StatelessWidget {
       {Key? key,
       required this.onChange,
       required this.chipList,
-      required this.value})
+      required this.value,
+      required this.customDuration})
       : super(key: key);
 
-  final void Function(bool, int) onChange;
+  final void Function(bool, int, BuildContext) onChange;
   final Map<String, Duration> chipList;
   final String? value;
+  final Duration customDuration;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
       children: [
         Text(
           "Select a Duration",
@@ -318,11 +387,14 @@ class DurationPage extends StatelessWidget {
           height: 15,
         ),
         Wrap(
-          spacing: 8,
+          spacing: 6,
           children: List<Widget>.generate(
             chipList.length,
             (index) => ChoiceChip(
-              label: Text(chipList.keys.toList()[index]),
+              label: Text(
+                  value == 'Custom' && chipList.keys.toList()[index] == 'Custom'
+                      ? '${durationToString(customDuration)} min'
+                      : chipList.keys.toList()[index]),
               selected: value == chipList.keys.toList()[index],
               selectedColor:
                   Theme.of(context).colorScheme.primary.withOpacity(0.7),
@@ -332,7 +404,7 @@ class DurationPage extends StatelessWidget {
                   color: value == chipList.keys.toList()[index]
                       ? Theme.of(context).colorScheme.onSecondary
                       : Theme.of(context).colorScheme.onBackground),
-              onSelected: (bool selected) => onChange(selected, index),
+              onSelected: (bool selected) => onChange(selected, index, context),
             ),
           ),
         ),
