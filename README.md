@@ -2,15 +2,13 @@
 
 Yet another Habit tracker made with flutter.
 
-
-
 ## ❓ About
 
 It's an open source and free app where you can manage your daily or weekly habits.
 
 ## 📢 Getting Started
 
-You can install the apk from releases tab.
+You can install the latest APK from the [Releases tab](https://github.com/Mazahir26/koduko/releases/latest). You can also download the latest APK from [IzzyOnDroid repo](https://apt.izzysoft.de/fdroid/index/apk/com.example.koduko) within a F-Droid client.
 
 Alternatively you can build the app yourself. See below for further information.
 
