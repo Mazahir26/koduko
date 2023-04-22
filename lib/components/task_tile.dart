@@ -60,7 +60,8 @@ class TaskTile extends StatelessWidget {
                                 ),
                                 TextButton(
                                   style: TextButton.styleFrom(
-                                      primary: Theme.of(context).errorColor),
+                                      foregroundColor:
+                                          Theme.of(context).colorScheme.error),
                                   onPressed: () {
                                     Provider.of<TaskModel>(context,
                                             listen: false)

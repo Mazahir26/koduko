@@ -8,7 +8,7 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> _launchUrl(url) async {
+    Future<void> openUrl(url) async {
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
         throw 'Could not launch $url';
       }
@@ -40,7 +40,7 @@ class AboutScreen extends StatelessWidget {
                     Center(
                         child: TextButton(
                             onPressed: () {
-                              _launchUrl(Uri.parse(
+                              openUrl(Uri.parse(
                                   'https://github.com/Mazahir26/koduko'));
                             },
                             child: const Text("Source Code"))),
@@ -55,13 +55,13 @@ class AboutScreen extends StatelessWidget {
                       children: [
                         TextButton(
                             onPressed: () {
-                              _launchUrl(
+                              openUrl(
                                   Uri.parse('https://github.com/Mazahir26'));
                             },
                             child: const Text("GitHub")),
                         TextButton(
                             onPressed: () {
-                              _launchUrl(Uri.parse('https://t.me/mazahir26'));
+                              openUrl(Uri.parse('https://t.me/mazahir26'));
                             },
                             child: const Text("Telegram"))
                       ],

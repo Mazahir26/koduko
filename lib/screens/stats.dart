@@ -64,7 +64,8 @@ class Statistics extends StatelessWidget {
                                 ),
                                 TextButton(
                                   style: TextButton.styleFrom(
-                                      primary: Theme.of(context).errorColor),
+                                      foregroundColor:
+                                          Theme.of(context).colorScheme.error),
                                   onPressed: (() =>
                                       Navigator.pop(context, true)),
                                   child: const Text("DELETE"),
@@ -76,7 +77,8 @@ class Statistics extends StatelessWidget {
                         clearHistory();
                       }
                     },
-                    style: TextButton.styleFrom(primary: Colors.red[300]),
+                    style:
+                        TextButton.styleFrom(foregroundColor: Colors.red[300]),
                     icon: const Icon(Icons.delete),
                     label: const Text("Clear History"))
               ],

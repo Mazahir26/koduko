@@ -367,9 +367,10 @@ class Buttons extends StatelessWidget {
           child: pageIndex != 0
               ? ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    onPrimary:
+                    foregroundColor:
                         Theme.of(context).colorScheme.onSecondaryContainer,
-                    primary: Theme.of(context).colorScheme.secondaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
                   ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
                   onPressed: onPrevious,
                   icon: const Icon(Icons.chevron_left_sharp),
@@ -393,8 +394,9 @@ class Buttons extends StatelessWidget {
           flex: 3,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              onPrimary: Theme.of(context).colorScheme.onSecondaryContainer,
-              primary: Theme.of(context).colorScheme.secondaryContainer,
+              foregroundColor:
+                  Theme.of(context).colorScheme.onSecondaryContainer,
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
             onPressed: onNext,
             child: Row(
@@ -579,7 +581,7 @@ class TaskSelectPage extends StatelessWidget {
                 child: ListTile(
                     leading: IconButton(
                       icon: const Icon(Icons.remove),
-                      color: Theme.of(context).errorColor,
+                      color: Theme.of(context).colorScheme.error,
                       onPressed: () => onTapDelete(index),
                     ),
                     trailing: ReorderableDragStartListener(
@@ -627,7 +629,7 @@ class RepeatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> _selectTime(BuildContext context) async {
+    Future<void> selectTime(BuildContext context) async {
       TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: time ?? TimeOfDay.now(),
@@ -736,7 +738,7 @@ class RepeatPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () => _selectTime(context),
+                      onPressed: () => selectTime(context),
                       child: time == null
                           ? const Text("Select Time")
                           : Text(

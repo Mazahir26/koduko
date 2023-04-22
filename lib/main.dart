@@ -7,7 +7,7 @@ import 'package:koduko/models/task_event.dart';
 import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/app.dart';
 import 'package:koduko/screens/archive_routines.dart';
-import 'package:koduko/screens/onboadring.dart';
+import 'package:koduko/screens/onboarding.dart';
 import 'package:koduko/screens/stats.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/notification_service.dart';
@@ -17,6 +17,7 @@ import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:dynamic_color/dynamic_color.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -24,6 +25,7 @@ void main() async {
   Hive.registerAdapter(RoutineAdapter());
   Hive.registerAdapter(TaskEventAdapter());
   WidgetsFlutterBinding.ensureInitialized();
+
   await NotificationService().initialize();
   _configureLocalTimeZone();
   runApp(const MyApp());
@@ -79,30 +81,38 @@ class MyApp extends StatelessWidget {
               ),
             ],
             child: Consumer<ThemeModel>(
-              builder: (context, value, child) => MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  title: 'KudoKo',
-                  themeMode: value.getTheme,
-                  theme: ThemeData(
-                    colorSchemeSeed: Colors.deepPurple,
-                    useMaterial3: true,
-                    brightness: Brightness.light,
-                  ),
-                  darkTheme: ThemeData(
-                    colorSchemeSeed: Colors.deepPurple,
-                    useMaterial3: true,
-                    brightness: Brightness.dark,
-                  ),
-                  initialRoute: initRoute,
-                  routes: {
-                    TasksScreen.routeName: (context) => const TasksScreen(),
-                    App.routeName: (context) => const App(),
-                    AboutScreen.routeName: (context) => const AboutScreen(),
-                    Statistics.routeName: ((context) => const Statistics()),
-                    ArchiveRoutinesScreen.routeName: ((context) =>
-                        const ArchiveRoutinesScreen()),
-                    OnBoarding.routeName: (((context) => const OnBoarding()))
-                  }),
+              builder: (context, value, child) => DynamicColorBuilder(
+                builder: (lightDynamic, darkDynamic) {
+                  return MaterialApp(
+                      debugShowCheckedModeBanner: false,
+                      title: 'KudoKo',
+                      themeMode: value.getTheme,
+                      theme: ThemeData(
+                        colorScheme: lightDynamic ??
+                            ColorScheme.fromSeed(seedColor: Colors.purple),
+                        useMaterial3: true,
+                        // brightness: Brightness.light,
+                      ),
+                      darkTheme: ThemeData(
+                        colorScheme: darkDynamic?.copyWith(
+                                brightness: Brightness.dark) ??
+                            ColorScheme.fromSeed(seedColor: Colors.purple),
+                        useMaterial3: true,
+                        // brightness: Brightness.dark,
+                      ),
+                      initialRoute: initRoute,
+                      routes: {
+                        TasksScreen.routeName: (context) => const TasksScreen(),
+                        App.routeName: (context) => const App(),
+                        AboutScreen.routeName: (context) => const AboutScreen(),
+                        Statistics.routeName: ((context) => const Statistics()),
+                        ArchiveRoutinesScreen.routeName: ((context) =>
+                            const ArchiveRoutinesScreen()),
+                        OnBoarding.routeName: (((context) =>
+                            const OnBoarding()))
+                      });
+                },
+              ),
             ),
           );
         }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:koduko/components/create_routine_bottom_sheet.dart';
 import 'package:koduko/components/routine_chart.dart';
-import 'package:koduko/components/weekly_chart.dart';
 import 'package:koduko/models/routine.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/services/routines_provider.dart';
@@ -140,7 +139,8 @@ class AlertOnDelete extends StatelessWidget {
           child: const Text("CANCEL"),
         ),
         TextButton(
-          style: TextButton.styleFrom(primary: Theme.of(context).errorColor),
+          style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error),
           onPressed: onDelete,
           child: const Text("DELETE"),
         )
@@ -187,15 +187,15 @@ class Action extends StatelessWidget {
   }
 }
 
-class CustomTile extends StatelessWidget {
-  const CustomTile(
-      {Key? key,
-      required this.isToday,
-      required this.routine,
-      required this.onPress,
-      required this.onDelete,
-      required this.onEdit})
-      : super(key: key);
+class CustomTile extends StatefulWidget {
+  const CustomTile({
+    Key? key,
+    required this.isToday,
+    required this.routine,
+    required this.onPress,
+    required this.onDelete,
+    required this.onEdit,
+  }) : super(key: key);
 
   final bool isToday;
   final Routine routine;
@@ -203,6 +203,12 @@ class CustomTile extends StatelessWidget {
   final Function(BuildContext context) onDelete;
   final Function(BuildContext context) onEdit;
 
+  @override
+  State<CustomTile> createState() => _CustomTileState();
+}
+
+class _CustomTileState extends State<CustomTile> {
+  bool isOpen = false;
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -212,29 +218,61 @@ class CustomTile extends StatelessWidget {
         highlightColor: Colors.transparent,
       ),
       child: ExpansionTile(
-        onExpansionChanged: (value) => Slidable.of(context)?.close(),
+        onExpansionChanged: (value) {
+          Slidable.of(context)?.close();
+          setState(() {
+            isOpen = value;
+          });
+        },
         title: Hero(
-          tag: routine.name,
+          tag: widget.routine.name,
           child: Text(
-            routine.name,
+            widget.routine.name,
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
-        subtitle: isToday
+        subtitle: widget.isToday
             ? Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    routine.inCompletedTasks.isEmpty
-                        ? const Text("Completed")
-                        : Text(
-                            'Completed ${routine.tasks.length - routine.inCompletedTasks.length} out of ${routine.tasks.length}'),
+                    if (widget.routine.inCompletedTasks.isEmpty)
+                      const Text("Completed")
+                    else
+                      AnimatedCrossFade(
+                        firstChild: Text(
+                            'Completed ${widget.routine.tasks.length - widget.routine.inCompletedTasks.length} out of ${widget.routine.tasks.length}'),
+                        secondChild: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                  "${widget.routine.getTimeLeft().inMinutes} mins left"),
+                            ),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  'Completed ${widget.routine.tasks.length - widget.routine.inCompletedTasks.length} / ${widget.routine.tasks.length}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        crossFadeState: isOpen
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        duration: const Duration(milliseconds: 300),
+                      ),
                     const SizedBox(height: 5),
                     LinearPercentIndicator(
                       animateFromLastPercent: true,
                       animation: true,
-                      percent: routine.getPercentage().clamp(0, 1),
+                      percent: widget.routine.getPercentage().clamp(0, 1),
                       barRadius: const Radius.circular(10),
                       lineHeight: 3,
                       progressColor:
@@ -244,15 +282,21 @@ class CustomTile extends StatelessWidget {
                   ],
                 ),
               )
-            : Text(routine.getDays()),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(widget.routine.getDays()),
+                  Text("${widget.routine.getTotalTime().inMinutes} mins")
+                ],
+              ),
         trailing: IconButton(
           padding: EdgeInsets.zero,
           onPressed: () {
-            onPress(context);
+            widget.onPress(context);
           },
-          icon: isToday
+          icon: widget.isToday
               ? Icon(
-                  routine.isCompleted
+                  widget.routine.isCompleted
                       ? Icons.replay_rounded
                       : Icons.play_arrow_rounded,
                   size: 30,
@@ -263,14 +307,21 @@ class CustomTile extends StatelessWidget {
                 ),
         ),
         children: [
-          RoutineChart(routine: routine),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                    "Total duration ${widget.routine.getTotalTime().inMinutes} mins")),
+          ),
+          RoutineChart(routine: widget.routine),
           Theme(
             data: Theme.of(context),
             child: Row(
               children: [
                 Expanded(
                   child: TextButton.icon(
-                    onPressed: () => onDelete(context),
+                    onPressed: () => widget.onDelete(context),
                     icon: Icon(
                       Icons.delete,
                       color: Colors.red[300],
@@ -286,7 +337,7 @@ class CustomTile extends StatelessWidget {
                 ),
                 Expanded(
                   child: TextButton.icon(
-                    onPressed: () => onEdit(context),
+                    onPressed: () => widget.onEdit(context),
                     icon: Icon(
                       Icons.edit,
                       color: Colors.blue[300],
