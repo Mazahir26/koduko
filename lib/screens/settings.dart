@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:koduko/screens/about.dart';
 import 'package:koduko/screens/archive_routines.dart';
 import 'package:koduko/screens/stats.dart';
-import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/routines_provider.dart';
 import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -28,31 +27,6 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-            child: InkWell(
-              onTap: () => Navigator.pushNamed(context, TasksScreen.routeName),
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Hero(
-                      tag: "My Tasks",
-                      child: Text(
-                        "My Tasks",
-                        style: textTheme.titleLarge,
-                      ),
-                    ),
-                    IconButton(
-                        onPressed: () =>
-                            Navigator.pushNamed(context, TasksScreen.routeName),
-                        icon: const Icon(Icons.chevron_right_rounded)),
-                  ],
-                ),
-              ),
-            ),
-          ),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
             child: InkWell(

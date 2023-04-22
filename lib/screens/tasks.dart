@@ -8,8 +8,10 @@ import 'package:koduko/services/tasks_provider.dart';
 import 'package:provider/provider.dart';
 
 class TasksScreen extends StatelessWidget {
-  const TasksScreen({Key? key}) : super(key: key);
+  const TasksScreen({Key? key, this.isBottomNavWidget = false})
+      : super(key: key);
   static const routeName = "/tasks";
+  final bool isBottomNavWidget;
   @override
   Widget build(BuildContext context) {
     void _addTask(Task t) {
@@ -69,7 +71,7 @@ class TasksScreen extends StatelessWidget {
                         Center(
                           child: TextButton.icon(
                               icon: const Icon(Icons.add),
-                              onPressed: _onCreateTask,
+                              onPressed: onCreateTask,
                               label: const Text(
                                 "Create One",
                                 style: TextStyle(fontSize: 18),
@@ -94,7 +96,7 @@ class TasksScreen extends StatelessWidget {
                             const SizedBox(height: 25),
                             TaskTile(
                               task: value.tasks[index],
-                              onEdit: _onEdit,
+                              onEdit: onEdit,
                             )
                           ],
                         ),
@@ -104,7 +106,7 @@ class TasksScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: TaskTile(
                           task: value.tasks[index],
-                          onEdit: _onEdit,
+                          onEdit: onEdit,
                         ));
                   })),
           child: const ScreenHeader(

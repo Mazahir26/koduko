@@ -6,6 +6,7 @@ import 'package:koduko/screens/home.dart';
 import 'package:koduko/screens/routines.dart';
 import 'package:koduko/screens/settings.dart';
 import 'package:koduko/screens/start_routine.dart';
+import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/notification_service.dart';
 
 class App extends StatefulWidget {
@@ -65,38 +66,55 @@ class _AppState extends State<App> {
         onTapChange: () => _onItemTapped(1),
       ),
       const RoutinesScreen(),
+      const TasksScreen(isBottomNavWidget: true),
       const SettingsScreen(),
     ];
-    return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: _onItemTapped,
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        selectedIndex: _selectedIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home_rounded),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.task_alt_rounded),
-            icon: Icon(Icons.task_alt_outlined),
-            label: 'Routines',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.settings_rounded),
-            icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
-          ),
-        ],
+    return AnnotatedRegion(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor:
+            Theme.of(context).brightness == Brightness.dark
+                ? Colors.black
+                : Colors.white,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+        systemNavigationBarIconBrightness:
+            Theme.of(context).brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
       ),
-      body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: (value) => setState(() {
-            _selectedIndex = value;
-          }),
-          children: widgetOptions,
+      child: Scaffold(
+        bottomNavigationBar: NavigationBar(
+          onDestinationSelected: _onItemTapped,
+          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          selectedIndex: _selectedIndex,
+          destinations: const <Widget>[
+            NavigationDestination(
+              selectedIcon: Icon(Icons.home_rounded),
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.task_alt_rounded),
+              icon: Icon(Icons.task_alt_outlined),
+              label: 'Routines',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.settings_rounded),
+              icon: Icon(Icons.settings_outlined),
+              label: 'Settings',
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (value) => setState(() {
+              _selectedIndex = value;
+            }),
+            children: widgetOptions,
+          ),
         ),
       ),
     );
