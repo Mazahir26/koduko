@@ -24,6 +24,7 @@ void main() async {
   Hive.registerAdapter(RoutineAdapter());
   Hive.registerAdapter(TaskEventAdapter());
   WidgetsFlutterBinding.ensureInitialized();
+
   await NotificationService().initialize();
   _configureLocalTimeZone();
   runApp(const MyApp());
