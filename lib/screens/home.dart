@@ -41,115 +41,137 @@ class HomeScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
               textStyle: textTheme.headlineMedium,
             )),
-        const SizedBox(height: 10),
         Consumer<RoutineModel>(
           builder: (context, value, child) {
             List<Routine> todayRoutines = value.todaysRoutines();
+            final Duration totalTime = value.todaysRoutines().fold(
+                Duration.zero,
+                (previousValue, element) =>
+                    previousValue + element.getTimeLeft());
             return Column(
-              children: todayRoutines.isEmpty
-                  ? [
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Center(
-                        child: Text(
-                          "You seem free today!",
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ),
-                      Center(
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              textStyle:
-                                  Theme.of(context).textTheme.titleMedium),
-                          onPressed: onTapChange,
-                          child: const Text(
-                            "Change that?",
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${totalTime.inMinutes} mins left to reach your goal today ",
+                  style: GoogleFonts.lato(
+                    fontWeight: FontWeight.w400,
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .apply(
+                            displayColor:
+                                Theme.of(context).colorScheme.onSurface)
+                        .bodyLarge,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Column(
+                  children: todayRoutines.isEmpty
+                      ? [
+                          const SizedBox(
+                            height: 50,
                           ),
-                        ),
-                      )
-                    ]
-                  : todayRoutines
-                      .asMap()
-                      .map((key, value) => MapEntry(
-                          key,
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  '${key + 1}',
-                                  style: GoogleFonts.lato(
-                                    fontWeight: FontWeight.bold,
-                                    textStyle: textTheme.headlineLarge,
-                                  ),
-                                ),
+                          Center(
+                            child: Text(
+                              "You seem free today!",
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                          ),
+                          Center(
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                  textStyle:
+                                      Theme.of(context).textTheme.titleMedium),
+                              onPressed: onTapChange,
+                              child: const Text(
+                                "Change that?",
                               ),
-                              Expanded(
-                                flex: 10,
-                                child: Card(
-                                  margin: const EdgeInsets.symmetric(
-                                    vertical: 5,
-                                  ),
-                                  child: ListTile(
-                                      title: Text(
-                                        value.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge,
+                            ),
+                          )
+                        ]
+                      : todayRoutines
+                          .asMap()
+                          .map((key, value) => MapEntry(
+                              key,
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '${key + 1}',
+                                      style: GoogleFonts.lato(
+                                        fontWeight: FontWeight.bold,
+                                        textStyle: textTheme.headlineLarge,
                                       ),
-                                      subtitle: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 3),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            value.inCompletedTasks.isEmpty
-                                                ? const Text("Completed")
-                                                : Text(
-                                                    'Completed ${value.tasks.length - value.inCompletedTasks.length} out of ${value.tasks.length}'),
-                                            const SizedBox(height: 5),
-                                            LinearPercentIndicator(
-                                              animateFromLastPercent: true,
-                                              animation: true,
-                                              percent: value
-                                                  .getPercentage()
-                                                  .clamp(0, 1),
-                                              barRadius:
-                                                  const Radius.circular(10),
-                                              lineHeight: 3,
-                                              progressColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .inversePrimary,
-                                              padding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 10,
+                                    child: Card(
+                                      margin: const EdgeInsets.symmetric(
+                                        vertical: 5,
+                                      ),
+                                      child: ListTile(
+                                          title: Text(
+                                            value.name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge,
+                                          ),
+                                          subtitle: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 3),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                value.inCompletedTasks.isEmpty
+                                                    ? const Text("Completed")
+                                                    : Text(
+                                                        'Completed ${value.tasks.length - value.inCompletedTasks.length} out of ${value.tasks.length}'),
+                                                const SizedBox(height: 5),
+                                                LinearPercentIndicator(
+                                                  animateFromLastPercent: true,
+                                                  animation: true,
+                                                  percent: value
+                                                      .getPercentage()
+                                                      .clamp(0, 1),
+                                                  barRadius:
+                                                      const Radius.circular(10),
+                                                  lineHeight: 3,
+                                                  progressColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                  padding: EdgeInsets.zero,
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      trailing: IconButton(
-                                          padding: EdgeInsets.zero,
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: ((context) =>
-                                                        RoutineScreen(
-                                                          routine: value.id,
-                                                        ))));
-                                          },
-                                          icon: Icon(
-                                            value.isCompleted
-                                                ? Icons.replay_rounded
-                                                : Icons.play_arrow_rounded,
-                                            size: 30,
-                                          ))),
-                                ),
-                              ),
-                            ],
-                          )))
-                      .values
-                      .toList(),
+                                          ),
+                                          trailing: IconButton(
+                                              padding: EdgeInsets.zero,
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: ((context) =>
+                                                            RoutineScreen(
+                                                              routine: value.id,
+                                                            ))));
+                                              },
+                                              icon: Icon(
+                                                value.isCompleted
+                                                    ? Icons.replay_rounded
+                                                    : Icons.play_arrow_rounded,
+                                                size: 30,
+                                              ))),
+                                    ),
+                                  ),
+                                ],
+                              )))
+                          .values
+                          .toList(),
+                ),
+              ],
             );
           },
         )

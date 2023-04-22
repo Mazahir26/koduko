@@ -109,10 +109,19 @@ class TasksScreen extends StatelessWidget {
                           onEdit: onEdit,
                         ));
                   })),
-          child: const ScreenHeader(
-            text: "My Tasks",
-            tag: "My Tasks",
-          )),
+          child: isBottomNavWidget
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    "My Task",
+                    style: Theme.of(context).textTheme.headlineLarge!.apply(
+                        color: Theme.of(context).colorScheme.onBackground),
+                  ),
+                )
+              : const ScreenHeader(
+                  text: "My Tasks",
+                  tag: "My Tasks",
+                )),
     );
   }
 }

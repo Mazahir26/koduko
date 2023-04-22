@@ -105,6 +105,11 @@ class _AppState extends State<App> {
               label: 'Routines',
             ),
             NavigationDestination(
+              selectedIcon: Icon(Icons.list_rounded),
+              icon: Icon(Icons.list_outlined),
+              label: 'Tasks',
+            ),
+            NavigationDestination(
               selectedIcon: Icon(Icons.settings_rounded),
               icon: Icon(Icons.settings_outlined),
               label: 'Settings',
