@@ -8,12 +8,12 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 
 class RoutineChart extends StatelessWidget {
-  RoutineChart({Key? key, required this.routine}) : super(key: key);
+  const RoutineChart({Key? key, required this.routine}) : super(key: key);
 
-  final List<Color> gradientColors = [
-    const Color(0xff6f7bf7),
-    const Color(0xff9bf8f4),
-  ];
+  // final List<Color> gradientColors = [
+  //   const Color(0xff6f7bf7),
+  //   const Color(0xff9bf8f4),
+  // ];
   final Routine routine;
   @override
   Widget build(BuildContext context) {
@@ -112,7 +112,7 @@ class RoutineChart extends StatelessWidget {
                     minX: 0,
                     maxX: maxX,
                     minY: -0.2,
-                    maxY: maxY + 2,
+                    maxY: maxY + 1,
                     lineBarsData: [
                       LineChartBarData(
                         spots: value
@@ -123,26 +123,15 @@ class RoutineChart extends StatelessWidget {
                             .values
                             .toList(),
                         isCurved: true,
-                        curveSmoothness: 0.25,
-                        gradient: LinearGradient(
-                          colors: gradientColors,
-                          begin: Alignment.centerRight,
-                          end: Alignment.centerLeft,
-                        ),
-                        barWidth: 2,
-                        isStrokeCapRound: true,
+                        curveSmoothness: 0.5,
+                        barWidth: 3,
+                        color: Theme.of(context).hintColor,
                         dotData: FlDotData(
-                          show: false,
+                          show: true,
                         ),
                         belowBarData: BarAreaData(
                           show: true,
-                          gradient: LinearGradient(
-                            colors: gradientColors
-                                .map((color) => color.withOpacity(0.4))
-                                .toList(),
-                            begin: Alignment.centerRight,
-                            end: Alignment.centerLeft,
-                          ),
+                          color: Theme.of(context).hintColor.withOpacity(0.4),
                         ),
                       ),
                     ],

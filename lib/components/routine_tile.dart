@@ -8,7 +8,7 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
-class RoutineTile extends StatelessWidget {
+class RoutineTile extends StatefulWidget {
   const RoutineTile({
     Key? key,
     required this.routine,
@@ -19,6 +19,11 @@ class RoutineTile extends StatelessWidget {
   final bool isToday;
   final void Function(Routine) onEdit;
 
+  @override
+  State<RoutineTile> createState() => _RoutineTileState();
+}
+
+class _RoutineTileState extends State<RoutineTile> {
   void onLongPress(BuildContext context) async {
     Routine? r = await showModalBottomSheet<Routine>(
         isScrollControlled: true,
@@ -31,11 +36,17 @@ class RoutineTile extends StatelessWidget {
         ),
         context: context,
         builder: ((context) => CreateRoutineBottomSheet(
-              editRoutine: routine,
+              editRoutine: widget.routine,
             )));
     if (r != null) {
-      onEdit(r);
+      widget.onEdit(r);
     }
+  }
+
+  void onExpanded(bool value) {
+    setState(() {
+      isExpanded = value;
+    });
   }
 
   void onPress(BuildContext context) {
@@ -43,29 +54,33 @@ class RoutineTile extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: ((context) => RoutineScreen(
-                  routine: routine.id,
+                  routine: widget.routine.id,
                 ))));
   }
+
+  bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2),
       child: Slidable(
-        key: Key(routine.id),
+        enabled: !isExpanded,
+        closeOnScroll: true,
+        key: Key(widget.routine.id),
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
           dismissible: DismissiblePane(
               closeOnCancel: true,
               onDismissed: () {
                 Provider.of<RoutineModel>(context, listen: false)
-                    .addToArchive(routine.id);
+                    .addToArchive(widget.routine.id);
               }),
           children: [
             Action(
               onPress: ((context) {
                 Provider.of<RoutineModel>(context, listen: false)
-                    .addToArchive(routine.id);
+                    .addToArchive(widget.routine.id);
               }),
               color: Colors.brown[300]!,
               icon: Icons.archive_rounded,
@@ -79,11 +94,11 @@ class RoutineTile extends StatelessWidget {
             Action(
               onPress: ((context) {
                 Provider.of<RoutineModel>(context, listen: false)
-                    .toggleMarkAsCompleted(routine.id);
+                    .toggleMarkAsCompleted(widget.routine.id);
               }),
               color: Colors.blue[300]!,
               icon: Icons.checklist_rounded,
-              label: routine.isCompleted
+              label: widget.routine.isCompleted
                   ? 'Mark as Incomplete'
                   : 'Mark as Completed',
             ),
@@ -93,8 +108,10 @@ class RoutineTile extends StatelessWidget {
             child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: CustomTile(
-                  isToday: isToday,
-                  routine: routine,
+                  isOpen: isExpanded,
+                  onStateChange: onExpanded,
+                  isToday: widget.isToday,
+                  routine: widget.routine,
                   onPress: onPress,
                   onEdit: onLongPress,
                   onDelete: ((context) {
@@ -106,7 +123,7 @@ class RoutineTile extends StatelessWidget {
                             },
                             onDelete: (() {
                               Provider.of<RoutineModel>(context, listen: false)
-                                  .delete(routine.id);
+                                  .delete(widget.routine.id);
                               Navigator.pop(context);
                             }),
                           )),
@@ -187,7 +204,7 @@ class Action extends StatelessWidget {
   }
 }
 
-class CustomTile extends StatefulWidget {
+class CustomTile extends StatelessWidget {
   const CustomTile({
     Key? key,
     required this.isToday,
@@ -195,6 +212,8 @@ class CustomTile extends StatefulWidget {
     required this.onPress,
     required this.onDelete,
     required this.onEdit,
+    required this.onStateChange,
+    required this.isOpen,
   }) : super(key: key);
 
   final bool isToday;
@@ -202,13 +221,10 @@ class CustomTile extends StatefulWidget {
   final Function(BuildContext context) onPress;
   final Function(BuildContext context) onDelete;
   final Function(BuildContext context) onEdit;
+  final Function(bool value) onStateChange;
+  final bool isOpen;
 
-  @override
-  State<CustomTile> createState() => _CustomTileState();
-}
-
-class _CustomTileState extends State<CustomTile> {
-  bool isOpen = false;
+  // bool isOpen = false;
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -220,41 +236,39 @@ class _CustomTileState extends State<CustomTile> {
       child: ExpansionTile(
         onExpansionChanged: (value) {
           Slidable.of(context)?.close();
-          setState(() {
-            isOpen = value;
-          });
+          onStateChange(value);
         },
         title: Hero(
-          tag: widget.routine.name,
+          tag: routine.name,
           child: Text(
-            widget.routine.name,
+            routine.name,
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
-        subtitle: widget.isToday
+        subtitle: isToday
             ? Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.routine.inCompletedTasks.isEmpty)
+                    if (routine.inCompletedTasks.isEmpty)
                       const Text("Completed")
                     else
                       AnimatedCrossFade(
                         firstChild: Text(
-                            'Completed ${widget.routine.tasks.length - widget.routine.inCompletedTasks.length} out of ${widget.routine.tasks.length}'),
+                            'Completed ${routine.tasks.length - routine.inCompletedTasks.length} out of ${routine.tasks.length}'),
                         secondChild: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Text(
-                                  "${widget.routine.getTimeLeft().inMinutes} mins left"),
+                                  "${routine.getTimeLeft().inMinutes} mins left"),
                             ),
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  'Completed ${widget.routine.tasks.length - widget.routine.inCompletedTasks.length} / ${widget.routine.tasks.length}',
+                                  'Completed ${routine.tasks.length - routine.inCompletedTasks.length} / ${routine.tasks.length}',
                                   style: const TextStyle(
                                     fontSize: 12,
                                   ),
@@ -272,7 +286,7 @@ class _CustomTileState extends State<CustomTile> {
                     LinearPercentIndicator(
                       animateFromLastPercent: true,
                       animation: true,
-                      percent: widget.routine.getPercentage().clamp(0, 1),
+                      percent: routine.getPercentage().clamp(0, 1),
                       barRadius: const Radius.circular(10),
                       lineHeight: 3,
                       progressColor:
@@ -285,18 +299,18 @@ class _CustomTileState extends State<CustomTile> {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(widget.routine.getDays()),
-                  Text("${widget.routine.getTotalTime().inMinutes} mins")
+                  Text(routine.getDays()),
+                  Text("${routine.getTotalTime().inMinutes} mins")
                 ],
               ),
         trailing: IconButton(
           padding: EdgeInsets.zero,
           onPressed: () {
-            widget.onPress(context);
+            onPress(context);
           },
-          icon: widget.isToday
+          icon: isToday
               ? Icon(
-                  widget.routine.isCompleted
+                  routine.isCompleted
                       ? Icons.replay_rounded
                       : Icons.play_arrow_rounded,
                   size: 30,
@@ -312,16 +326,16 @@ class _CustomTileState extends State<CustomTile> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    "Total duration ${widget.routine.getTotalTime().inMinutes} mins")),
+                    "Total duration ${routine.getTotalTime().inMinutes} mins")),
           ),
-          RoutineChart(routine: widget.routine),
+          RoutineChart(routine: routine),
           Theme(
             data: Theme.of(context),
             child: Row(
               children: [
                 Expanded(
                   child: TextButton.icon(
-                    onPressed: () => widget.onDelete(context),
+                    onPressed: () => onDelete(context),
                     icon: Icon(
                       Icons.delete,
                       color: Colors.red[300],
@@ -337,7 +351,7 @@ class _CustomTileState extends State<CustomTile> {
                 ),
                 Expanded(
                   child: TextButton.icon(
-                    onPressed: () => widget.onEdit(context),
+                    onPressed: () => onEdit(context),
                     icon: Icon(
                       Icons.edit,
                       color: Colors.blue[300],
