@@ -224,7 +224,6 @@ class CustomTile extends StatelessWidget {
   final Function(bool value) onStateChange;
   final bool isOpen;
 
-  // bool isOpen = false;
   @override
   Widget build(BuildContext context) {
     return Theme(

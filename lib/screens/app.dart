@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,8 @@ import 'package:koduko/screens/settings.dart';
 import 'package:koduko/screens/start_routine.dart';
 import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/notification_service.dart';
+
+import '../models/notification_payload.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -131,11 +134,13 @@ class _AppState extends State<App> {
 
   void onNotificationListener(String? payload) {
     if (payload != null && payload.isNotEmpty) {
+      final j = jsonDecode(payload);
+      final Payload p = Payload.fromJson(j);
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: ((context) => RoutineScreen(
-                    routine: payload,
+                    routine: p.uId,
                   ))));
     }
   }

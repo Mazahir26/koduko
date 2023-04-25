@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/timezone.dart' as tz;
+import '../models/notification_payload.dart';
 
 class NotificationService {
   static final NotificationService _notificationService =
@@ -39,12 +42,26 @@ class NotificationService {
     );
   }
 
+  void notificationTapBackground(NotificationResponse notificationResponse) {
+    // ignore: avoid_print
+    print('notification(${notificationResponse.id}) action tapped: '
+        '${notificationResponse.actionId} with'
+        ' payload: ${notificationResponse.payload}');
+    if (notificationResponse.payload != null) {
+      final j = jsonDecode(notificationResponse.payload!);
+      final Payload p = Payload.fromJson(j);
+      snoozeNotification(p);
+    }
+  }
+
   Future<void> scheduleDaily({
     required TimeOfDay time,
     required String title,
     required String des,
     required String uId,
   }) async {
+    final payload = Payload(uId: uId, title: title, des: des, isDaily: true);
+
     await _flutterLocalNotificationsPlugin.zonedSchedule(
       ValueKey(uId).hashCode,
       title,
@@ -52,12 +69,19 @@ class NotificationService {
       _dailyAt(time),
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          '002',
+          '001',
           'Daily Routine Notifications',
           channelDescription: 'Daily Routine Notifications',
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              "01",
+              "Snooze 30 mins",
+              cancelNotification: true,
+            ),
+          ],
         ),
       ),
-      payload: uId,
+      payload: payload.toJson().toString(),
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
@@ -72,6 +96,8 @@ class NotificationService {
     required String day,
     required String uId,
   }) async {
+    final payload = Payload(uId: uId, title: title, des: des, isDaily: false);
+
     await _flutterLocalNotificationsPlugin.zonedSchedule(
       ValueKey(uId + day).hashCode,
       title,
@@ -82,9 +108,16 @@ class NotificationService {
           '003',
           'Weekly Routine Notifications',
           channelDescription: 'Weekly Routine Notifications',
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              "01",
+              "Snooze 30 mins",
+              cancelNotification: true,
+            ),
+          ],
         ),
       ),
-      payload: uId,
+      payload: payload.toJson(),
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
@@ -119,6 +152,44 @@ class NotificationService {
   //     platformChannelSpecifics,
   //   );
   // }
+
+  Future<void> snoozeNotification(Payload payload) async {
+    AndroidNotificationDetails details = const AndroidNotificationDetails(
+      '003',
+      'Weekly Routine Notifications',
+      channelDescription: 'Weekly Routine Notifications',
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction("01", "Snooze 30 mins"),
+      ],
+    );
+    if (payload.isDaily) {
+      details = const AndroidNotificationDetails(
+        '002',
+        'Daily Routine Notifications',
+        channelDescription: 'Daily Routine Notifications',
+        actions: <AndroidNotificationAction>[
+          AndroidNotificationAction(
+            "01",
+            "Snooze 30 mins",
+            cancelNotification: true,
+          ),
+        ],
+      );
+    }
+
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        ValueKey(payload.uId).hashCode,
+        payload.title,
+        payload.des,
+        tz.TZDateTime.now(tz.local).add(const Duration(minutes: 30)),
+        NotificationDetails(
+          android: details,
+        ),
+        payload: payload.toJson().toString(),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
+  }
 
   Future<void> scheduledNotification(
       Duration dur, String id, String title, String des) async {
@@ -196,6 +267,7 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.initialize(
       settings,
       onDidReceiveNotificationResponse: onSelectNotification,
+      // onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
   }
 }
