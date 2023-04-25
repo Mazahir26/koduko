@@ -125,13 +125,16 @@ class RoutineChart extends StatelessWidget {
                         isCurved: true,
                         curveSmoothness: 0.5,
                         barWidth: 3,
-                        color: Theme.of(context).hintColor,
+                        color: Theme.of(context).colorScheme.primary,
                         dotData: FlDotData(
                           show: true,
                         ),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: Theme.of(context).hintColor.withOpacity(0.4),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.4),
                         ),
                       ),
                     ],
