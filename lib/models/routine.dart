@@ -161,6 +161,11 @@ class Routine {
     return d;
   }
 
+  Duration getTimeSpentToday() {
+    Duration d = getTotalTime() - getTimeLeft();
+    return d;
+  }
+
   Duration getTimeLeft() {
     Duration d = Duration.zero;
     for (var t in inCompletedTasks) {

@@ -4,6 +4,7 @@ import 'package:koduko/components/daily_activity.dart';
 import 'package:koduko/components/header.dart';
 import 'package:koduko/components/most_productive_hour.dart';
 import 'package:koduko/components/productive_day.dart';
+import 'package:koduko/components/time_spent_today.dart';
 import 'package:koduko/components/weekly_chart.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/services/routines_provider.dart';
@@ -38,6 +39,13 @@ class Statistics extends StatelessWidget {
               children: [
                 Expanded(child: ProductiveHour(textTheme: textTheme)),
                 Expanded(child: ProductiveDay(textTheme: textTheme)),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(child: TimeSpentToday(textTheme: textTheme)),
               ],
             ),
             const SizedBox(height: 15),

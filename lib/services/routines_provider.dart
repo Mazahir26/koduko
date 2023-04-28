@@ -1,5 +1,7 @@
 import 'dart:collection';
+import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -78,13 +80,13 @@ class RoutineModel extends ChangeNotifier {
     }
   }
 
-  List<TaskEvent> getHistory() {
+  List<TaskEvent> getHistory({int clamp = 0}) {
     List<TaskEvent> list = [];
     for (var element in _routines) {
       list.addAll(element.history);
       list.sort(((a, b) => a.time.compareTo(b.time)));
     }
-    return list;
+    return list.slice(0, min(list.length - 1, 25));
   }
 
   int getMostProductiveHour() {
@@ -100,6 +102,15 @@ class RoutineModel extends ChangeNotifier {
       }
     }
     return max;
+  }
+
+  int getTimeSpentToday() {
+    List<Routine> list = _routines;
+    Duration d = Duration.zero;
+    for (var e in list) {
+      d += e.getTimeSpentToday();
+    }
+    return d.inMinutes;
   }
 
   DateTime? getMostProductiveDay() {

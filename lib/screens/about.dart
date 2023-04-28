@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:koduko/components/header.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,21 +33,38 @@ class AboutScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "This an Open source app made with flutter.",
-                      style: Theme.of(context).textTheme.bodyLarge,
+                    RichText(
+                      text: TextSpan(
+                          text:
+                              "Koduko is an open source habit tracker app that helps users develop and maintain positive daily habits. Users can set personalized goals and track their progress towards achieving them, as well as receive reminders to stay on track. You can find the source code and releases ",
+                          style: Theme.of(context).textTheme.bodyLarge,
+                          children: [
+                            TextSpan(
+                              text: "here",
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => openUrl(Uri.parse(
+                                    'https://github.com/Mazahir26/koduko')),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                            )
+                          ]),
                     ),
-                    const SizedBox(height: 10),
-                    Center(
-                        child: TextButton(
-                            onPressed: () {
-                              openUrl(Uri.parse(
-                                  'https://github.com/Mazahir26/koduko'));
-                            },
-                            child: const Text("Source Code"))),
                     const SizedBox(height: 15),
                     Text(
                       'Developer Contact',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "For any questions or suggestions regarding Koduko's functionality or code, You can reach me out via telegram or github",
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     const SizedBox(height: 10),
@@ -65,7 +83,17 @@ class AboutScreen extends StatelessWidget {
                             },
                             child: const Text("Telegram"))
                       ],
-                    )
+                    ),
+                    const SizedBox(height: 30),
+                    Center(
+                      child: Text(
+                        "Thank You ❤️",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ],
                 ),
               )
