@@ -37,7 +37,7 @@ dependencies:
   hive: ^2.2.3
   provider: ^6.0.3
   uuid: ^3.0.6
-  google_fonts: ^3.0.1
+  google_fonts: ^4.0.4
   intl: ^0.17.0
   fl_chart: ^0.55.0
   flutter_slidable: ^2.0.0

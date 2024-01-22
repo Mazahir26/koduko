@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/models/task_event.dart';
 import 'package:koduko/utils/date_time_extension.dart';
-import 'package:koduko/utils/duration_to_string.dart';
 import 'package:koduko/utils/parse_duration.dart';
 import 'package:koduko/utils/time_of_day_util.dart';
 import 'package:uuid/uuid.dart';
