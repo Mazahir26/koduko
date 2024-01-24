@@ -86,6 +86,9 @@ class RoutineModel extends ChangeNotifier {
       list.addAll(element.history);
       list.sort(((a, b) => a.time.compareTo(b.time)));
     }
+    if (list.isEmpty) {
+      return [];
+    }
     return list.slice(0, min(list.length - 1, 25));
   }
 

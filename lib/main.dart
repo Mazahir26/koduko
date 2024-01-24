@@ -17,7 +17,6 @@ import 'package:koduko/services/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:dynamic_color/dynamic_color.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -81,38 +80,32 @@ class MyApp extends StatelessWidget {
               ),
             ],
             child: Consumer<ThemeModel>(
-              builder: (context, value, child) => DynamicColorBuilder(
-                builder: (lightDynamic, darkDynamic) {
-                  return MaterialApp(
-                      debugShowCheckedModeBanner: false,
-                      title: 'KudoKo',
-                      themeMode: value.getTheme,
-                      theme: ThemeData(
-                        colorScheme: lightDynamic ??
-                            ColorScheme.fromSeed(seedColor: Colors.purple),
-                        useMaterial3: true,
-                        // brightness: Brightness.light,
-                      ),
-                      darkTheme: ThemeData(
-                        colorScheme: darkDynamic?.copyWith(
-                                brightness: Brightness.dark) ??
-                            ColorScheme.fromSeed(seedColor: Colors.purple),
-                        useMaterial3: true,
-                        // brightness: Brightness.dark,
-                      ),
-                      initialRoute: initRoute,
-                      routes: {
-                        TasksScreen.routeName: (context) => const TasksScreen(),
-                        App.routeName: (context) => const App(),
-                        AboutScreen.routeName: (context) => const AboutScreen(),
-                        Statistics.routeName: ((context) => const Statistics()),
-                        ArchiveRoutinesScreen.routeName: ((context) =>
-                            const ArchiveRoutinesScreen()),
-                        OnBoarding.routeName: (((context) =>
-                            const OnBoarding()))
-                      });
-                },
-              ),
+              builder: (context, value, child) => MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  title: 'KudoKo',
+                  themeMode: value.getTheme,
+                  theme: ThemeData.light(useMaterial3: true).copyWith(
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: Colors.purple,
+                      brightness: Brightness.light,
+                    ),
+                  ),
+                  darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: Colors.purple,
+                      brightness: Brightness.dark,
+                    ),
+                  ),
+                  initialRoute: initRoute,
+                  routes: {
+                    TasksScreen.routeName: (context) => const TasksScreen(),
+                    App.routeName: (context) => const App(),
+                    AboutScreen.routeName: (context) => const AboutScreen(),
+                    Statistics.routeName: ((context) => const Statistics()),
+                    ArchiveRoutinesScreen.routeName: ((context) =>
+                        const ArchiveRoutinesScreen()),
+                    OnBoarding.routeName: (((context) => const OnBoarding()))
+                  }),
             ),
           );
         }
