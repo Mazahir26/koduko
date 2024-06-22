@@ -5,7 +5,7 @@ import 'package:koduko/utils/time_of_day_util.dart';
 import 'package:provider/provider.dart';
 
 class ProductiveHour extends StatelessWidget {
-  const ProductiveHour({Key? key, required this.textTheme}) : super(key: key);
+  const ProductiveHour({super.key, required this.textTheme});
   final TextTheme textTheme;
 
   @override

@@ -5,7 +5,7 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 
 class ArchiveRoutinesScreen extends StatelessWidget {
-  const ArchiveRoutinesScreen({Key? key}) : super(key: key);
+  const ArchiveRoutinesScreen({super.key});
   static const routeName = "/archive";
 
   @override
@@ -92,12 +92,11 @@ class ArchiveRoutinesScreen extends StatelessWidget {
 
 class Action extends StatelessWidget {
   const Action(
-      {Key? key,
+      {super.key,
       required this.onPress,
       required this.color,
       required this.icon,
-      required this.label})
-      : super(key: key);
+      required this.label});
 
   final Function(BuildContext context) onPress;
   final Color color;

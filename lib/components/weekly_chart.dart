@@ -8,9 +8,9 @@ import 'package:collection/collection.dart';
 
 class WeeklyChart extends StatefulWidget {
   const WeeklyChart({
-    Key? key,
+    super.key,
     required this.textTheme,
-  }) : super(key: key);
+  });
   final TextTheme textTheme;
 
   @override
@@ -54,7 +54,7 @@ class _WeeklyChartState extends State<WeeklyChart> {
                                     backDrawRodData: BackgroundBarChartRodData(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .surfaceVariant,
+                                          .surfaceContainerHighest,
                                       show: true,
                                       toY: value
                                                   .getWeeklyStats()
@@ -103,7 +103,7 @@ class _WeeklyChartState extends State<WeeklyChart> {
                               },
                             ),
                             borderData: FlBorderData(show: false),
-                            gridData: FlGridData(show: false),
+                            gridData: const FlGridData(show: false),
                             alignment: BarChartAlignment.spaceAround,
                             titlesData: FlTitlesData(
                               show: true,
@@ -114,21 +114,19 @@ class _WeeklyChartState extends State<WeeklyChart> {
                                   getTitlesWidget: ((value, meta) => getTitles(
                                       value,
                                       meta,
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .onBackground,
+                                      Theme.of(context).colorScheme.onSurface,
                                       Theme.of(context)
                                           .colorScheme
                                           .inversePrimary)),
                                 ),
                               ),
-                              leftTitles: AxisTitles(
+                              leftTitles: const AxisTitles(
                                 sideTitles: SideTitles(showTitles: false),
                               ),
-                              topTitles: AxisTitles(
+                              topTitles: const AxisTitles(
                                 sideTitles: SideTitles(showTitles: false),
                               ),
-                              rightTitles: AxisTitles(
+                              rightTitles: const AxisTitles(
                                 sideTitles: SideTitles(showTitles: false),
                               ),
                             ),
@@ -190,7 +188,6 @@ Widget getTitles(double value, TitleMeta meta, Color color, Color backColor) {
 
 BarTouchTooltipData barToolTipData(BuildContext context) {
   return BarTouchTooltipData(
-    tooltipBgColor: Theme.of(context).colorScheme.inversePrimary,
     getTooltipItem: (group, groupIndex, rod, rodIndex) {
       String weekDay;
       switch (group.x.toInt()) {

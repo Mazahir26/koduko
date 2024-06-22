@@ -11,7 +11,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key, required this.onTapChange}) : super(key: key);
+  const HomeScreen({super.key, required this.onTapChange});
   final void Function() onTapChange;
   @override
   Widget build(BuildContext context) {
@@ -182,9 +182,9 @@ class HomeScreen extends StatelessWidget {
 
 class Header extends StatelessWidget {
   const Header({
-    Key? key,
+    super.key,
     required this.textTheme,
-  }) : super(key: key);
+  });
 
   final TextTheme textTheme;
 

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ScreenHeader extends StatelessWidget {
-  const ScreenHeader({Key? key, required this.text, required this.tag})
-      : super(key: key);
+  const ScreenHeader({super.key, required this.text, required this.tag});
   final String text;
   final String tag;
   @override
@@ -30,7 +29,7 @@ class ScreenHeader extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headlineLarge!
-                  .apply(color: Theme.of(context).colorScheme.onBackground),
+                  .apply(color: Theme.of(context).colorScheme.onSurface),
               textAlign: TextAlign.center,
             ),
           ),

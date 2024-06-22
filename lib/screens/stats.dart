@@ -11,7 +11,7 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 
 class Statistics extends StatelessWidget {
-  const Statistics({Key? key}) : super(key: key);
+  const Statistics({super.key});
   static const routeName = "/stats";
 
   @override

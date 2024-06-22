@@ -6,7 +6,7 @@ import 'package:koduko/utils/parse_duration.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {
-  const CreateTaskBottomSheet({Key? key, this.task}) : super(key: key);
+  const CreateTaskBottomSheet({super.key, this.task});
   final Task? task;
   @override
   State<CreateTaskBottomSheet> createState() => _CreateTaskBottomSheetState();
@@ -115,7 +115,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
         const NumberPickerColumn(begin: 0, end: 30, suffix: Text(' minutes')),
         const NumberPickerColumn(begin: 5, end: 60, suffix: Text(' seconds')),
       ]),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       onBuilderItem: (context, text, child, selected, col, index) {
         String t = text == null
             ? ''
@@ -289,12 +289,12 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
 
 class Buttons extends StatelessWidget {
   const Buttons({
-    Key? key,
+    super.key,
     required this.pageIndex,
     required this.onNext,
     required this.onPrevious,
     required this.text,
-  }) : super(key: key);
+  });
 
   final int pageIndex;
   final void Function()? onNext;
@@ -363,12 +363,11 @@ class Buttons extends StatelessWidget {
 
 class DurationPage extends StatelessWidget {
   const DurationPage(
-      {Key? key,
+      {super.key,
       required this.onChange,
       required this.chipList,
       required this.value,
-      required this.customDuration})
-      : super(key: key);
+      required this.customDuration});
 
   final void Function(bool, int, BuildContext) onChange;
   final Map<String, Duration> chipList;
@@ -403,7 +402,7 @@ class DurationPage extends StatelessWidget {
               labelStyle: Theme.of(context).textTheme.labelLarge!.apply(
                   color: value == chipList.keys.toList()[index]
                       ? Theme.of(context).colorScheme.onSecondary
-                      : Theme.of(context).colorScheme.onBackground),
+                      : Theme.of(context).colorScheme.onSurface),
               onSelected: (bool selected) => onChange(selected, index, context),
             ),
           ),
@@ -415,11 +414,10 @@ class DurationPage extends StatelessWidget {
 
 class ColorPage extends StatelessWidget {
   const ColorPage(
-      {Key? key,
+      {super.key,
       required this.onChange,
       required this.colorList,
-      required this.selectedColor})
-      : super(key: key);
+      required this.selectedColor});
   final void Function(int) onChange;
   final List<Color> colorList;
   final int? selectedColor;
@@ -449,7 +447,7 @@ class ColorPage extends StatelessWidget {
                         border: Border.all(
                           color: selectedColor == index
                               ? Colors.blueAccent
-                              : Theme.of(context).colorScheme.background,
+                              : Theme.of(context).colorScheme.surface,
                           width: 3,
                         ),
                         shape: BoxShape.circle,
