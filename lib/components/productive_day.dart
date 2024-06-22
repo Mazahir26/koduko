@@ -4,7 +4,7 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProductiveDay extends StatelessWidget {
-  const ProductiveDay({Key? key, required this.textTheme}) : super(key: key);
+  const ProductiveDay({super.key, required this.textTheme});
   final TextTheme textTheme;
 
   @override

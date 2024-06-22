@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 class NamePage extends StatelessWidget {
   const NamePage(
-      {Key? key,
+      {super.key,
       required this.nameController,
       required this.validateName,
       required this.pageComplected,
       required this.hintText,
-      required this.title})
-      : super(key: key);
+      required this.title});
   final TextEditingController nameController;
   final void Function(String) validateName;
   final bool pageComplected;

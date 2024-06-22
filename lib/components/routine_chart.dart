@@ -8,7 +8,7 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 
 class RoutineChart extends StatelessWidget {
-  RoutineChart({Key? key, required this.routine}) : super(key: key);
+  RoutineChart({super.key, required this.routine});
 
   final List<Color> gradientColors = [
     const Color(0xff6f7bf7),
@@ -64,10 +64,10 @@ class RoutineChart extends StatelessWidget {
                   LineChartData(
                     titlesData: FlTitlesData(
                       show: true,
-                      rightTitles: AxisTitles(
+                      rightTitles: const AxisTitles(
                         sideTitles: SideTitles(showTitles: false),
                       ),
-                      topTitles: AxisTitles(
+                      topTitles: const AxisTitles(
                         sideTitles: SideTitles(showTitles: false),
                       ),
                       bottomTitles: AxisTitles(
@@ -131,7 +131,7 @@ class RoutineChart extends StatelessWidget {
                         ),
                         barWidth: 2,
                         isStrokeCapRound: true,
-                        dotData: FlDotData(
+                        dotData: const FlDotData(
                           show: false,
                         ),
                         belowBarData: BarAreaData(

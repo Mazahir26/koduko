@@ -18,7 +18,7 @@ class TaskCard extends StatelessWidget {
   late final Color textColor;
   final bool isSwipeDisabled;
   TaskCard(
-      {Key? key,
+      {super.key,
       required this.name,
       required this.controller,
       required this.color,
@@ -29,8 +29,7 @@ class TaskCard extends StatelessWidget {
       required this.onTap,
       required this.isCompleted,
       required this.isSkipped,
-      required this.isSwipeDisabled})
-      : super(key: key) {
+      required this.isSwipeDisabled}) {
     if (controller != null) {
       if (isCompleted) {
         tween = Tween(

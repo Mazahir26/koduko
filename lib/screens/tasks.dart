@@ -8,7 +8,7 @@ import 'package:koduko/services/tasks_provider.dart';
 import 'package:provider/provider.dart';
 
 class TasksScreen extends StatelessWidget {
-  const TasksScreen({Key? key}) : super(key: key);
+  const TasksScreen({super.key});
   static const routeName = "/tasks";
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class TasksScreen extends StatelessWidget {
                               .apply(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .onBackground),
+                                      .onSurface),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),

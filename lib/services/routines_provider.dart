@@ -102,6 +102,21 @@ class RoutineModel extends ChangeNotifier {
     return max;
   }
 
+  int getTimeSpentToday() {
+    List<TaskEvent> list = getHistory();
+    List<int> hours = List.filled(24, 0);
+    for (var e in list) {
+      hours[e.time.hour] += 1;
+    }
+    int max = 0;
+    for (var i = 0; i < 24; i++) {
+      if (hours[i] > hours[max]) {
+        max = i;
+      }
+    }
+    return max;
+  }
+
   DateTime? getMostProductiveDay() {
     List<TaskEvent> list = getHistory();
     final Map<DateTime, int> hours = HashMap();

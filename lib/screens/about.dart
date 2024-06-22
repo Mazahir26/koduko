@@ -3,7 +3,7 @@ import 'package:koduko/components/header.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutScreen extends StatelessWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+  const AboutScreen({super.key});
   static const routeName = "/about";
 
   @override

@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 
 class TodayProgress extends StatelessWidget {
   const TodayProgress({
-    Key? key,
+    super.key,
     required this.textTheme,
-  }) : super(key: key);
+  });
 
   final TextTheme textTheme;
 
@@ -49,7 +49,7 @@ class TodayProgress extends StatelessWidget {
                   CircularPercentIndicator(
                     percent: per,
                     backgroundColor:
-                        Theme.of(context).colorScheme.surfaceVariant,
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     backgroundWidth: 15,
                     progressColor: Theme.of(context).colorScheme.inversePrimary,
                     animation: true,
