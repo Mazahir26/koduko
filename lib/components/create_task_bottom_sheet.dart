@@ -3,7 +3,6 @@ import 'package:koduko/components/name_page_bottom_sheet.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/utils/duration_to_string.dart';
 import 'package:koduko/utils/parse_duration.dart';
-import 'package:flutter_picker/flutter_picker.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {
   const CreateTaskBottomSheet({super.key, this.task});
@@ -110,51 +109,52 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
   }
 
   Future<bool> onCustomDurationSelect(BuildContext context) async {
-    final result = await Picker(
-      adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
-        const NumberPickerColumn(begin: 0, end: 30, suffix: Text(' minutes')),
-        const NumberPickerColumn(begin: 5, end: 60, suffix: Text(' seconds')),
-      ]),
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      onBuilderItem: (context, text, child, selected, col, index) {
-        String t = text == null
-            ? ''
-            : col == 0
-                ? '$text min'
-                : '$text sec';
-        return Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                t,
-                style: selected
-                    ? Theme.of(context)
-                        .textTheme
-                        .titleLarge!
-                        .apply(color: Theme.of(context).colorScheme.primary)
-                    : Theme.of(context).textTheme.titleMedium,
-              )
-            ],
-          ),
-        );
-      },
-      looping: true,
-      magnification: 1.1,
-      itemExtent: 50,
-      hideHeader: true,
-      confirmText: 'Select',
-      title: const Text('Select duration'),
-      onConfirm: (Picker picker, List<int> value) {
-        Duration duration = Duration(
-            minutes: picker.getSelectedValues()[0],
-            seconds: picker.getSelectedValues()[1]);
-        setState(() {
-          customTime = duration;
-        });
-        validateDuration();
-      },
-    ).showDialog(context);
+    const result = null;
+    // final result = await Picker(
+    //   adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
+    //     const NumberPickerColumn(begin: 0, end: 30, suffix: Text(' minutes')),
+    //     const NumberPickerColumn(begin: 5, end: 60, suffix: Text(' seconds')),
+    //   ]),
+    //   backgroundColor: Theme.of(context).colorScheme.surface,
+    //   onBuilderItem: (context, text, child, selected, col, index) {
+    //     String t = text == null
+    //         ? ''
+    //         : col == 0
+    //             ? '$text min'
+    //             : '$text sec';
+    //     return Center(
+    //       child: Row(
+    //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //         children: [
+    //           Text(
+    //             t,
+    //             style: selected
+    //                 ? Theme.of(context)
+    //                     .textTheme
+    //                     .titleLarge!
+    //                     .apply(color: Theme.of(context).colorScheme.primary)
+    //                 : Theme.of(context).textTheme.titleMedium,
+    //           )
+    //         ],
+    //       ),
+    //     );
+    //   },
+    //   looping: true,
+    //   magnification: 1.1,
+    //   itemExtent: 50,
+    //   hideHeader: true,
+    //   confirmText: 'Select',
+    //   title: const Text('Select duration'),
+    //   onConfirm: (Picker picker, List<int> value) {
+    //     Duration duration = Duration(
+    //         minutes: picker.getSelectedValues()[0],
+    //         seconds: picker.getSelectedValues()[1]);
+    //     setState(() {
+    //       customTime = duration;
+    //     });
+    //     validateDuration();
+    //   },
+    // ).showDialog(context);
     if (result == null) {
       return false;
     } else {
