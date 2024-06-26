@@ -12,6 +12,13 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+def keyStoreProperties= new Properties()
+def keyStorePropertiesFile = rootProject.file('key.properties')
+if (keyStorePropertiesFile.exists()) {
+    keyStorePropertiesFile.withReader('UTF-8') {reader -> 
+        keyStoreProperties.load(reader)
+    } 
+}
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
@@ -53,14 +60,32 @@ android {
         versionName flutterVersionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
-            shrinkResources false
-        }
-    }
+    signingConfigs {
+       release {
+            storeFile file(keyStoreProperties['storeFile'])
+            storePassword keyStoreProperties['storePassword']
+            keyAlias keyStoreProperties['keyAlias']
+            keyPassword keyStoreProperties['keyPassword']
+            v1SigningEnabled true
+            v2SigningEnabled true
+            enableV3Signing true
+            enableV4Signing true
+          }
+     }
+
+     buildTypes {
+         release {
+             signingConfig signingConfigs.release
+         }
+     }
+    // buildTypes {
+    //     release {
+    //         // TODO: Add your own signing config for the release build.
+    //         // Signing with the debug keys for now, so `flutter run --release` works.
+    //         signingConfig signingConfigs.debug
+    //         shrinkResources false
+    //     }
+    // }
 }
 
 flutter {
