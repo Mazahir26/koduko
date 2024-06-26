@@ -10,11 +10,11 @@ import 'package:provider/provider.dart';
 
 class RoutineTile extends StatefulWidget {
   const RoutineTile({
-    Key? key,
+    super.key,
     required this.routine,
     this.isToday = false,
     required this.onEdit,
-  }) : super(key: key);
+  });
   final Routine routine;
   final bool isToday;
   final void Function(Routine) onEdit;
@@ -137,10 +137,10 @@ class _RoutineTileState extends State<RoutineTile> {
 
 class AlertOnDelete extends StatelessWidget {
   const AlertOnDelete({
-    Key? key,
+    super.key,
     required this.onCancel,
     required this.onDelete,
-  }) : super(key: key);
+  });
   final void Function() onCancel;
   final void Function() onDelete;
 
@@ -168,12 +168,11 @@ class AlertOnDelete extends StatelessWidget {
 
 class Action extends StatelessWidget {
   const Action(
-      {Key? key,
+      {super.key,
       required this.onPress,
       required this.color,
       required this.icon,
-      required this.label})
-      : super(key: key);
+      required this.label});
 
   final Function(BuildContext context) onPress;
   final Color color;
@@ -206,7 +205,7 @@ class Action extends StatelessWidget {
 
 class CustomTile extends StatelessWidget {
   const CustomTile({
-    Key? key,
+    super.key,
     required this.isToday,
     required this.routine,
     required this.onPress,
@@ -214,7 +213,7 @@ class CustomTile extends StatelessWidget {
     required this.onEdit,
     required this.onStateChange,
     required this.isOpen,
-  }) : super(key: key);
+  });
 
   final bool isToday;
   final Routine routine;

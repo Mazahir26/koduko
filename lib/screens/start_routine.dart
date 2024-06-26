@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class RoutineScreen extends StatefulWidget {
   final String routine;
-  const RoutineScreen({Key? key, required this.routine}) : super(key: key);
+  const RoutineScreen({super.key, required this.routine});
 
   @override
   State<RoutineScreen> createState() => RoutineScreenState();
@@ -330,10 +330,10 @@ class RoutineScreenState extends State<RoutineScreen>
                                             _isSkipped = true;
                                           });
                                         },
-                                        child: Column(
+                                        child: const Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
-                                          children: const [
+                                          children: [
                                             Icon(Icons.swipe_left_rounded),
                                             SizedBox(height: 10),
                                             Text("Skip"),
@@ -348,11 +348,11 @@ class RoutineScreenState extends State<RoutineScreen>
                                             onTap(null);
                                           },
                                           style: ButtonStyle(
-                                            elevation: MaterialStateProperty
+                                            elevation: WidgetStateProperty
                                                 .all<double>(6),
-                                            shape: MaterialStateProperty.all(
+                                            shape: WidgetStateProperty.all(
                                                 const CircleBorder()),
-                                            padding: MaterialStateProperty.all(
+                                            padding: WidgetStateProperty.all(
                                                 const EdgeInsets.all(15)),
                                           ),
                                           child: AnimatedIcon(
@@ -372,10 +372,10 @@ class RoutineScreenState extends State<RoutineScreen>
                                             _isComplete = true;
                                           });
                                         },
-                                        child: Column(
+                                        child: const Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
-                                          children: const [
+                                          children: [
                                             Icon(Icons.swipe_right_rounded),
                                             SizedBox(height: 10),
                                             Text("Completed"),
@@ -398,8 +398,8 @@ class RoutineScreenState extends State<RoutineScreen>
 
 class MyAppBar extends StatelessWidget {
   const MyAppBar({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

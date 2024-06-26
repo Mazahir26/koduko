@@ -16,9 +16,9 @@ enum RepeatType {
 
 class CreateRoutineBottomSheet extends StatefulWidget {
   const CreateRoutineBottomSheet({
-    Key? key,
+    super.key,
     this.editRoutine,
-  }) : super(key: key);
+  });
   final Routine? editRoutine;
 
   @override
@@ -346,12 +346,12 @@ class _CreateRoutineBottomSheetState extends State<CreateRoutineBottomSheet> {
 
 class Buttons extends StatelessWidget {
   const Buttons({
-    Key? key,
+    super.key,
     required this.pageIndex,
     required this.onNext,
     required this.onPrevious,
     required this.text,
-  }) : super(key: key);
+  });
 
   final int pageIndex;
   final void Function()? onNext;
@@ -420,12 +420,12 @@ class Buttons extends StatelessWidget {
 
 class TaskSelectPage extends StatelessWidget {
   const TaskSelectPage({
-    Key? key,
+    super.key,
     required this.selectedTask,
     required this.onTapAdd,
     required this.onTapDelete,
     required this.onChangeOrder,
-  }) : super(key: key);
+  });
   final List<Task> selectedTask;
   final void Function(Task task) onTapAdd;
   final void Function(int index) onTapDelete;
@@ -468,7 +468,7 @@ class TaskSelectPage extends StatelessWidget {
               children: [
                 Text('Select Tasks',
                     style: Theme.of(context).textTheme.headlineMedium!.apply(
-                        color: Theme.of(context).colorScheme.onBackground)),
+                        color: Theme.of(context).colorScheme.onSurface)),
                 TextButton.icon(
                   onPressed: (() {
                     Navigator.pushNamed(
@@ -549,7 +549,7 @@ class TaskSelectPage extends StatelessWidget {
                                   .apply(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .onBackground
+                                          .onSurface
                                           .withOpacity(0.8)),
                             ),
                             title: Text(
@@ -558,7 +558,7 @@ class TaskSelectPage extends StatelessWidget {
                             )),
                       )))
                   .values
-                  .toList()
+                  
           ],
         ),
         onReorder: onChangeOrder,
@@ -593,7 +593,7 @@ class TaskSelectPage extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium!.apply(
                           color: Theme.of(context)
                               .colorScheme
-                              .onBackground
+                              .onSurface
                               .withOpacity(0.8)),
                     ),
                     title: Text(
@@ -610,7 +610,7 @@ class TaskSelectPage extends StatelessWidget {
 
 class RepeatPage extends StatelessWidget {
   const RepeatPage({
-    Key? key,
+    super.key,
     required this.onDayChange,
     required this.selectedDays,
     required this.onChangeRepeatType,
@@ -618,7 +618,7 @@ class RepeatPage extends StatelessWidget {
     required this.onChangeTime,
     required this.onToggleNotification,
     required this.notification,
-  }) : super(key: key);
+  });
   final void Function(String, bool) onDayChange;
   final Map<String, bool> selectedDays;
   final void Function(RepeatType) onChangeRepeatType;

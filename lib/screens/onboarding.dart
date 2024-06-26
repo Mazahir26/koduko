@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class OnBoarding extends StatefulWidget {
-  const OnBoarding({Key? key}) : super(key: key);
+  const OnBoarding({super.key});
   static const routeName = "/onBoarding";
 
   @override
@@ -139,12 +139,12 @@ class _OnBoardingState extends State<OnBoarding> {
 
 class Page extends StatelessWidget {
   const Page({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.title,
     required this.des,
     required this.color,
-  }) : super(key: key);
+  });
   final String imagePath;
   final String title;
   final String des;
@@ -184,14 +184,14 @@ class Page extends StatelessWidget {
 
 class Buttons extends StatelessWidget {
   const Buttons({
-    Key? key,
+    super.key,
     required this.pageIndex,
     required this.onNext,
     required this.onPrevious,
     required this.onSkip,
     required this.text,
     this.color,
-  }) : super(key: key);
+  });
   final Color? color;
   final int pageIndex;
   final void Function() onNext;

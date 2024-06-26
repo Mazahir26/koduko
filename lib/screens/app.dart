@@ -11,7 +11,7 @@ import 'package:koduko/screens/tasks.dart';
 import 'package:koduko/services/notification_service.dart';
 
 class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
   static const routeName = "/";
 
   @override

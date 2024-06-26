@@ -3,7 +3,7 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 
 class TimeSpentToday extends StatelessWidget {
-  const TimeSpentToday({Key? key, required this.textTheme}) : super(key: key);
+  const TimeSpentToday({super.key, required this.textTheme});
   final TextTheme textTheme;
 
   @override

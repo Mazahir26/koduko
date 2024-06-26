@@ -8,8 +8,7 @@ import 'package:koduko/utils/parse_duration.dart';
 import 'package:provider/provider.dart';
 
 class TaskTile extends StatelessWidget {
-  const TaskTile({Key? key, required this.task, required this.onEdit})
-      : super(key: key);
+  const TaskTile({super.key, required this.task, required this.onEdit});
   final Task task;
   final void Function(Task) onEdit;
   @override

@@ -1,12 +1,12 @@
+import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:koduko/components/name_page_bottom_sheet.dart';
 import 'package:koduko/models/task.dart';
 import 'package:koduko/utils/duration_to_string.dart';
 import 'package:koduko/utils/parse_duration.dart';
-import 'package:flutter_picker/flutter_picker.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {
-  const CreateTaskBottomSheet({Key? key, this.task}) : super(key: key);
+  const CreateTaskBottomSheet({super.key, this.task});
   final Task? task;
   @override
   State<CreateTaskBottomSheet> createState() => _CreateTaskBottomSheetState();
@@ -26,7 +26,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     "20 mins": Duration(minutes: 20),
     "25 mins": Duration(minutes: 25),
     "30 mins": Duration(minutes: 30),
-    "Custom": Duration(minutes: 30),
+    "Custom": Duration(minutes: 5),
   };
   static const colorList = [
     Colors.blue,
@@ -38,7 +38,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     Colors.red,
   ];
 
-  Duration customTime = const Duration(seconds: 0);
+  Duration customTime = const Duration(minutes: 5);
   String? _value;
   int? _selectedColor;
   int pageIndex = 0;
@@ -98,10 +98,27 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
 
   void onChangeChip(bool selected, int index, BuildContext context) async {
     if (chipList.keys.toList()[index] == 'Custom') {
-      final r = await onCustomDurationSelect(context);
-      if (!r) {
+      final r = await showDurationPicker(
+        context: context,
+        initialTime: _value != null
+            ? _value == 'Custom'
+                ? customTime
+                : chipList[_value] ?? customTime
+            : customTime,
+        baseUnit: BaseUnit.second,
+        lowerBound: const Duration(seconds: 15),
+        upperBound: const Duration(hours: 1),
+      );
+
+      if (r == null) {
         return;
       }
+      setState(() {
+        customTime = r;
+        _value = 'Custom';
+      });
+      validateDuration();
+      return;
     }
     setState(() {
       _value = selected ? chipList.keys.toList()[index] : null;
@@ -109,58 +126,58 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     validateDuration();
   }
 
-  Future<bool> onCustomDurationSelect(BuildContext context) async {
-    final result = await Picker(
-      adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
-        const NumberPickerColumn(begin: 0, end: 30, suffix: Text(' minutes')),
-        const NumberPickerColumn(begin: 5, end: 60, suffix: Text(' seconds')),
-      ]),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      onBuilderItem: (context, text, child, selected, col, index) {
-        String t = text == null
-            ? ''
-            : col == 0
-                ? '$text min'
-                : '$text sec';
-        return Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                t,
-                style: selected
-                    ? Theme.of(context)
-                        .textTheme
-                        .titleLarge!
-                        .apply(color: Theme.of(context).colorScheme.primary)
-                    : Theme.of(context).textTheme.titleMedium,
-              )
-            ],
-          ),
-        );
-      },
-      looping: true,
-      magnification: 1.1,
-      itemExtent: 50,
-      hideHeader: true,
-      confirmText: 'Select',
-      title: const Text('Select duration'),
-      onConfirm: (Picker picker, List<int> value) {
-        Duration duration = Duration(
-            minutes: picker.getSelectedValues()[0],
-            seconds: picker.getSelectedValues()[1]);
-        setState(() {
-          customTime = duration;
-        });
-        validateDuration();
-      },
-    ).showDialog(context);
-    if (result == null) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+  // Future<bool> onCustomDurationSelect(BuildContext context) async {
+  //   final result = await Picker(
+  //     adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
+  //       const NumberPickerColumn(begin: 0, end: 30, suffix: Text(' minutes')),
+  //       const NumberPickerColumn(begin: 5, end: 60, suffix: Text(' seconds')),
+  //     ]),
+  //     backgroundColor: Theme.of(context).colorScheme.surface,
+  //     onBuilderItem: (context, text, child, selected, col, index) {
+  //       String t = text == null
+  //           ? ''
+  //           : col == 0
+  //               ? '$text min'
+  //               : '$text sec';
+  //       return Center(
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             Text(
+  //               t,
+  //               style: selected
+  //                   ? Theme.of(context)
+  //                       .textTheme
+  //                       .titleLarge!
+  //                       .apply(color: Theme.of(context).colorScheme.primary)
+  //                   : Theme.of(context).textTheme.titleMedium,
+  //             )
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //     looping: true,
+  //     magnification: 1.1,
+  //     itemExtent: 50,
+  //     hideHeader: true,
+  //     confirmText: 'Select',
+  //     title: const Text('Select duration'),
+  //     onConfirm: (Picker picker, List<int> value) {
+  //       Duration duration = Duration(
+  //           minutes: picker.getSelectedValues()[0],
+  //           seconds: picker.getSelectedValues()[1]);
+  //       setState(() {
+  //         customTime = duration;
+  //       });
+  //       validateDuration();
+  //     },
+  //   ).showDialog(context);
+  //   if (result == null) {
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
   void onChangeColor(int index) {
     setState(() {
@@ -289,12 +306,12 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
 
 class Buttons extends StatelessWidget {
   const Buttons({
-    Key? key,
+    super.key,
     required this.pageIndex,
     required this.onNext,
     required this.onPrevious,
     required this.text,
-  }) : super(key: key);
+  });
 
   final int pageIndex;
   final void Function()? onNext;
@@ -363,12 +380,11 @@ class Buttons extends StatelessWidget {
 
 class DurationPage extends StatelessWidget {
   const DurationPage(
-      {Key? key,
+      {super.key,
       required this.onChange,
       required this.chipList,
       required this.value,
-      required this.customDuration})
-      : super(key: key);
+      required this.customDuration});
 
   final void Function(bool, int, BuildContext) onChange;
   final Map<String, Duration> chipList;
@@ -403,7 +419,7 @@ class DurationPage extends StatelessWidget {
               labelStyle: Theme.of(context).textTheme.labelLarge!.apply(
                   color: value == chipList.keys.toList()[index]
                       ? Theme.of(context).colorScheme.onSecondary
-                      : Theme.of(context).colorScheme.onBackground),
+                      : Theme.of(context).colorScheme.onSurface),
               onSelected: (bool selected) => onChange(selected, index, context),
             ),
           ),
@@ -415,11 +431,10 @@ class DurationPage extends StatelessWidget {
 
 class ColorPage extends StatelessWidget {
   const ColorPage(
-      {Key? key,
+      {super.key,
       required this.onChange,
       required this.colorList,
-      required this.selectedColor})
-      : super(key: key);
+      required this.selectedColor});
   final void Function(int) onChange;
   final List<Color> colorList;
   final int? selectedColor;
@@ -449,7 +464,7 @@ class ColorPage extends StatelessWidget {
                         border: Border.all(
                           color: selectedColor == index
                               ? Colors.blueAccent
-                              : Theme.of(context).colorScheme.background,
+                              : Theme.of(context).colorScheme.surface,
                           width: 3,
                         ),
                         shape: BoxShape.circle,

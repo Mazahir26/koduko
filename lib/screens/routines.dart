@@ -8,7 +8,7 @@ import 'package:koduko/services/routines_provider.dart';
 import 'package:provider/provider.dart';
 
 class RoutinesScreen extends StatelessWidget {
-  const RoutinesScreen({Key? key}) : super(key: key);
+  const RoutinesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +132,7 @@ class RoutinesScreen extends StatelessWidget {
                                             isToday: true,
                                             onEdit: editRoutine,
                                           ))
-                                      .toList()
+                                      
                                 ]),
                           ),
                     value.allRoutines().isEmpty
@@ -171,7 +171,7 @@ class RoutinesScreen extends StatelessWidget {
                                             routine: e,
                                             onEdit: editRoutine,
                                           ))
-                                      .toList()
+                                      
                                 ]),
                           )
                   ],
