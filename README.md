@@ -3,12 +3,6 @@
 Yet another Habit tracker made with flutter.
 
 
-## Warning ⚠️
-
-**This Repo is not Maintained any more**
-
-
-
 ## ❓ About
 
 It's an open source and free app where you can manage your daily or weekly habits.
